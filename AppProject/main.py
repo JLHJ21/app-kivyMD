@@ -6,6 +6,7 @@
 from kivy.lang import Builder
 from kivy.metrics import dp
 from kivy.properties import ObjectProperty, StringProperty
+import os
 
 #Permite abrir la aplicación
 from kivymd.app import MDApp
@@ -23,6 +24,9 @@ from kivymd.uix.button import MDFlatButton, MDRectangleFlatButton, MDRaisedButto
 from kivymd.uix.dialog import MDDialog
 from kivymd.uix.widget import MDWidget
 from kivymd.uix.boxlayout import MDBoxLayout
+from kivymd.uix.scrollview import MDScrollView
+from kivymd.toast import toast
+from kivymd.uix.filemanager import MDFileManager
 
 
 #Permite pasar a otras paginas o ventas
@@ -38,505 +42,67 @@ from kivy.core.window import Window
 #DrawerClickableItem           
 
 
-KV = '''
 
-<DrawerClickableItem@MDNavigationDrawerItem>
-    focus_color: "#e7e4c0"
-    text_color: "#4a4939"
-    icon_color: "#4a4939"
-    ripple_color: "#c5bdd2"
-    selected_color: "#0c6c4d"
-
-
-<DrawerLabelItem@MDNavigationDrawerItem>
-    text_color: "#4a4939"
-    icon_color: "#4a4939"
-    focus_behavior: False
-    selected_color: "#4a4939"
-    _no_ripple_effect: True
-
-<ContentNavigationDrawer>
-
-    MDNavigationDrawerMenu:
-
-        MDNavigationDrawerHeader:
-            title: "BroxElt S.A."
-            title_color: "#4a4939"
-            text: "Bienvenido XXXXX"
-            source: "logo.jpg"
-            spacing: "4dp"
-            padding: "12dp", 0, 0, "40dp"
-
-        MDNavigationDrawerLabel:
-            text: "General"
-
-        MDNavigationDrawerDivider:
-            padding: dp(10),0, dp(12), dp(1)
-
-        DrawerClickableItem:
-            icon: "home"
-            text_right_color: "#4a4939"
-            text: "Panel de control"
-
-            on_press:
-                root.screen_manager.current = "InitialPage"
-
-                app.root.ids.toolbar.title = self.text
-
-        DrawerClickableItem:
-            icon: "cash-register"
-            text_right_color: "#4a4939"
-            text: "Cajero"
-
-            on_press:
-                root.screen_manager.current = "InitialPage"
-
-                app.root.ids.toolbar.title = self.text
-
-        DrawerClickableItem:
-            icon: "store"
-            text_right_color: "#4a4939"
-            text: "Almacen"
-            on_press:
-                root.screen_manager.current = "StorePage"
-
-                app.root.ids.toolbar.title = self.text
-        
-        DrawerClickableItem:
-            icon: "cash-clock"
-            text_right_color: "#4a4939"
-            text: "Presupuesto"
-            on_press:
-                root.screen_manager.current = "scr 2"
-
-                app.root.ids.toolbar.title = self.text
-        
-        DrawerClickableItem:
-            icon: "account-cash"
-            text_right_color: "#4a4939"
-            text: "Cliente"
-            on_press:
-                root.screen_manager.current = "scr 2"
-
-                app.root.ids.toolbar.title = self.text
-        
-                
-
-        MDNavigationDrawerLabel:
-            text: "Administrador"
-            padding: dp(16), dp(10), dp(12), dp(10)
-
-
-        MDNavigationDrawerDivider:
-            padding: dp(10), 0, dp(12), dp(1)
-
-        DrawerClickableItem:
-            icon: "cube-send"
-            text_right_color: "#4a4939"
-            text: "Encargos"
-
-            on_press:
-                root.screen_manager.current = "InitialPage"
-
-                app.root.ids.toolbar.title = self.text
-
-        DrawerClickableItem:
-            icon: "cash-multiple"
-            text_right_color: "#4a4939"
-            text: "Divisas"
-
-            on_press:
-                root.screen_manager.current = "InitialPage"
-
-                app.root.ids.toolbar.title = self.text
-
-        DrawerClickableItem:
-            icon: "account-multiple"
-            text_right_color: "#4a4939"
-            text: "Proveedores"
-
-            on_press:
-                root.screen_manager.current = "InitialPage"
-
-                app.root.ids.toolbar.title = self.text
-        
-        DrawerClickableItem:
-            icon: "cash-remove"
-            text_right_color: "#4a4939"
-            text: "Prestamos"
-
-            on_press:
-                root.screen_manager.current = "InitialPage"
-
-                app.root.ids.toolbar.title = self.text
-
-        DrawerClickableItem:
-            icon: "receipt-text-clock"
-            text_right_color: "#4a4939"
-            text: "Historial de Ventas"
-
-            on_press:
-                root.screen_manager.current = "InitialPage"
-
-                app.root.ids.toolbar.title = self.text
-        
-        DrawerClickableItem:
-            icon: "text-box-search"
-            text_right_color: "#4a4939"
-            text: "Historial de Dinero"
-
-            on_press:
-                root.screen_manager.current = "InitialPage"
-
-                app.root.ids.toolbar.title = self.text
-
-
-                
-        MDNavigationDrawerLabel:
-            text: "Configuraciones"
-            padding: dp(16), dp(10), dp(12), dp(10)
-
-        MDNavigationDrawerDivider:
-            padding: dp(10), 0, dp(12), dp(1)
-
-        DrawerClickableItem:
-            icon: "account-cog"
-            text_right_color: "#4a4939"
-            text: "Configuracion"
-
-            on_press:
-                root.screen_manager.current = "InitialPage"
-
-                app.root.ids.toolbar.title = self.text
-
-MDScreen:
-
-    MDTopAppBar:
-        id: toolbar
-        pos_hint: {"top": 1}
-        elevation: 4
-        title: "MDNavigationDrawer"
-        use_overflow: True
-        left_action_items: [["menu", lambda x: nav_drawer.set_state("open")]]
-        right_action_items:
-            [
-            ["cash-100", lambda x: app.CallbackMenuChangeMoney(x), "Tipo de tasa - Dolar", "Tipo de tasa - Dolar"],
-            ["weather-sunny", lambda x: app.CallbackModeScreen(x, 'oscuro'), "Modo Claro", "Modo Claro"],
-            ["account-settings", lambda x: app.CallbackMenuUser(x), "Perfil" , "Perfil"],
-            ]
-            
-    MDTopAppBar:
-        id: toolbarbottom
-        type_height: "small"
-        headline_text: "Headline"
-        title: "BroxElt S.A."
-        elevation: 4
-        anchor_title: "left"
-        use_overflow: True
-        
-        right_action_items:
-            [             
-            ["account-cog", lambda x: app.callback(x), "", "Configuracion"],             
-            ["cash-remove", lambda x: app.callback(x), "", "Prestamos"],             
-            ["home", lambda x: app.ChangePage("InitialPage", "Inicio"), "", "Inicio"],    
-            ["cash-register", lambda x: app.callback(x), "", "Cajero"],             
-            ["store", lambda x: app.callback(x), "", "Almacen"],             
-            ]
-
-    MDNavigationLayout:
-
-        MDScreenManager:
-            id: screen_manager
-
-            MDScreen:
-                name: "InitialPage"
-
-                MDBoxLayout:
-                    orientation: 'vertical'
-                    size_hint: 1, 1
-                    MDGridLayout:
-                        cols: 1
-                        padding: dp(0), dp(toolbar.height), dp(0), dp(toolbarbottom.height)
-                        MDBoxLayout:
-                            adaptive_height: True               
-                            size_hint: 1, 1
-
-                            MDGridLayout:
-                                cols: 1                                
-                                
-                                MDLabel:
-                                    markup: True
-                                    padding: dp(50), dp(20), dp(16), dp(1)
-                                    text: "[b][i]Datos[/i][/b]"      
-                                    halign: "left"
-                                    font_style: "H3"
-                                    adaptive_height: True       
-
-                                MDBoxLayout:
-                                    orientation: 'horizontal'
-                                    size_hint: 1, None
-                                    height:75
-
-
-                                    MDGridLayout:
-                                    
-                                        cols: 2                             
-                                        padding: dp(1), dp(10), dp(1), dp(1)
-
-
-                                        MDBoxLayout:
-                                            padding: dp(50), dp(1), dp(25), dp(1)
-
-                                            MDIcon:
-                                                padding: dp(1), dp(1), dp(10), dp(1)
-                                                icon: "account"
-                                                pos_hint: {"center_x": .5, "center_y": .75} 
-                                                font_size: '36sp' 
-                                            MDTextField:
-                                                pos_hint: {"center_x": 1, "center_y": .7} 
-                                                text: "root"
-                                                hint_text: "Nombre de usuario:"
-                                                mode: "rectangle"
-                                                disabled: True 
-                                                focus: True
-
-                                        MDBoxLayout:
-
-                                            padding: dp(25), dp(1), dp(50), dp(1)
-
-                                            MDIcon:
-                                                padding: dp(1), dp(1), dp(10), dp(1)
-                                                icon: "account-hard-hat"
-                                                pos_hint: {"center_x": .5, "center_y": .75} 
-                                                font_size: '36sp' 
-                                            MDTextField:
-                                                pos_hint: {"center_x": 1, "center_y": .7} 
-                                                text: "root"
-                                                hint_text: "Nivel de usuario:"
-                                                mode: "rectangle"
-                                                disabled: True 
-                                                focus: True
-                                            
-
-                                MDLabel:                                
-                                    markup: True
-                                    padding: dp(50), dp(1), dp(1), dp(1)
-                                    text: "[b][i]Cuenta[/i][/b]"
-                                    halign: "left"
-                                    font_style: "H3"
-                                    adaptive_height: True             
-
-                                MDBoxLayout:
-                                    orientation: 'horizontal'
-                                    size_hint: 1, None
-                                    height:75
-
-
-                                    MDGridLayout:
-                                    
-                                        cols: 2                             
-                                        padding: dp(1), dp(10), dp(1), dp(1)
-
-
-                                        MDBoxLayout:
-                                            padding: dp(50), dp(1), dp(25), dp(1)
-
-                                            MDIcon:
-                                                padding: dp(1), dp(1), dp(10), dp(1)
-                                                icon: "cash-plus"
-                                                pos_hint: {"center_x": .5, "center_y": .75} 
-                                                font_size: '36sp' 
-                                            MDTextField:
-                                                pos_hint: {"center_x": 1, "center_y": .7} 
-                                                text: "100$"
-                                                hint_text: "Dinero Credito:"
-                                                mode: "rectangle"
-                                                disabled: True 
-                                                focus: True
-
-                                        MDBoxLayout:
-
-                                            padding: dp(25), dp(1), dp(50), dp(1)
-
-                                            MDIcon:
-                                                padding: dp(1), dp(1), dp(10), dp(1)
-                                                icon: "cash-minus"
-                                                pos_hint: {"center_x": .5, "center_y": .75} 
-                                                font_size: '36sp' 
-                                            MDTextField:
-                                                pos_hint: {"center_x": 1, "center_y": .7} 
-                                                text: "24$"
-                                                hint_text: "Dinero prestado:"
-                                                mode: "rectangle"
-                                                disabled: True 
-                                                focus: True
-                                
-                                MDBoxLayout:
-                                    orientation: 'horizontal'
-                                    size_hint: 1, None
-                                    height:75
-
-                                    MDGridLayout:
-                                    
-                                        cols: 3                            
-                                        padding: dp(1), dp(10), dp(1), dp(1)
-
-                                        MDBoxLayout:
-                                            padding: dp(50), dp(1), dp(1), dp(1)
-
-                                            MDIcon:
-                                                padding: dp(1), dp(1), dp(10), dp(1)
-                                                icon: "cash"
-                                                pos_hint: {"center_x": .5, "center_y": .75} 
-                                                font_size: '36sp' 
-                                            MDTextField:
-                                                pos_hint: {"center_x": .5, "center_y": .7} 
-                                                text: "100$"
-                                                hint_text: "Dinero en dólares:"
-                                                mode: "rectangle"
-                                                disabled: True 
-                                                focus: True
-                                    
-                                        MDBoxLayout:
-                                            padding: dp(30), dp(1), dp(30), dp(1)
-
-                                            MDIcon:
-                                                padding: dp(1), dp(1), dp(10), dp(1)
-                                                icon: "cash"
-                                                pos_hint: {"center_x": .5, "center_y": .75} 
-                                                font_size: '36sp' 
-                                            MDTextField:
-                                                pos_hint: {"center_x": .5, "center_y": .7} 
-                                                text: "100$"
-                                                hint_text: "Dinero en pesos:"
-                                                mode: "rectangle"
-                                                disabled: True 
-                                                focus: True
-                                        
-                                        MDBoxLayout:
-                                            padding: dp(1), dp(1), dp(50), dp(1)
-
-                                            MDIcon:
-                                                padding: dp(1), dp(1), dp(10), dp(1)
-                                                icon: "cash"
-                                                pos_hint: {"center_x": .5, "center_y": .75} 
-                                                font_size: '36sp' 
-                                            MDTextField:
-                                                pos_hint: {"center_x": .5, "center_y": .7} 
-                                                text: "100$"
-                                                hint_text: "Dinero en bolívares:"
-                                                mode: "rectangle"
-                                                disabled: True 
-                                                focus: True
-
-                                MDBoxLayout:
-                                    orientation: 'horizontal'
-                                    size_hint: 1, None
-                                    height:75
-
-                                    MDGridLayout:
-                                    
-                                        cols: 1                            
-                                        padding: dp(1), dp(10), dp(1), dp(1)
-
-                                        MDBoxLayout:
-                                            padding: dp(230), dp(1), dp(230), dp(1)
-
-                                            MDIcon:
-                                                padding: dp(1), dp(1), dp(10), dp(1)
-                                                icon: "cash"
-                                                pos_hint: {"center_x": .5, "center_y": .8} 
-                                                font_size: '36sp' 
-                                            MDTextField:
-                                                pos_hint: {"center_x": .5, "center_y": .7} 
-                                                text: "100$"
-                                                hint_text: "Dinero mensual:"
-                                                mode: "rectangle"
-                                                disabled: True 
-                                                focus: True
-
-            MDScreen:
-                name: "StorePageUpdate"
-                
-                MDLabel:
-                    text: "Screen 2"
-                    halign: "center"
-
-            MDScreen:
-                name: "StorePage"
-
-                MDBoxLayout:
-                    orientation: 'vertical'
-                    size_hint: 1, 1
-                    MDGridLayout:
-                        cols: 1
-                        padding: dp(16), dp(toolbar.height), dp(16), dp(toolbarbottom.height)
-                                
-                        MDGridLayout:
-                            cols: 3
-                            spacing: dp(20)
-                            padding: dp(16), dp(16), dp(16), dp(16)
-                            size_hint_y: None
-                            height: dp(toolbar.height)
-                            MDTextField:
-                                id: ButtonMenuSearchingStore
-
-                                size_hint_x: None
-                                width: "100dp"
-
-                                text: "TODO"
-                                hint_text: "Tipo:"
-                                icon_right: "arrow-down"
-
-                                mode: "rectangle"
-                                readonly: True 
-                                focus: True
-
-
-                                on_focus: if self.focus: app.MenuProductoTypeStore.open()
-
-                            MDTextField:
-                                id: SearchProduct
-                                hint_text: 'Buscar producto'
-                                icon_right: "android"
-                                mode: "rectangle"
-
-                            MDFloatingActionButton:
-                                id: ButtonSearchingStore
-
-                                width: "150dp"
-                                icon: "book-search"
-                                style: "standard"
-                                width: "100dp"
-                                
-                        ClientsTable:
-
-                                            
-
-                               
-
-        MDNavigationDrawer:
-            id: nav_drawer
-            radius: (0, 16, 16, 0)
-        
-            ContentNavigationDrawer:
-                screen_manager: screen_manager
-                nav_drawer: nav_drawer
-
-                
-'''
 
 #VARIABLE QUE ALMACENA EL SELF, PERMITE CAMBIAR DE SCREN (PANTALLA) AUN SI SON DIFERENTES CLASES
-global_self = ''
+global_self = global_self_client = ''
 
 class ContentNavigationDrawer(MDScrollView):
     screen_manager = ObjectProperty()
     nav_drawer = ObjectProperty()
 
 #PERMITE MOSTRAR EL ICONO EN LOS SELECTS DE TASA DE DINERO
-class Item(OneLineAvatarIconListItem):
-    left_icon = StringProperty()
+#class Item(OneLineAvatarIconListItem):
+#    left_icon = StringProperty()
 
+#Clase para la seleccion de fotos, pagina
+class ChooseImage(MDScreen):
+
+    def __init__(self, **kwargs):
+
+        super().__init__(**kwargs)
+        Window.bind(on_keyboard=self.events)
+        self.manager_open = False
+        self.file_manager = MDFileManager(
+            exit_manager=self.exit_manager, 
+            select_path=self.select_path,
+            preview=True,
+            icon_selection_button="pencil",
+        )
+    
+    #Abre el seleccionador
+    def file_manager_open(self):
+        self.file_manager.show(os.path.expanduser("~"))  # output manager to the screen
+        self.manager_open = True
+
+    #Archivo seleccionado
+    def select_path(self, path: str):
+        '''
+        It will be called when you click on the file name
+        or the catalog selection button.
+
+        :param path: path to the selected directory or file;
+        '''
+
+        self.exit_manager()
+        toast(path)
+
+    #Permite cerrar el seleccionador
+    def exit_manager(self, *args):
+        '''Called when the user reaches the root of the directory tree.'''
+
+        self.manager_open = False
+        self.file_manager.close()
+
+    def events(self, instance, keyboard, keycode, text, modifiers):
+        '''Called when buttons are pressed on the mobile device.'''
+
+        if keyboard in (1001, 27):
+            if self.manager_open:
+                self.file_manager.back()
+        return True
+    
+    
 
 class App(MDApp):
 
@@ -544,7 +110,7 @@ class App(MDApp):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         #CARGA LOS DATOS DE .KV
-        self.screen = Builder.load_string(KV)
+        self.screen = Builder.load_file("styles.kv")
 
         #PROCESO QUE ALMACENA DE FORMA GLOBAL LOS DATOS DE SELF EN GLOBAL_SELF
         global global_self
@@ -641,6 +207,43 @@ class App(MDApp):
             elevation= 4
         )
 
+        menu_item_supplier = [
+            {
+                "text": "Polar",
+                "leading_icon": "account-arrow-left",
+                "on_press": lambda x='Polar': self.ChangeSelectStoreUpdate(x),
+            },
+            {
+                "text": "CANTV",
+                "leading_icon": "account-arrow-left",
+                "on_press": lambda x='CANTV': self.ChangeSelectStoreUpdate(x),
+            },
+            {
+                "text": "CORPOELECT",
+                "leading_icon": "account-arrow-left",
+                "on_press": lambda x='CORPOELECT': self.ChangeSelectStoreUpdate(x),
+            },
+            {
+                "text": "HidroSurOeste",
+                "leading_icon": "account-arrow-left",
+                "on_press": lambda x='HidroSurOeste': self.ChangeSelectStoreUpdate(x),
+            },
+            {
+                "text": "DIRECTV",
+                "leading_icon": "account-arrow-left",
+                "on_press": lambda x='DIRECTV': self.ChangeSelectStoreUpdate(x),
+            },
+        ]
+        self.MenuSupplierStore = MDDropdownMenu(
+            caller=self.screen.ids.inputSupplierMenu,
+            border_margin=dp(4),
+            items=menu_item_supplier,
+            position="bottom",
+            ver_growth="down",
+            #radius=[24, 0, 24, 24],
+            elevation= 3,
+        )
+
     def build(self):
         
         self.title = 'App'
@@ -706,7 +309,7 @@ class App(MDApp):
         self.menu2.open()
 
     ## CALLBACK PARA CAMBIAR DE PAGINA CON MDTopAppBar BUTTON
-    def ChangePage(self, page, text, dontSelf = None):
+    def ChangePage(self, page, text, dontSelf = None, extra = None):
 
 
         if dontSelf == None:
@@ -720,7 +323,7 @@ class App(MDApp):
 
             match page:
                 case 'StorePageUpdate':
-                    ClientsTable.CloseDialogStorePage('obj')
+                    ClientsTable.CloseDialogStorePage(extra, 'obj')
                 case _:
                     pass
 
@@ -732,6 +335,12 @@ class App(MDApp):
         
         self.root.ids.ButtonMenuSearchingStore.text = instace
         self.MenuProductoTypeStore.dismiss()
+
+    ## CALLBACK DEL SELECT DE ALMACEN PROVEEDORES MODIFICAR
+    def ChangeSelectStoreUpdate(self, instace):
+        
+        self.root.ids.inputSupplierMenu.text = instace
+        self.MenuSupplierStore.dismiss()
 
     def test(self):
             print('funcionó')
@@ -778,12 +387,16 @@ class ClientsTable(Screen):
         #return layout
 
     def on_row_press(self, instance_table, instance_row):
+        
         self.ShowAlertDialog()
 
         print(instance_table, instance_row)
 
 
     def ShowAlertDialog(self):
+
+        global global_self_client
+        global_self_client = self
         
         if not self.dialog:
             self.dialog = MDDialog(
@@ -805,7 +418,7 @@ class ClientsTable(Screen):
                     MDRaisedButton(
                         text="Modificar",
                         md_bg_color="orange",
-                        on_release= lambda x: App.ChangePage(x,"StorePageUpdate", "Almacen", True)
+                        on_release= lambda x: App.ChangePage(x,"StorePageUpdate", "Almacen - Modificar", True, global_self_client)
                                                         
                     ),
                 ],
@@ -823,7 +436,7 @@ class ClientsTable(Screen):
                 buttons=[
                     MDFlatButton(
                         text="Cancelar",
-                        text_color=self.theme_cls.primary_color,
+                        text_color= "red",
                         on_release = self.CloseDialogDelete
                     ),
                     MDRaisedButton(
