@@ -454,14 +454,14 @@ MDScreen:
                                         font_style: "H4"
 
                                 MDGridLayout:
-                                    cols: 2
+                                    cols: 3
                                     spacing: dp(20)
                                     padding: dp(16), dp(0), dp(16), dp(8) 
                                     size_hint_y: None
                                     height: self.minimum_height  # required to size GridLayout
                                     MDLabel:
-                                        size_hint_x: None
-                                        width: "250dp"
+                                        size_hint_x: 0.38
+                                        #width: "250dp"
                                         padding: dp(32), dp(1)
 
                                         text: "Nombre:"
@@ -471,8 +471,8 @@ MDScreen:
                                     MDTextField:
 
                                         id: name_field
-                                        size_hint_x: None
-                                        width: "375dp"
+                                        size_hint_x: 0.7
+                                        #width: "375dp"
 
                                         hint_text: "Nombre del producto"
 
@@ -484,17 +484,20 @@ MDScreen:
                                         max_text_length: 25
                                         mode: "rectangle"
                                         line_color_normal: "red" if len(self.text) == 0 else "blue"
+                                    
+                                    MDLabel:
+                                        size_hint_x: 0.1
 
                                 MDGridLayout:
-                                    cols: 2
+                                    cols: 3
                                     spacing: dp(20)
                                     padding: dp(16), dp(8)
                                     #padding: ["16dp", "16dp", "16dp", "16dp"]  if len(inputSupplierMenu.text) == 0 else ["16dp", "8dp", "16dp", "8dp"] 
                                     size_hint_y: None
                                     height: self.minimum_height  # required to size GridLayout
                                     MDLabel:
-                                        size_hint_x: None
-                                        width: "250dp"
+                                        size_hint_x: 0.38
+                                        #width: "250dp"
                                         padding: dp(32), dp(1)
 
                                         text: "Proveedor:"
@@ -504,8 +507,8 @@ MDScreen:
                                     MDTextField:
 
                                         id: inputSupplierMenu
-                                        size_hint_x: None
-                                        width: "375dp"
+                                        size_hint_x: 0.7
+                                        #width: "375dp"
                                         text: ""
                                         hint_text: "Proveedor del producto"
 
@@ -518,16 +521,18 @@ MDScreen:
                                         
                                         on_focus: if self.focus: app.MenuSupplierStore.open()
                                         line_color_normal: "red" if len(self.text) == 0 else "blue"
-
+                                    
+                                    MDLabel:
+                                        size_hint_x: 0.1
                                 MDGridLayout:
-                                    cols: 2
+                                    cols: 3
                                     spacing: dp(20)
                                     padding: dp(16), dp(8)
                                     size_hint_y: None
                                     height: self.minimum_height  # required to size GridLayout
                                     MDLabel:
-                                        size_hint_x: None
-                                        width: "250dp"
+                                        size_hint_x: 0.38
+                                        #width: "250dp"
                                         padding: dp(32), dp(1)
 
                                         text: "Cantidad:"
@@ -537,8 +542,8 @@ MDScreen:
                                     MDTextField:
 
                                         id: name_field
-                                        size_hint_x: None
-                                        width: "375dp"
+                                        size_hint_x: 0.7
+                                        #width: "375dp"
 
                                         hint_text: "Cantidad del producto"
 
@@ -550,16 +555,19 @@ MDScreen:
                                         max_text_length: 5
                                         mode: "rectangle"
                                         line_color_normal: "red" if len(self.text) == 0 else "blue"
+                                    
+                                    MDLabel:
+                                        size_hint_x: 0.1
 
                                 MDGridLayout:
-                                    cols: 2
+                                    cols: 3
                                     spacing: dp(20)
                                     padding: dp(16), dp(8)
                                     size_hint_y: None
                                     height: self.minimum_height  # required to size GridLayout
                                     MDLabel:
-                                        size_hint_x: None
-                                        width: "250dp"
+                                        size_hint_x: 0.38
+                                        #width: "250dp"
                                         padding: dp(32), dp(1)
 
                                         text: "Precio:"
@@ -569,7 +577,7 @@ MDScreen:
                                     MDTextField:
 
                                         id: name_field
-                                        size_hint_x: None
+                                        size_hint_x: 0.7
                                         width: "375dp"
 
                                         hint_text: "Precio del producto"
@@ -582,55 +590,81 @@ MDScreen:
                                         max_text_length: 10
                                         mode: "rectangle"
                                         line_color_normal: "red" if len(self.text) == 0 else "blue"
+                                    
+                                    MDLabel:
+                                        size_hint_x: 0.1
 
                                 MDGridLayout:
-                                    cols: 2
+                                    cols: 3
                                     spacing: dp(20)
-                                    padding: dp(16), dp(8)
+                                    padding: dp(16), dp(16)
                                     size_hint_y: None
                                     height: self.minimum_height  # required to size GridLayout
                                     MDLabel:
-                                        size_hint_x: None
-                                        width: "250dp"
+                                        size_hint_x: 0.38
+                                        #width: "250dp"
                                         padding: dp(32), dp(1)
+                                        #padding: ["16dp", "16dp", "16dp", "16dp"]  if len(inputSupplierMenu.text) == 0 else ["16dp", "8dp", "16dp", "8dp"] 
 
                                         text: "Imagen:"
-                                        halign: "right"
                                         font_style: "H5"
-                                    
-                                    
-                                    MDTextField:
+                                        halign: "right"
 
-                                        id: name_field
-                                        size_hint_x: None
-                                        width: "375dp"
+                                    
+                                    MDRaisedButton:
 
-                                        hint_text: "Imagen del producto"
+                                        #id: name_field
+                                        size_hint_x: 0.7
+                                        padding: dp(1), dp(1)
+                                        #width: "375dp"
+
+                                        #hint_text: "Imagen del producto"
 
                                         required: True
 
-                                        helper_text_mode: "on_error"
-                                        helper_text: "Por favor, ingrese la imagen del producto." if len(self.text) == 0 else ""
+                                        #helper_text_mode: "on_error"
+                                        #helper_text: "Por favor, ingrese la imagen del producto." if len(self.text) == 0 else ""
 
-                                        max_text_length: 10
-                                        mode: "rectangle"
-                                        line_color_normal: "red" if len(self.text) == 0 else "blue"
+                                        #max_text_length: 10
+                                        #mode: "rectangle"
+                                        #line_color_normal: "red" if len(self.text) == 0 else "blue"
+
+                                        #on_press: app.root.file_manager_open() #app.root.file_manager_open()
+
+                                        text: "Elegir imagen" if len(imageProduct.source) == 0 else "Imagen elegida"
+                                        text_color: "white"
+                                        line_color: "blue"
+                                        md_bg_color: "blue"
+
+                                        on_press: screen_manager.current = "chooseimagePage"
+                                        
+                                    
+                                    MDLabel:
+                                        size_hint_x: 0.1
 
 
                                 MDGridLayout:
-                                    cols: 2
-                                    spacing: dp(20)
-                                    padding: dp(16), dp(8)
-                                    size_hint_y: None
-                                    height: self.minimum_height  # required to size GridLayout
-                                    MDLabel:
-                                        size_hint_x: None
-                                        width: "250dp"
-                                    
-                                    Image:
 
+                                    cols: 2
+
+                                    size_hint_y: None
+                                    padding: dp(80), dp(16), dp(98), dp(16)
+
+                                    height: root.height / 2  # required to size GridLayout
+
+                                    Label:
+                                    #    canvas.before:
+                                    #        Color: 
+                                    #            rgba: (1,0,1,1)
+                                    #        Rectangle:
+                                    #            size: self.size
+                                    #            pos: self.pos
+                                    FitImage:
                                         id: imageProduct
-                                        source: "C:/Users/PC/Documents/Universidad_PDFs_4/sistema/bocetos/almacen.png"
+                                        source: "question.jpg"
+                                        #allow_stretch: True
+                                        #keep_ratio: False
+                                        size_hint_x: 1
 
 
                                 MDGridLayout:
@@ -653,8 +687,6 @@ MDScreen:
                                         text_color: "white"
                                         line_color: "blue"
                                         md_bg_color: "blue"
-
-                                        on_press: screen_manager.current = "imagess"
             
             ChooseImage:
             MDScreen:
@@ -721,12 +753,6 @@ MDScreen:
 
 #CLASE Kivy que llama a la página "ChooseImage" para elegir imagen del producto
 <ChooseImage>:
-    name: "imagess"
-    MDRaisedButton:
-        size_hint_x: 0.5
-        text: "Aceptar"
-        text_color: "white"
-        line_color: "blue"
-        md_bg_color: "blue"
-
-        on_press: root.file_manager_open() #app.root.file_manager_open()
+    name: "chooseimagePage"
+    
+    on_pre_enter: root.file_manager_open() #app.root.file_manager_open()

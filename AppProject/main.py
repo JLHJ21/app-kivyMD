@@ -58,11 +58,13 @@ class ContentNavigationDrawer(MDScrollView):
 #Clase para la seleccion de fotos, pagina
 class ChooseImage(MDScreen):
 
+    global_root = ""
+
     def __init__(self, **kwargs):
 
         super().__init__(**kwargs)
         Window.bind(on_keyboard=self.events)
-        self.manager_open = False
+        #self.manager_open = False
         self.file_manager = MDFileManager(
             exit_manager=self.exit_manager, 
             select_path=self.select_path,
@@ -73,7 +75,7 @@ class ChooseImage(MDScreen):
     #Abre el seleccionador
     def file_manager_open(self):
         self.file_manager.show(os.path.expanduser("~"))  # output manager to the screen
-        self.manager_open = True
+        #self.manager_open = True
 
     #Archivo seleccionado
     def select_path(self, path: str):
@@ -84,14 +86,24 @@ class ChooseImage(MDScreen):
         :param path: path to the selected directory or file;
         '''
 
+        #Retorna el self de la aplicacion
+        variable_global = App.ReturnSelf()
+
+        #Cambia el source de la imagen
+        variable_global.root.ids.imageProduct.source = path
+
+        #Cambia la pagina
+        self.manager.current = 'StorePageUpdate'
+
+        #global_root.manager.screen_manager.current = "StorePageUpdate"
         self.exit_manager()
-        toast(path)
+        #toast(path)
 
     #Permite cerrar el seleccionador
     def exit_manager(self, *args):
         '''Called when the user reaches the root of the directory tree.'''
 
-        self.manager_open = False
+        #self.manager_open = False
         self.file_manager.close()
 
     def events(self, instance, keyboard, keycode, text, modifiers):
@@ -337,17 +349,19 @@ class App(MDApp):
         self.MenuProductoTypeStore.dismiss()
 
     ## CALLBACK DEL SELECT DE ALMACEN PROVEEDORES MODIFICAR
-    def ChangeSelectStoreUpdate(self, instace):
+    def ReturnSelf():
         
-        self.root.ids.inputSupplierMenu.text = instace
-        self.MenuSupplierStore.dismiss()
+        return global_self
+
+    def ShowImage(self, path):
+        global_self.root.ids.imageProduct.source = path
 
     def test(self):
             print('funcionó')
     
 
 ## CLASE PARA MOSTRAR LA TABLA, MDDATATABLE
-class ClientsTable(Screen):
+class ClientsTable(MDScreen):
 
     dialog = None
     dialog2 = None
