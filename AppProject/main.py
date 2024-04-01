@@ -51,18 +51,53 @@ class ContentNavigationDrawer(MDScrollView):
     screen_manager = ObjectProperty()
     nav_drawer = ObjectProperty()
 
-#PERMITE MOSTRAR EL ICONO EN LOS SELECTS DE TASA DE DINERO
-#class Item(OneLineAvatarIconListItem):
-#    left_icon = StringProperty()
+
+class HeaderAndFooter(MDScreen):
+    pass
+
+class InitialPage(MDScreen):
+
+    pass
+
+class StoreUpdatePage(MDScreen):
+    
+    pass
+
+self_store_page = None
+
+class StorePage(MDScreen):
+    
+    
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        global self_store_page
+        self_store_page = self
+
+    def CallbackMenuProduct(self, button):
+
+        global_self.MenuProductoTypeStore.caller = button
+        global_self.MenuProductoTypeStore.open()
+
+
+    ## CALLBACK DEL SELECT BUSCADOR DEL MENU ALMACEN
+    def ChangeSearchingTypeStore(self = None, instance = ""):
+
+        print(instance)
+        
+        self_store_page.ids.ButtonMenuSearchingStore.text = instance
+        global_self.MenuProductoTypeStore.dismiss()
+
+    pass
 
 #Clase para la seleccion de fotos, pagina
-class ChooseImage(MDScreen):
+class ChooseImagePage(MDScreen):
 
     global_root = ""
 
     def __init__(self, **kwargs):
 
         super().__init__(**kwargs)
+        
         Window.bind(on_keyboard=self.events)
         #self.manager_open = False
         self.file_manager = MDFileManager(
@@ -182,35 +217,39 @@ class App(MDApp):
 
         ##  MENU 2RA MANERA, PARA SOLO MDBUTTON
         #Menu almacen 
+
+
         menu_items3 = [
+            
             {
                 "text": "TODO",
                 "leading_icon": "account-arrow-left",
-                "on_press": lambda x='TODO': self.ChangeSearchingTypeStore(x),
+                "on_press": lambda x='TODO': StorePage.ChangeSearchingTypeStore("",x),
             },
             {
                 "text": "CANTIDAD ASC",
                 "leading_icon": "account-arrow-left",
-                "on_press": lambda x='CANTIDAD ASC': self.ChangeSearchingTypeStore(x),
+                "on_press": lambda x='CANTIDAD ASC': StorePage.ChangeSearchingTypeStore("",x),
             },
             {
                 "text": "CANTIDAD DES",
                 "leading_icon": "account-arrow-left",
-                "on_press": lambda x='CANTIDAD DES': self.ChangeSearchingTypeStore(x),
+                "on_press": lambda x='CANTIDAD DES': StorePage.ChangeSearchingTypeStore("",x),
             },
             {
                 "text": "PRECIO ASC",
                 "leading_icon": "account-arrow-left",
-                "on_press": lambda x='PRECIO ASC': self.ChangeSearchingTypeStore(x),
+                "on_press": lambda x='PRECIO ASC': StorePage.ChangeSearchingTypeStore("",x),
             },
             {
                 "text": "PRECIO DES",
                 "leading_icon": "account-arrow-left",
-                "on_press": lambda x='PRECIO DES': self.ChangeSearchingTypeStore(x),
+                "on_press": lambda x='PRECIO DES': StorePage.ChangeSearchingTypeStore("",x),
             },
         ]
+        
         self.MenuProductoTypeStore = MDDropdownMenu(
-            caller=self.screen.ids.ButtonMenuSearchingStore,
+            #caller=self.screen.ids.ButtonMenuSearchingStore,
             border_margin=dp(4),
             items=menu_items3,
             hor_growth="right",
@@ -219,42 +258,7 @@ class App(MDApp):
             elevation= 4
         )
 
-        menu_item_supplier = [
-            {
-                "text": "Polar",
-                "leading_icon": "account-arrow-left",
-                "on_press": lambda x='Polar': self.ChangeSelectStoreUpdate(x),
-            },
-            {
-                "text": "CANTV",
-                "leading_icon": "account-arrow-left",
-                "on_press": lambda x='CANTV': self.ChangeSelectStoreUpdate(x),
-            },
-            {
-                "text": "CORPOELECT",
-                "leading_icon": "account-arrow-left",
-                "on_press": lambda x='CORPOELECT': self.ChangeSelectStoreUpdate(x),
-            },
-            {
-                "text": "HidroSurOeste",
-                "leading_icon": "account-arrow-left",
-                "on_press": lambda x='HidroSurOeste': self.ChangeSelectStoreUpdate(x),
-            },
-            {
-                "text": "DIRECTV",
-                "leading_icon": "account-arrow-left",
-                "on_press": lambda x='DIRECTV': self.ChangeSelectStoreUpdate(x),
-            },
-        ]
-        self.MenuSupplierStore = MDDropdownMenu(
-            caller=self.screen.ids.inputSupplierMenu,
-            border_margin=dp(4),
-            items=menu_item_supplier,
-            position="bottom",
-            ver_growth="down",
-            #radius=[24, 0, 24, 24],
-            elevation= 3,
-        )
+        
 
     def build(self):
         
@@ -342,11 +346,6 @@ class App(MDApp):
             global_self.root.ids.screen_manager.current = page
             global_self.root.ids.toolbar.title = text
 
-    ## CALLBACK DEL SELECT BUSCADOR DEL MENU ALMACEN
-    def ChangeSearchingTypeStore(self, instace):
-        
-        self.root.ids.ButtonMenuSearchingStore.text = instace
-        self.MenuProductoTypeStore.dismiss()
 
     ## CALLBACK DEL SELECT DE ALMACEN PROVEEDORES MODIFICAR
     def ReturnSelf():
