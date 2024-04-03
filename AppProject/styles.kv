@@ -1,4 +1,5 @@
 
+#TOOLBAR
 <DrawerClickableItem@MDNavigationDrawerItem>
     focus_color: "#e7e4c0"
     text_color: "#4a4939"
@@ -7,6 +8,7 @@
     selected_color: "#0c6c4d"
 
 
+#TOOLBAR
 <DrawerLabelItem@MDNavigationDrawerItem>
     text_color: "#4a4939"
     icon_color: "#4a4939"
@@ -14,6 +16,7 @@
     selected_color: "#4a4939"
     _no_ripple_effect: True
 
+#MENU SLICE
 <ContentNavigationDrawer>
 
     MDNavigationDrawerMenu:
@@ -48,7 +51,7 @@
             text: "Cajero"
 
             on_press:
-                root.screen_manager.current = "InitialPage"
+                root.screen_manager.current = "CashierPage"
 
                 app.root.ids.toolbar.title = self.text
 
@@ -66,7 +69,7 @@
             text_right_color: "#4a4939"
             text: "Presupuesto"
             on_press:
-                root.screen_manager.current = "StorePageUpdate"
+                #root.screen_manager.current = "StorePageUpdate"
 
                 app.root.ids.toolbar.title = self.text
         
@@ -75,7 +78,7 @@
             text_right_color: "#4a4939"
             text: "Cliente"
             on_press:
-                root.screen_manager.current = "scr 2"
+                #root.screen_manager.current = "scr 2"
 
                 app.root.ids.toolbar.title = self.text               
 
@@ -173,11 +176,13 @@ HeaderAndFooter:
             id: screen_manager
 
             InitialPage:
-            StoreUpdatePage:
+            CashierPage:
                 
             
-            ChooseImagePage:
             StorePage:       
+            StoreUpdatePage:
+            ChooseImagePage:
+
 
         MDNavigationDrawer:
             id: nav_drawer
@@ -191,7 +196,6 @@ HeaderAndFooter:
 #CLASE Kivy que llama a la página "ChooseImage" para elegir imagen del producto
 <ChooseImagePage>:
     name: "chooseimagePage"
-    
     on_pre_enter: root.file_manager_open() #app.root.file_manager_open()
 
 <InitialPage>:
@@ -629,7 +633,8 @@ HeaderAndFooter:
                             line_color: "blue"
                             md_bg_color: "blue"
 
-                            on_press: screen_manager.current = "chooseimagePage"
+                            #OJO
+                            on_press: root.manager.current = "chooseimagePage"
                             
                         
                         MDLabel:
@@ -703,7 +708,7 @@ HeaderAndFooter:
                     size_hint_x: None
                     width: "100dp"
 
-                    text: ""
+                    text: "TODO"
                     hint_text: "Tipo:"
                     icon_right: "arrow-down"
 
@@ -762,7 +767,275 @@ HeaderAndFooter:
             [             
             ["account-cog", lambda x: app.callback(x), "", "Configuracion"],             
             ["cash-remove", lambda x: app.callback(x), "", "Prestamos"],             
-            ["home", lambda x: app.ChangePage("InitialPage", "Inicio"), "", "Inicio"],    
+            ["home", lambda x: app.ChangePage("InitialPage", "Panel de control"), "", "Panel de control"],    
             ["cash-register", lambda x: app.callback(x), "", "Cajero"],             
             ["store", lambda x: app.callback(x), "", "Almacen"],             
             ]
+
+<CashierPage>:
+    name: "CashierPage"
+
+    MDBoxLayout:
+        orientation: 'vertical'
+        size_hint: 1, 1
+        
+        
+        MDGridLayout:
+            cols:1
+            padding: dp(16), dp(root.manager.parent.parent.ids.toolbar.height), dp(16), dp(root.manager.parent.parent.ids.toolbarbottom.height)
+        
+            MDGridLayout:
+                cols: 2
+                #padding: dp(16), dp(root.manager.parent.parent.ids.toolbar.height), dp(16), dp(root.manager.parent.parent.ids.toolbarbottom.height)
+                        
+                    
+                MDScrollView:
+
+                    MDBoxLayout:
+
+                        orientation: 'horizontal'
+                        size_hint: 1, 1
+                        adaptive_height: True
+                        MDGridLayout:
+                            cols: 1
+                            padding: dp(16), dp(8)
+                            size_hint_y: None
+                            height: self.minimum_height  # required to size GridLayout
+
+
+                            canvas.before:
+                                Color:
+                                    rgba: .5, .5, .5, 1
+                                Line:
+                                    width: 2
+                                    rectangle: self.x, self.y, self.width - 15, self.height - 13
+
+                            MDGridLayout:
+                                cols: 1
+                                padding: dp(1), dp(32), dp(1), dp(8)
+
+                                size_hint_y: None
+                                height: self.minimum_height  # required to size GridLayout
+
+                                MDLabel:
+                                    text: "[b][i]Datos[/i][/b]"
+                                    halign: "center"
+                                    font_style: "H4"
+                                    
+                                    markup: True
+
+                            MDGridLayout:
+                                cols: 2
+                                spacing: dp(20)
+                                padding: dp(16), dp(12)
+
+                                size_hint_y: None
+                                height: self.minimum_height  # required to size GridLayout
+                                MDLabel:
+                                    size_hint_x: 0.4
+                                    text: "Cédula:"
+                                    halign: "left"
+                                    font_style: "H6"
+                                    #md_bg_color: "red"
+
+                                MDTextField:
+
+                                    id: name_field
+                                    size_hint_x: 0.4
+
+                                    hint_text: "Cédula del cliente"
+
+                                    required: True
+
+                                    helper_text_mode: "on_error"
+                                    helper_text: "Ingrese una cédula." if len(self.text) == 0 else ""
+
+                                    max_text_length: 10
+                                    mode: "rectangle"
+                                    line_color_normal: "red" if len(self.text) == 0 else "blue"
+
+                            MDGridLayout:
+                                cols: 2
+                                spacing: dp(20)
+                                padding: dp(16), dp(12)
+
+                                size_hint_y: None
+                                height: self.minimum_height  # required to size GridLayout
+                                MDLabel:
+                                    size_hint_x: 0.4
+                                    text: "Nombre:"
+                                    halign: "left"
+                                    font_style: "H6"
+                                    #md_bg_color: "red"
+
+                                MDTextField:
+
+                                    id: name_field
+                                    size_hint_x: 0.4
+
+                                    hint_text: "Nombre del cliente"
+
+                                    required: True
+
+                                    helper_text_mode: "on_error"
+                                    helper_text: "Ingrese un nombre." if len(self.text) == 0 else ""
+
+                                    max_text_length: 10
+                                    mode: "rectangle"
+                                    line_color_normal: "red" if len(self.text) == 0 else "blue"
+
+                            MDGridLayout:
+                                cols: 2
+                                spacing: dp(20)
+                                padding: dp(16), dp(12)
+
+                                size_hint_y: None
+                                height: self.minimum_height  # required to size GridLayout
+                                MDLabel:
+                                    size_hint_x: 0.4
+                                    text: "Tipo de pago:"
+                                    halign: "left"
+                                    font_style: "H6"
+                                    #md_bg_color: "red"
+
+                                MDTextField:
+
+                                    id: ButtonMenuCashierPaymentType
+
+                                    size_hint_x: 0.4
+                                    text: "Dólar"
+                                    icon_right: "arrow-down"
+
+                                    mode: "rectangle"
+                                    readonly: True 
+                                    focus: True
+
+                                    on_focus: if self.focus: root.CallbackMenuCashierPaymentType(self)
+
+                            MDGridLayout:
+                                cols: 3
+                                spacing: dp(10)
+                                padding: dp(16), dp(12), dp(1), dp(12)
+
+                                size_hint_y: None
+                                height: self.minimum_height  # required to size GridLayout
+                                MDLabel:
+                                    size_hint_x: 0.4
+                                    text: "Pagado:"
+                                    halign: "left"
+                                    font_style: "H6"
+                                    #md_bg_color: "red"
+
+                                MDTextField:
+
+                                    id: name_field
+                                    size_hint_x: 0.4
+
+                                    text: "100$"
+                                    readonly: True
+
+                                    mode: "rectangle"
+
+                                MDFloatingActionButton:
+
+                                    size_hint_x: 0.2
+                                    icon: "cash-plus"
+                                    style: "standard"
+                                    elevation: 0
+
+
+                            MDGridLayout:
+                                cols: 2
+                                spacing: dp(20)
+                                padding: dp(16), dp(12)
+
+                                size_hint_y: None
+                                height: self.minimum_height  # required to size GridLayout
+                                MDLabel:
+                                    size_hint_x: 0.4
+                                    text: "Costo total:"
+                                    halign: "left"
+                                    font_style: "H6"
+                                    #md_bg_color: "red"
+
+                                MDTextField:
+
+                                    id: name_field
+                                    size_hint_x: 0.4
+
+                                    text: "10$"
+                                    readonly: True
+
+                                    mode: "rectangle"
+                            
+                MDBoxLayout:
+                    orientation: 'vertical'
+                    size_hint: 1, 1
+                    padding: dp(1), dp(16), dp(1), dp(1)
+                    spacing: dp(-60)
+
+                    canvas.before:
+                        Color:
+                            rgba: .5, .5, .5, 1
+                        Line:
+                            width: 2
+                            rectangle: self.x, self.y, self.width, self.height - 13
+
+                    MDGridLayout:
+                        cols: 1
+                        padding: dp(16), dp(1), dp(16), dp(1)
+                                
+                        MDGridLayout:
+                            cols: 2
+                            spacing: dp(10)
+                            height: dp(root.manager.parent.parent.ids.toolbar.height)
+
+
+                            MDTextField:
+                                id: SearchProductMenu
+                                hint_text: 'Buscar producto'
+                                icon_right: "android"
+                                mode: "rectangle"
+
+                            MDFloatingActionButton:
+                                id: ButtonSearchingStoreMenu
+
+                                icon: "book-search"
+                                style: "standard"
+
+                    CashierTableProductsToOffer:
+
+            CashierTableProductsToSell:
+
+
+            MDBoxLayout:
+                orientation: "vertical"
+                adaptive_height: True
+                MDBoxLayout:
+                    pos_hint: {'center_x': .5}
+                    orientation: "vertical"
+                    adaptive_height: True
+
+                    MDGridLayout:
+                        padding: dp(10) 
+                        cols: 3 
+                        spacing: 10
+                        size_hint: None, None
+                        size: self.minimum_size
+                        pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+
+                        MDRectangleFlatButton:
+                            text: "Cancelar"
+                            text_color: "red"
+                            line_color: "red"
+
+
+                        MDRaisedButton:
+                            text: "Previsualizar"
+                            text_color: "white"
+                            md_bg_color: "green"
+
+                        MDRaisedButton:
+                            text: "Aceptar"
+                            text_color: "white"
+                            md_bg_color: "blue"

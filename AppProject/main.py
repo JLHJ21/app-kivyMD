@@ -34,6 +34,9 @@ from kivymd.uix.scrollview import MDScrollView
 
 #Acomoda la resolución de la ventada, OJO solo para uso de desarrollo
 from kivy.core.window import Window
+
+from kivy.clock import Clock
+
 #Window.size = (600, 800)
 
 #OJO
@@ -56,6 +59,25 @@ class HeaderAndFooter(MDScreen):
     pass
 
 class InitialPage(MDScreen):
+    pass
+
+class CashierPage(MDScreen):
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        global self_cashier_page
+        self_cashier_page = self
+
+    def CallbackMenuCashierPaymentType(self, button):
+
+        global_self.MenuCashierPaymentType.caller = button
+        global_self.MenuCashierPaymentType.open()
+
+    ## CALLBACK DEL SELECT BUSCADOR DEL MENU ALMACEN
+    def CashierPaymentType(self = None, instance = ""):
+        
+        self_cashier_page.ids.ButtonMenuCashierPaymentType.text = instance
+        global_self.MenuCashierPaymentType.dismiss()
 
     pass
 
@@ -81,8 +103,6 @@ class StorePage(MDScreen):
 
     ## CALLBACK DEL SELECT BUSCADOR DEL MENU ALMACEN
     def ChangeSearchingTypeStore(self = None, instance = ""):
-
-        print(instance)
         
         self_store_page.ids.ButtonMenuSearchingStore.text = instance
         global_self.MenuProductoTypeStore.dismiss()
@@ -121,11 +141,8 @@ class ChooseImagePage(MDScreen):
         :param path: path to the selected directory or file;
         '''
 
-        #Retorna el self de la aplicacion
-        variable_global = App.ReturnSelf()
-
         #Cambia el source de la imagen
-        variable_global.root.ids.imageProduct.source = path
+        self.manager.get_screen("StorePageUpdate").ids.imageProduct.source = path
 
         #Cambia la pagina
         self.manager.current = 'StorePageUpdate'
@@ -157,6 +174,7 @@ class App(MDApp):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         #CARGA LOS DATOS DE .KV
+
         self.screen = Builder.load_file("styles.kv")
 
         #PROCESO QUE ALMACENA DE FORMA GLOBAL LOS DATOS DE SELF EN GLOBAL_SELF
@@ -258,6 +276,35 @@ class App(MDApp):
             elevation= 4
         )
 
+        menu_items4 = [
+{
+                "text": "Dolar",
+                "leading_icon": "cash-100",
+                "on_press": lambda x='Item Dolar': CashierPage.CashierPaymentType(x, 'Dólar'),
+            },
+            {
+                "text": "Peso",
+                "leading_icon": "cash-fast",
+                "on_press": lambda x='Item Peso': CashierPage.CashierPaymentType(x, 'Peso'),
+            },
+            {
+                "text": "Bolívar",
+                "leading_icon": "cash-off",
+                "on_press": lambda x='Item Bolivar': CashierPage.CashierPaymentType(x, 'Bolívar'),
+            }
+        ]
+
+        self.MenuCashierPaymentType = MDDropdownMenu(
+            #caller=self.screen.ids.ButtonMenuSearchingStore,
+            border_margin=dp(4),
+            items=menu_items4,
+            #hor_growth="center",
+            ver_growth="down",
+            position="bottom",
+            #radius=[24, 0, 24, 24],
+            elevation= 4
+        )
+
         
 
     def build(self):
@@ -346,12 +393,6 @@ class App(MDApp):
             global_self.root.ids.screen_manager.current = page
             global_self.root.ids.toolbar.title = text
 
-
-    ## CALLBACK DEL SELECT DE ALMACEN PROVEEDORES MODIFICAR
-    def ReturnSelf():
-        
-        return global_self
-
     def ShowImage(self, path):
         global_self.root.ids.imageProduct.source = path
 
@@ -360,7 +401,7 @@ class App(MDApp):
     
 
 ## CLASE PARA MOSTRAR LA TABLA, MDDATATABLE
-class ClientsTable(MDScreen):
+class ClientsTable(MDBoxLayout):
 
     dialog = None
     dialog2 = None
@@ -392,7 +433,7 @@ class ClientsTable(MDScreen):
                     "42",
                     "62.5",
                 )
-                for i in range(50)],)
+                for i in range(10)],)
         
         self.data_tables.bind(on_row_press=self.on_row_press)
         layout.add_widget(self.data_tables)
@@ -491,5 +532,80 @@ class ClientsTable(MDScreen):
     #def on_enter(self):
     #    print('entro en on_enter')
     #    self.load_table()
+
+
+
+## CLASE PARA MOSTRAR LA TABLA, MDDATATABLE
+class CashierTableProductsToOffer(MDBoxLayout):
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+        #print('entro en load_table')
+        layout = MDAnchorLayout()
+
+
+        self.data_tables = MDDataTable(
+            pos_hint={'center_y': 1, 'center_x': 1},
+            size_hint=(1, 1),
+            padding= [dp(16), dp(1), dp(16), dp(1)],
+            use_pagination=True,
+            column_data=[
+                ("Imagen", dp(25)),
+                ("Nombre", dp(25)),
+                ("Cantidad", dp(20)),
+            ],
+            row_data=[
+                (
+                    "imagen.jpg",
+                    "Harina",
+                    "42"
+                )
+                for i in range(50)],)
+        
+        self.data_tables.bind(on_row_press=self.on_row_press)
+        layout.add_widget(self.data_tables)
+        self.add_widget(layout)
+        #return layout
+
+    def on_row_press(self, instance_table, instance_row):
+        print(instance_table, instance_row)
+
+class CashierTableProductsToSell(MDBoxLayout):
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+        #print('entro en load_table')
+        layout = MDAnchorLayout()
+        self.data_tables = MDDataTable(
+            pos_hint={'center_y': 1, 'center_x': 1},
+            size_hint=(1, 1),
+            padding= [dp(16), dp(32), dp(16), dp(1)],
+            use_pagination=True,
+            column_data=[
+                ("Imagen", dp(30)),
+                ("Nombre", dp(30)),
+                ("Proveedor", dp(30)),
+                ("Cantidad", dp(30)),
+                ("Precio", dp(15))
+            ],
+            row_data=[
+                (
+                    "imagen.jpg",
+                    "Arroz",
+                    "Polar S.A.",
+                    "42",
+                    "62.5",
+                )
+                for i in range(10)],)
+        
+        self.data_tables.bind(on_row_press=self.on_row_press)
+        layout.add_widget(self.data_tables)
+        self.add_widget(layout)
+        #return layout
+
+    def on_row_press(self, instance_table, instance_row):
+        print(instance_table, instance_row)
 
 App().run()
