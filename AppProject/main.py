@@ -28,7 +28,6 @@ from kivymd.uix.scrollview import MDScrollView
 from kivymd.toast import toast
 from kivymd.uix.filemanager import MDFileManager
 
-
 #Permite pasar a otras paginas o ventas
 from kivymd.uix.scrollview import MDScrollView
 
