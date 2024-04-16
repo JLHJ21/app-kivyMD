@@ -1,0 +1,196 @@
+#############
+#Table
+<LabelTable@MDLabel>:
+    halign: "center"
+    markup: True
+
+<DialogsModals>:
+
+<SelectableLabel>:
+    # Draw a background to indicate selection
+    #canvas.before:
+    #    Color:
+    #        rgba: (.0, 0.9, .7, 1) if self.selected else (0, 0, 0, 0)
+    #    Rectangle:
+    #        pos: self.pos
+    #        size: self.size
+    #    Line:
+    #        points: (*self.pos, self.right, self.y)
+
+    MDGridLayout:
+        cols:5
+        
+        pos: self.pos
+        size: self.size
+
+        Image:
+            id: id_imagen
+            source: "images/logo.jpg"
+            #fit_mode: True
+            #keep_ratio: False
+            fit_mode: "scale-down"
+            size_hint: 1, 1
+
+            canvas.before:
+                Color:
+                    rgba: (1, 1, 1, 1)
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+
+        LabelTable:
+            id: id_nombre
+            text: "Nombre"
+
+        LabelTable:
+            id: id_proveedor
+            text: "Proveedor"
+
+        LabelTable:
+            id: id_cantidad
+            text: "Cantidad"
+
+        LabelTable:
+            id: id_precio
+            text: "Precio"
+
+<RecycleViewTable>:
+    orientation: 'vertical'
+    rv: rv # expose the widget
+    #itemsAmount: ItemsAmount
+
+    MDGridLayout:
+        adaptive_height: True
+        cols: 1
+
+        MDGridLayout:
+            cols: 5
+            default_size: None, dp(56)
+            default_size_hint: 1, None
+            size_hint_y: None
+            height: dp(56)
+
+            canvas.before:
+                Color:
+                    rgba: (0, 0, 255, .6)
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+
+            LabelTable:
+                text: "Imagen"
+                font_style: "H6"
+
+            LabelTable:
+                text: "Nombre"
+                font_style: "H6"
+
+            LabelTable:
+                text: "Proveedor"
+                font_style: "H6"
+
+            LabelTable:
+                text: "Cantidad"
+                font_style: "H6"
+
+            LabelTable:
+                text: "Precio"
+                font_style: "H6"
+
+    RecycleView:
+        id: rv
+        viewclass: 'SelectableLabel'
+
+        SelectableRecycleBoxLayout:
+            id: controller
+            default_size: None, dp(56)
+            default_size_hint: 1, None
+            size_hint_y: None
+            height: self.minimum_height
+            orientation: 'vertical'
+            key_selection: 'True'
+            
+            multiselect: False # ** DIFFERENCE **
+            touch_multiselect: False # ** DIFFERENCE **
+
+    MDGridLayout:
+        cols:3
+        padding: dp(36), dp(8)
+        adaptive_height: True
+
+        canvas.before:
+            Color:
+                rgba: (0, 0, 255, .6)
+            Rectangle:
+                pos: self.pos
+                size: self.size
+
+        MDBoxLayout:
+            size_hint_x: .35
+
+            MDLabel:
+                id: ItemsShowed
+                text: "Mostrando: 1-5 de 10"
+                halign: "left"
+                font_style: "Subtitle1"
+
+        AnchorLayout:
+            size_hint_x: .55
+            size_hint_y: None
+            height: ButtonLeftPagination.height
+            anchor_x:'center'
+            anchor_y:'bottom'
+
+            MDRectangleFlatIconButton:
+                id: ItemsAmount
+                icon: "android"
+                text: "Items por página: 5"
+                font_style: "Subtitle1"
+                md_bg_color: "white"
+                text_color: "black"
+                line_color: "orange"
+                icon_color: "orange"
+
+                on_release:
+                    root.ChangeItemsAmount()
+
+        AnchorLayout:
+            size_hint_y: None
+            height: ButtonLeftPagination.height
+            size_hint_x: .3
+            anchor_x:'right'
+            anchor_y:'bottom'
+
+            MDBoxLayout:
+                orientation: "horizontal"
+                size_hint: None, None
+                size: self.minimum_size
+                spacing: dp(10)
+
+                MDFloatingActionButton:
+                    id: ButtonLeftPagination
+
+                    icon: "arrow-left-bold-outline"
+                    type: "small"
+                    theme_icon_color: "Custom"
+                    md_bg_color: "#fefbff"
+                    text_color: "#6851a5"
+                    elevation: 0
+                    disabled: True
+
+                    on_release:
+                        root.ChangeItemsAmountButtons("left")
+
+                MDFloatingActionButton:
+                    id: ButtonRightPagination
+                    icon: "arrow-right-bold-outline"
+                    type: "small"
+                    theme_icon_color: "Custom"
+                    md_bg_color: "#fefbff"
+                    text_color: "#6851a5"
+                    elevation: 0
+                    disabled: False
+
+                    on_release:
+                        root.ChangeItemsAmountButtons("right")
+#############
