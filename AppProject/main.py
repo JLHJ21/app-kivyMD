@@ -11,22 +11,20 @@ import os
 #Permite abrir la aplicación
 from kivymd.app import MDApp
 from kivymd.uix.screen import MDScreen
-from kivy.uix.screenmanager import Screen, ScreenManager
 
 from kivymd.uix.menu import MDDropdownMenu
 from kivymd.uix.list import OneLineAvatarIconListItem
 
 from kivymd.uix.datatables import MDDataTable
-from kivy.uix.anchorlayout import AnchorLayout
 from kivymd.uix.anchorlayout import MDAnchorLayout
 
-from kivymd.uix.button import MDFlatButton, MDRectangleFlatButton, MDRaisedButton
+from kivymd.uix.button import MDFlatButton, MDRaisedButton
 from kivymd.uix.dialog import MDDialog
-from kivymd.uix.widget import MDWidget
 from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.scrollview import MDScrollView
 from kivymd.toast import toast
 from kivymd.uix.filemanager import MDFileManager
+
 
 #Permite pasar a otras paginas o ventas
 from kivymd.uix.scrollview import MDScrollView
@@ -34,7 +32,11 @@ from kivymd.uix.scrollview import MDScrollView
 #Acomoda la resolución de la ventada, OJO solo para uso de desarrollo
 from kivy.core.window import Window
 
-from kivy.clock import Clock
+
+#Enlazar archivo templates/table/table.py
+import intermediary
+from templates.table.table import RecycleViewTable
+
 
 #Window.size = (600, 800)
 
@@ -43,11 +45,9 @@ from kivy.clock import Clock
 #IBA EN 
 #DrawerClickableItem           
 
-
-
-
 #VARIABLE QUE ALMACENA EL SELF, PERMITE CAMBIAR DE SCREN (PANTALLA) AUN SI SON DIFERENTES CLASES
 global_self = global_self_client = ''
+self_store_page = None
 
 class ContentNavigationDrawer(MDScrollView):
     screen_manager = ObjectProperty()
@@ -84,7 +84,6 @@ class StoreUpdatePage(MDScreen):
     
     pass
 
-self_store_page = None
 
 class StorePage(MDScreen):
     
@@ -164,21 +163,18 @@ class ChooseImagePage(MDScreen):
             if self.manager_open:
                 self.file_manager.back()
         return True
-    
-    
-
 class App(MDApp):
 
     #LO PRIMERO QUE SE CARGA
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        
         #CARGA LOS DATOS DE .KV
-
         self.screen = Builder.load_file("styles.kv")
 
         #PROCESO QUE ALMACENA DE FORMA GLOBAL LOS DATOS DE SELF EN GLOBAL_SELF
         global global_self
-        global_self = self
+        global_self = intermediary.GlobalVariables.GetGlobalSelf(self)
 
         ##  MENU 1RA MANERA, PARA SOLO MDTopAppBar
         #TASA DE MONEDA
@@ -304,10 +300,8 @@ class App(MDApp):
             elevation= 4
         )
 
-        
-
     def build(self):
-        
+
         self.title = 'App'
         #self.theme_cls.primary_palette = "Orange"
         #self.theme_cls.theme_style = "Dark"
@@ -371,6 +365,7 @@ class App(MDApp):
         self.menu2.open()
 
     ## CALLBACK PARA CAMBIAR DE PAGINA CON MDTopAppBar BUTTON
+    '''
     def ChangePage(self, page, text, dontSelf = None, extra = None):
 
 
@@ -379,7 +374,8 @@ class App(MDApp):
             self.root.ids.toolbar.title = text
 
             global global_self
-            global_self = self
+            global_self = intermediary.GlobalVariables.GetGlobalSelf(self)
+            
 
         elif dontSelf == True:
 
@@ -391,66 +387,27 @@ class App(MDApp):
 
             global_self.root.ids.screen_manager.current = page
             global_self.root.ids.toolbar.title = text
+    '''
 
     def ShowImage(self, path):
         global_self.root.ids.imageProduct.source = path
 
-    def test(self):
-            print('funcionó')
-    
 
 ## CLASE PARA MOSTRAR LA TABLA, MDDATATABLE
+'''
 class ClientsTable(MDBoxLayout):
 
     dialog = None
     dialog2 = None
     dialog3 = None
 
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-
-        #print('entro en load_table')
-        layout = MDAnchorLayout()
-        self.data_tables = MDDataTable(
-            pos_hint={'center_y': 1, 'center_x': 1},
-            size_hint=(1, 1),
-            padding= [dp(16), dp(32)],
-            use_pagination=True,
-            column_data=[
-                ("Imagen", dp(30)),
-                ("Nombre", dp(30)),
-                ("Proveedor", dp(30)),
-                ("Cantidad", dp(30)),
-                ("Precio", dp(15)),
-            ],
-            row_data=[
-                (
-                    "imagen.jpg",
-                    "Arroz",
-                    "Polar S.A.",
-                    "42",
-                    "62.5",
-                )
-                for i in range(10)],)
-        
-        self.data_tables.bind(on_row_press=self.on_row_press)
-        layout.add_widget(self.data_tables)
-        self.add_widget(layout)
-        #return layout
-
-    def on_row_press(self, instance_table, instance_row):
-        
-        self.ShowAlertDialog()
-
-        print(instance_table, instance_row)
-
-
     def ShowAlertDialog(self):
 
-        global global_self_client
-        global_self_client = self
-        
+        #global global_self_client
+        #global_self_client = self
+
+        print(self)
+        """
         if not self.dialog:
             self.dialog = MDDialog(
                 title="¿Que desea realizar?",
@@ -471,13 +428,13 @@ class ClientsTable(MDBoxLayout):
                     MDRaisedButton(
                         text="Modificar",
                         md_bg_color="orange",
-                        on_release= lambda x: App.ChangePage(x,"StorePageUpdate", "Almacen - Modificar", True, global_self_client)
+                        on_release= lambda x: App.ChangePage(x,"StorePageUpdate", "Almacen - Modificar", True, self)
                                                         
                     ),
                 ],
             )
         self.dialog.open()
-
+        """
     def ShowAlertDialogDelete(self, obj):
 
         self.CloseDialogStorePage('obj')
@@ -532,7 +489,8 @@ class ClientsTable(MDBoxLayout):
     #    print('entro en on_enter')
     #    self.load_table()
 
-
+'''
+## TABLA
 
 ## CLASE PARA MOSTRAR LA TABLA, MDDATATABLE
 class CashierTableProductsToOffer(MDBoxLayout):

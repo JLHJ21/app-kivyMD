@@ -1,4 +1,9 @@
 
+
+
+##: import RecycleViewTable templates.table.table
+#:include templates/table/table.kv
+
 #TOOLBAR
 <DrawerClickableItem@MDNavigationDrawerItem>
     focus_color: "#e7e4c0"
@@ -732,7 +737,11 @@ HeaderAndFooter:
                     style: "standard"
                     width: "100dp"
                     
-            ClientsTable:
+            RecycleViewTable:
+                padding: dp(16), dp(root.manager.parent.parent.ids.toolbar.height / 2), dp(16), dp(root.manager.parent.parent.ids.toolbarbottom.height /2)
+
+             
+                
 <HeaderAndFooter>:
     id: headerandfooter
 
@@ -1039,3 +1048,4 @@ HeaderAndFooter:
                             text: "Aceptar"
                             text_color: "white"
                             md_bg_color: "blue"
+
