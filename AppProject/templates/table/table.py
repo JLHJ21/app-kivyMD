@@ -71,6 +71,9 @@ class SelectableRecycleBoxLayout(FocusBehavior, LayoutSelectionBehavior,
 
 class SelectableLabel(RecycleDataViewBehavior, MDFlatButton):
 
+
+    #row_content = ObjectProperty()
+
     ''' Add selection support to the Label '''
     index = None
     #selected = BooleanProperty(False)
@@ -86,7 +89,7 @@ class SelectableLabel(RecycleDataViewBehavior, MDFlatButton):
 
     def CreateLabels(self):
 
-        print(self.ids.rv.children.children)
+        #print(SelectableLabel.row_content)
 
         '''
         self_main = intermediary.global_variable_self
@@ -114,7 +117,7 @@ class SelectableLabel(RecycleDataViewBehavior, MDFlatButton):
         #self.ids[global_rv.list_table_labels[0]].text  = data["dato" + str(index + 1)][index]
         #print(data["dato1"]["nombre"])
 
-        indexDictionary = RecycleViewTable.StartPagination + 1
+        #indexDictionary = RecycleViewTable.StartPagination + 1
 
         #self.label2_text = data['label2']['text']
 
@@ -171,7 +174,6 @@ class RecycleViewTable(MDBoxLayout):
     modalData = StringProperty(None)
     test = StringProperty(None)
 
-
     boleana = True
 
 
@@ -203,10 +205,27 @@ class RecycleViewTable(MDBoxLayout):
         #Llama la función TableData para rellenar los datos de la tabla 
         #Mediante el uso de Clock, ya que __init__ inicia antes de que el .kv exista
         Clock.schedule_once(lambda dt: self.TableData(self.DictionaryDataset))
+        Clock.schedule_once(lambda dt: self.CreateLabels(self))
         #Clock.schedule_once(lambda dt: self.Test())
 
         #self.TableData(self.DictionaryDataset)
 
+    def CreateLabels(self, *args):
+
+        for i in self.list_table_data:
+
+            i = (i).title()
+
+            
+            label = MDLabel(
+                        text = i,
+                        halign="center",
+                        font_style = "H6",
+                        markup= True
+                    )
+
+            self.scroll_box_layout.add_widget(label)
+            
 
     #def Test(self):
 

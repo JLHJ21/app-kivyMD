@@ -41,30 +41,33 @@
 
         LabelTable:
             id: id_nombre
-            text: "Nombre"
+            text: ""
 
         LabelTable:
             id: id_proveedor
-            text: "Proveedor"
+            text: ""
 
         LabelTable:
             id: id_cantidad
-            text: "Cantidad"
+            text: ""
 
         LabelTable:
             id: id_precio
-            text: "Precio"
+            text: ""
 
 <RecycleViewTable>:
 
     orientation: 'vertical'
     rv: rv # expose the widget
+    scroll_box_layout: scroll_box_layout 
     
+    #crear en el recycleview table una funcion que permita crear de forma dinamica los labels, esto se puede lograr haciendo un objecto y que cuando este iniciando se creen los labels
     MDGridLayout:
         adaptive_height: True
         cols: 1
 
         MDGridLayout:
+            id: scroll_box_layout
             cols: 5
             default_size: None, dp(56)
             default_size_hint: 1, None
@@ -82,21 +85,7 @@
                 text: "Imagen"
                 font_style: "H6"
 
-            LabelTable:
-                text: "Nombre"
-                font_style: "H6"
-
-            LabelTable:
-                text: "Proveedor"
-                font_style: "H6"
-
-            LabelTable:
-                text: "Cantidad"
-                font_style: "H6"
-
-            LabelTable:
-                text: "Precio"
-                font_style: "H6"
+            
 
     RecycleView:
         id: rv
