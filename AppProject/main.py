@@ -35,7 +35,7 @@ from kivy.core.window import Window
 
 #Enlazar archivo templates/table/table.py
 import intermediary
-from templates.table.table import RecycleViewTable
+from templates.table.table import RecycleViewTable, ModalsDialog
 
 
 #Window.size = (600, 800)
@@ -164,6 +164,8 @@ class ChooseImagePage(MDScreen):
                 self.file_manager.back()
         return True
 class App(MDApp):
+
+    modals = ModalsDialog()
 
     #LO PRIMERO QUE SE CARGA
     def __init__(self, **kwargs):

@@ -4,9 +4,8 @@
     halign: "center"
     markup: True
 
-<DialogsModals>:
-
 <SelectableLabel>:
+    id: SelectableLabel
     # Draw a background to indicate selection
     #canvas.before:
     #    Color:
@@ -22,6 +21,8 @@
         
         pos: self.pos
         size: self.size
+
+        id: GridSelectableLabel
 
         Image:
             id: id_imagen
@@ -55,10 +56,10 @@
             text: "Precio"
 
 <RecycleViewTable>:
+
     orientation: 'vertical'
     rv: rv # expose the widget
-    #itemsAmount: ItemsAmount
-
+    
     MDGridLayout:
         adaptive_height: True
         cols: 1
@@ -152,7 +153,7 @@
                 icon_color: "orange"
 
                 on_release:
-                    root.ChangeItemsAmount()
+                    app.modals.ChangeItemsAmount()
 
         AnchorLayout:
             size_hint_y: None
@@ -179,7 +180,7 @@
                     disabled: True
 
                     on_release:
-                        root.ChangeItemsAmountButtons("left")
+                        app.modals.ChangeItemsAmountButtons("left")
 
                 MDFloatingActionButton:
                     id: ButtonRightPagination
@@ -192,5 +193,5 @@
                     disabled: False
 
                     on_release:
-                        root.ChangeItemsAmountButtons("right")
+                        app.modals.ChangeItemsAmountButtons("right")
 #############
