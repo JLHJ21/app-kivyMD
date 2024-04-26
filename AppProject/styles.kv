@@ -738,16 +738,18 @@ HeaderAndFooter:
                     width: "100dp"
                     
             RecycleViewTable:
+                objecto: self
                 padding: dp(16), dp(root.manager.parent.parent.ids.toolbar.height / 2), dp(16), dp(root.manager.parent.parent.ids.toolbarbottom.height /2)
-                list_table_labels: ["id_nombre", "id_proveedor", "id_cantidad", "id_precio"]
-                list_table_data: ["nombre", "proveedor", "cantidad", "precio"]
-                dictionaryPrincipal: ["_nombre", "_proveedor", "_cantidad", "_precio"]
+                columnas: 5
+                list_table_labels: ["id_imagen", "id_cedula", "id_proveedor", "id_cantidad", "id_precio"]
+                list_table_data: ["imagen", "cedula", "proveedor", "cantidad", "precio"]
+                #dictionaryPrincipal: ["_nombre", "_proveedor", "_cantidad", "_precio"]
                 modalData: 
                     'ModalsDialog.ShowAlertDialog(global_rv,"¿Que desea realizar?", "Por favor, elija algunas de las opciones presentadas.", "Cancelar", "Eliminar", "Modificar",  lambda x: ModalsDialog.CloseDialog(global_rv, global_rv.dialog.dismiss()),lambda x: ModalsDialog.ShowAlertDialogDelete (global_rv,"¿De verdad quiere eliminar este producto?", "Si es así, adelante","Cancelar","Eliminar",lambda x: ModalsDialog.CloseDialog(global_rv, global_rv.dialog2.dismiss()),lambda x: print("cerrar")    ),lambda x: ModalsDialog.ChangePage(global_rv, "StorePageUpdate", "Almacen - Modificar"))'
-                #itemsAmount: ItemsAmount
                 test: 
-                    'for i in range(1,21): d = {f"dato{i}": [f"dato{i}_nombre", f"dato{i}_proveedor", f"dato{i}_cantidad", f"dato{i}_precio"]};self.DictionaryDataset.update(d)'
-             
+                    'for i in range(1,21): d = {f"dato{i}": [f"images/logo.jpg", f"dato{i}_cedula", f"dato{i}_proveedor", f"dato{i}_cantidad", f"dato{i}_precio"]};self.DictionaryDataset.update(d)'
+                id_table: "tableAlmacen"
+
                 
 <HeaderAndFooter>:
     id: headerandfooter
@@ -988,7 +990,7 @@ HeaderAndFooter:
                     orientation: 'vertical'
                     size_hint: 1, 1
                     padding: dp(1), dp(16), dp(1), dp(1)
-                    spacing: dp(-60)
+                    #spacing: dp(-60)
 
                     canvas.before:
                         Color:
@@ -1030,7 +1032,30 @@ HeaderAndFooter:
                                 icon: "book-search"
                                 style: "standard"
 
-                    CashierTableProductsToOffer:
+                    #CashierTableProductsToOffer:
+
+                    RecycleViewTable:
+                        objecto: self
+                        #padding: dp(16), dp(root.manager.parent.parent.ids.toolbar.height / 2), dp(16), dp(root.manager.parent.parent.ids.toolbarbottom.height /2)
+                        columnas: 3
+                        list_table_labels: ["id_imagen", "id_cedula", "id_proveedor"]
+                        list_table_data: ["imagen", "cedula", "proveedor"]
+                        #dictionaryPrincipal: ["_nombre", "_proveedor", "_cantidad", "_precio"]
+                        modalData: 
+                            'ModalsDialog.ShowAlertDialog(global_rv,"¿Que desea realizar?", "Por favor, elija algunas de las opciones presentadas.", "Cancelar", "Eliminar", "Modificar",  lambda x: ModalsDialog.CloseDialog(global_rv, global_rv.dialog.dismiss()),lambda x: ModalsDialog.ShowAlertDialogDelete (global_rv,"¿De verdad quiere eliminar este producto?", "Si es así, adelante","Cancelar","Eliminar",lambda x: ModalsDialog.CloseDialog(global_rv, global_rv.dialog2.dismiss()),lambda x: print("cerrar")    ),lambda x: ModalsDialog.ChangePage(global_rv, "StorePageUpdate", "Almacen - Modificar"))'
+                        test: 
+                            'for i in range(1,21): d = {f"dato{i}": [f"images/logo.jpg", f"dato{i}_cedula", f"dato{i}_proveedor"]};self.DictionaryDataset.update(d)'
+                        id_table: "tableCajeroProducto"
+
+                    #RecycleViewTable:
+                    #    padding: dp(16), dp(root.manager.parent.parent.ids.toolbar.height / 2), dp(16), dp(root.manager.parent.parent.ids.toolbarbottom.height /2)
+                    #    list_table_labels: ["id_nombre", "id_proveedor", "id_cantidad", "id_precio"]
+                    #    list_table_data: ["nombre", "proveedor", "cantidad", "precio"]
+                        #dictionaryPrincipal: ["_nombre", "_proveedor", "_cantidad", "_precio"]
+                    #    modalData: 
+                    #        'ModalsDialog.ShowAlertDialog(global_rv,"¿Que desea realizar?", "Por favor, elija algunas de las opciones presentadas.", "Cancelar", "Eliminar", "Modificar",  lambda x: ModalsDialog.CloseDialog(global_rv, global_rv.dialog.dismiss()),lambda x: ModalsDialog.ShowAlertDialogDelete (global_rv,"¿De verdad quiere eliminar este producto?", "Si es así, adelante","Cancelar","Eliminar",lambda x: ModalsDialog.CloseDialog(global_rv, global_rv.dialog2.dismiss()),lambda x: print("cerrar")    ),lambda x: ModalsDialog.ChangePage(global_rv, "StorePageUpdate", "Almacen - Modificar"))'
+                    #    test: 
+                    #        'for i in range(1,21): d = {f"dato{i}": [f"dato{i}_nombre", f"dato{i}_proveedor", f"dato{i}_cantidad", f"dato{i}_precio"]};self.DictionaryDataset.update(d)'
 
             CashierTableProductsToSell:
 

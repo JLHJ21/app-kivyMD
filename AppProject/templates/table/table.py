@@ -15,55 +15,38 @@ from kivymd.uix.button import MDFlatButton, MDRaisedButton
 from kivy.clock import Clock
 from kivy.lang import Builder
 from kivy.uix.behaviors import ButtonBehavior
-
+from kivy.core.window import Window
+from kivy.metrics import dp
+from kivy.core.text import Label as CoreLabel
+from kivy.core.text.markup import MarkupLabel
 
 from kivy.uix.recycleview import RecycleView
 
 from kivymd.uix.label import MDLabel
+from kivy.uix.label import Label
+
+from kivy.factory import Factory
+from kivy.uix.image import Image
 
 import intermediary
+import weakref
+from retry import retry
 
 ############
 ###TABLA
 
 ''' Global rv '''
-global_rv = global_selectable = None
+global_selectable = global_gridSelectableLabelChildren = global_id_table = global_columnas  = None
 
+global_labels_order = have_labels_cols = False
 
-class TestTable(MDLabel):
+global_dictionary = []
 
-   def __init__(self, **kwargs):
+global_rv = {}
 
-        x = StringProperty(None)
+global_dictionary_table_data = {}
 
-        super().__init__(**kwargs)
-
-        '''
-
-        x = lambda x: ModalsDialog.ShowAlertDialog(
-                global_selectable,
-                "¿Que desea realizar?", 
-                "Por favor, elija algunas de las opciones presentadas.", 
-                "Cancelar", 
-                "Eliminar", 
-                "Modificar", 
-
-                lambda x: ModalsDialog.CloseDialog(global_selectable, global_selectable.dialog.dismiss()),
-                lambda x: ModalsDialog.ShowAlertDialogDelete
-                    (
-                        global_selectable,
-                        "¿De verdad quiere eliminar este producto?", 
-                        "Si es así, adelante",
-                        "Cancelar",
-                        "Eliminar",
-                        lambda x: ModalsDialog.CloseDialog(global_selectable, global_selectable.dialog2.dismiss()),
-                        lambda x: print("cerrar")
-                    ),
-                lambda x: ModalsDialog.ChangePage(global_selectable, "StorePageUpdate", "Almacen - Modificar")
-            )
-        '''
-
-
+        
 class SelectableRecycleBoxLayout(FocusBehavior, LayoutSelectionBehavior,
                                  RecycleBoxLayout):
     ''' Adds selection and focus behaviour to the view. '''
@@ -71,6 +54,9 @@ class SelectableRecycleBoxLayout(FocusBehavior, LayoutSelectionBehavior,
 
 class SelectableLabel(RecycleDataViewBehavior, MDFlatButton):
 
+
+    gridSelectableLabel = ObjectProperty(None)
+    objectTest = ObjectProperty(None)
 
     #row_content = ObjectProperty()
 
@@ -82,65 +68,176 @@ class SelectableLabel(RecycleDataViewBehavior, MDFlatButton):
     def __init__(self, **kwargs):
         super(SelectableLabel, self).__init__(**kwargs) 
 
+        #global que permite usar el self de SelectableLabel en otras clases
         global global_selectable
         global_selectable = self
 
-        #print(self.ids.test)
+        
 
-    def CreateLabels(self):
+        #self.CreateLabelsWidgets()
+    
+    #Columnas de las tablas y el nombre que tendrán
+    def CreateLabelsWidgets(self, dictionary, stop = False):        
 
-        #print(SelectableLabel.row_content)
+        #se agrega al mdgridlayout para que se muestre
+        #self.gridSelectableLabel.add_widget(label)           
 
-        '''
-        self_main = intermediary.global_variable_self
+        #self.gridSelectableLabel.ids["id_" + str(i)] = weakref.ref(label)
+            
+        #print(str(RecycleViewTable.list_table_data) + " <--- list table data")
+        
+        if (self == None):
+            #Clock.schedule_once(lambda dt: RecycleViewTable.CreateLabels(global_rv))
+            
+            pass
+        else:
 
-        self_main.root.ids.GridSelectableLabel.add_widget(
-                MDLabel(
-                    text='how how',
-                    halign="center"
-                )
-            )
-        '''
 
+            #print(global_dictionary_table_data)
+
+
+            self.children[0].cols = global_columnas
+
+
+            #print(self.ids['GridSelectableLabel'].children)
+
+
+            #NOMBRE DEL ID = OBJETO QUE SE LE AGREGARA ESO
+            #self.ids[global_id_table] = weakref.ref(self.children[0])
+            
+            #self.scroll_box_layout.add_widget(label)           
+            
+            for index, p in enumerate(dictionary): 
+
+
+                print(str(dictionary) + " createlabelswidget")
+
+                if index == 0:
+
+                    l=Image(
+                        source= "",
+                        #fit_mode= True,
+                        #keep_ratio= False,
+                        fit_mode= "scale-down",
+                        size_hint= [1, 1],
+                    )
+
+                    
+                    id_label = "id_" + str(p)
+
+                    #self.children[0].ids[global_id_table].add_widget(l)
+                    #self.children[0].ids[global_id_table].ids[id_label] = weakref.ref(l)
+
+                    self.ids.GridSelectableLabel.add_widget(l)
+                    self.ids.GridSelectableLabel.ids[id_label] = weakref.ref(l)
+
+                else:
+                    
+                    l=MDLabel(
+                        text=str(p) + str(index),
+                        halign="center",
+                        font_style = "H6",
+                        #font_size= ,
+                        markup= True,
+                        #is_image=False
+                    )
+
+                    id_label = "id_" + str(p)
+
+                    #self.children[0].ids[global_id_table].add_widget(l)
+                    #self.children[0].ids[global_id_table].ids[id_label] = weakref.ref(l)
+
+                    
+                    self.ids.GridSelectableLabel.add_widget(l)
+                    self.ids.GridSelectableLabel.ids[id_label] = weakref.ref(l)
+
+            if stop == True:
+                return
+            
     def refresh_view_attrs(self, rv, index, data):
 
+        global have_labels_cols
+        global global_gridSelectableLabelChildren
+        global global_dictionary
 
-        #print(global_rv.list_table_data)
-    
-        ''' Catch and handle the view changes '''
-        self.index = index
+        #print(global_rv.objecto.id_table)
+        #print(global_dictionary_table_data[global_rv.objecto.id_table])
 
-        #self.ids['id_imagen'].text  = str(index) #if index > 0 else "Imagen"
+        for i in global_rv:
 
-        #print(global_rv.list_table_labels[0])
+            #print(str(global_rv[i].objecto.rv) + " GLOBAL RV")        
 
-        #self.ids[global_rv.list_table_labels[0]].text  = data["dato" + str(index + 1)][index]
-        #print(data["dato1"]["nombre"])
+            if global_rv[i].objecto.rv == rv:
+                
+                self_objecto_tabla = global_rv[i].objecto
 
-        #indexDictionary = RecycleViewTable.StartPagination + 1
 
-        #self.label2_text = data['label2']['text']
+                #print(global_rv[i].objecto.list_table_data)
+                #for i in global_rv[i].objecto.list_table_data:
+                #    global_dictionary = []
+                #    global_dictionary.append(i)
 
-        #self.ids['id_nombre'].text = data['dato']['nombre']  # As an alternate method of assignment
 
-        for label, itemData in zip(global_rv.list_table_labels, global_rv.list_table_data):
-            
-            self.ids[label].text = data['dato'][itemData]
-        #    print(label)
-        #    print(self.ids[label].text + "  <--- LABEL")
-        #    print(data["dato" + str(indexDictionary)][itemData] + "  <--- ITEMDATA")
-        #    self.ids[label].text  = data["dato" + str(indexDictionary)][itemData]
-            #self.ids['id_proveedor'].text = data['proveedor']['text'] 
-            #self.ids['id_cantidad'].text = data['cantidad']['text'] 
-            #self.ids['id_precio'].text = data['precio']['text'] 
+                #print(self_objecto_tabla.list_table_labels[::-1])
 
-            #print(str(index) + " <-- index")
-            #print(str(label) + " <-- label")
-            #print(str(itemData) + " <-- itemData")
-
-        #    indexDictionary += 1
+            #(str(rv) + " <--- RV")
         
-        # self.label2_text = data['label2']['text']  # As an alternate method of assignment
+        try:
+            if self.gridSelectableLabel.children[0]:
+                pass
+
+        except IndexError:
+            self.CreateLabelsWidgets(self_objecto_tabla.list_table_labels, True)
+
+        #print(str(global_rv['tableCajeroProducto'].objecto.list_table_data) + " refresh")        
+
+        ''' Catch and handle the view changes '''
+
+        #print(global_rv.objecto.list_table_data)
+
+
+        #print(str(global_rv[rv]['tableCajeroProducto']) + "refresh")
+
+        #print(str(global_rv))        
+
+
+        
+            
+
+
+        self.index = index
+        #self.ids["a"] = weakref.ref(self.gridSelectableLabel.parent)
+
+
+        #OJO
+        #print(self.ids.a.children[0])
+        #print(self.ids.a.ids.GridSelectableLabel.children)
+
+
+        #ciclo FOR que agrega los datos en la tabla segun lo escrito en el .kv
+        #Une las listas de list_table_labels y list_table_data con el zip, para que la iteracion sea 0:0 1:1
+        
+        for index, (label, itemData) in enumerate(zip(self_objecto_tabla.list_table_labels[::-1], self_objecto_tabla.list_table_data[::-1])):
+
+            #print(str(len(global_rv.list_table_labels)) + " len")
+            
+            #print(self.ids.GridSelectableLabel.children)
+
+            #print(global_rv.list_table_data[::-1])
+
+
+            try:
+                
+                print(str(self.gridSelectableLabel.children[index].source) + " <--- SOURCE")
+
+                self.gridSelectableLabel.children[index].source = data['dato'][itemData]
+                
+            except AttributeError:
+                #print(str(self.gridSelectableLabel.children[index].text) + " <--- TEXT")
+
+                self.gridSelectableLabel.children[index].text = data['dato'][itemData]
+                
+        
 
         return super(SelectableLabel, self).refresh_view_attrs(
             rv, index, data)
@@ -155,13 +252,10 @@ class SelectableLabel(RecycleDataViewBehavior, MDFlatButton):
         
     def ButtonDialog(self, x):
 
-
         #la variable self de la funcion, se relaciona con la clase RecycleViewTable, no con esta clase SelectableTable
         exec(x)
         
 class RecycleViewTable(MDBoxLayout):
-
-    #itemsAmount = ObjectProperty(None)
     
     ''' Variables de los modales Dialogs'''
     
@@ -170,12 +264,13 @@ class RecycleViewTable(MDBoxLayout):
 
     list_table_labels = ListProperty([])
     list_table_data = ListProperty([])
-    dictionaryPrincipal = ListProperty([])
+    #dictionaryPrincipal = ListProperty([])
     modalData = StringProperty(None)
     test = StringProperty(None)
-
+    columnas = NumericProperty(1)
+    id_table = StringProperty(None)
+    objecto = ObjectProperty(None)
     boleana = True
-
 
     #Cantidad de items que se mostrará en el RecycleView
     StartPagination = 0
@@ -190,94 +285,143 @@ class RecycleViewTable(MDBoxLayout):
 
     def __init__(self, **kwargs):
         super(RecycleViewTable, self).__init__(**kwargs)
+     
+        #Window.bind(on_resize=self.on_window_resize)
 
-        global global_rv
-        global_rv = self
-        
-        #Texto de la cantidad de items que se muestran
-        #self.ids.ItemsAmount.text = "Items por página: " + str(self.ItemsAccountPagination)
-        
-        #dictionary donde estará todos los datos de la tabla
-
-
-        
-
-        #Llama la función TableData para rellenar los datos de la tabla 
         #Mediante el uso de Clock, ya que __init__ inicia antes de que el .kv exista
-        Clock.schedule_once(lambda dt: self.TableData(self.DictionaryDataset))
+        #Clock.schedule_once(lambda dt: SelectableLabel.CreateLabelsWidgets(global_selectable))
         Clock.schedule_once(lambda dt: self.CreateLabels(self))
+        #Clock.schedule_once(lambda dt: self.on_window_resize)
+        Clock.schedule_once(lambda dt: self.TableData(self.DictionaryDataset))
         #Clock.schedule_once(lambda dt: self.Test())
 
         #self.TableData(self.DictionaryDataset)
 
+    '''
+    def on_window_resize(self, instance, width, height):
+        font_size_height = int(height / 10)
+        font_size_width = int(width / 45)
+
+        font_size = min(font_size_height, font_size_width)
+        #self.ids.labeltest.font_size = dp(font_size)
+        
+        for widget in self.walk():
+            if hasattr(widget, 'font_size'):
+                widget.font_size = dp(font_size)
+    '''
+
+    #TITULO
     def CreateLabels(self, *args):
 
-        for i in self.list_table_data:
+        global global_id_table, global_columnas, global_dictionary_table_data
 
-            i = (i).title()
+        
+        global global_rv
 
-            
-            label = MDLabel(
-                        text = i,
-                        halign="center",
-                        font_style = "H6",
-                        markup= True
-                    )
+        item = {self.objecto.rv: self}
+        #global_rv[self.objecto.rv] = {}
+        global_rv.update(item)
 
-            self.scroll_box_layout.add_widget(label)
-            
+        #print(global_rv)
 
-    #def Test(self):
+
+        #print(str(global_rv) + " createLabels")
+        global_id_table = self.objecto.id_table
+
+        global_dictionary_table_data[self.objecto.id_table] = []
+
+
+        lista = self.list_table_labels
+
+        global_dictionary_table_data[self.objecto.id_table].append(lista)
+
+
+        #print(global_dictionary_table_data)
+        
+
+
+        #print(self.list_table_data)
+
+
+        #NOMBRE DEL ID = OBJETO QUE SE LE AGREGARA ESO
+        #self.ids[self.id_table] = weakref.ref(self)
+
+        #print(self.ids.hello)
+
+        global global_dictionary
+
+        global_dictionary = []
+
+        #Permite eliegir el numero de columnas dinamicamente
+        self.objecto.children[2].children[0].cols = self.objecto.columnas
+
+        global_columnas = self.objecto.columnas
+
+        font_size = int(self.width/11 if self.width/11 > 10 else self.width/7)
+
+        #Crea las cabeceras de la tabla
+        for index, i in enumerate(self.objecto.list_table_data):
+
+            if index == 0:
+                pass
+            else:
+
+                #Capitaliza el inicio de la palabra
+                i = (i).title()
+
+                #Caracteristicas que tendrá el widget, en este caso un MDLabel
+                label = MDLabel(
+                            #text = "[size="+ str(font_size) +"]"+str(i)+"[/size]",
+                            text = i,
+                            halign="center",
+                            font_style = "H6",
+                            #font_size= ,
+                            markup= True,
+                        )
+
+                #se agrega al mdgridlayout para que se muestre
+                self.objecto.scroll_box_layout.add_widget(label)           
+
+        for i in self.objecto.list_table_data:
+            global_dictionary.append(i)
+        
+
 
     def TableData(self, dictionary):
 
+        if self.objecto.boleana:
 
-        if self.boleana:
+            #ejecuta lo escrito en el kv, normalmente es donde se ejecutará el codigo mongodb que nos dará los datos de la base de datos
+            exec(self.objecto.test)
 
-
-            exec(self.test)
-
-            #for i in range(1,21): 
-            #    d = {f"dato{i}": [f"dato{i}_nombre", f"dato{i}_proveedor", f"dato{i}_cantidad", f"dato{i}_precio"]}
-
-                #for a in self.dictionaryPrincipal:
-                #    d['dato{i}'].append(a)
-
-                #Creo indice del diccionario, normalmente se llama dato + numero de iteracion
-                #d = {f"dato{i}": []}
+            dictionary = self.objecto.DictionaryDataset
 
 
-                #d[f"dato{i}"].extend(t for t in self.dictionaryPrincipal)
+            #permite que se active solamente una vez
+            self.objecto.boleana = False
 
 
-            #    self.DictionaryDataset.update(d)
-            
-            self.boleana = False
-
-
-        #print(str(self.list_table_labels) + " | " + str(self.list_table_data) + " | " + str(self.dictionaryPrincipal))
 
         #Cuenta la cantidad de items que tiene el diccionario
         CountDictionary = len(dictionary)
 
         #Cambia el texto del Label ShowItems, a los que haya en el diccionario
         #Si el valor es 0, le suma un 1 solo visualmente
-        if self.StartPagination <= 0:
-            self.ids.ItemsShowed.text = f" Mostrando {str(self.StartPagination + 1)}-{str(self.ItemsAccountPagination)} de {str(CountDictionary)}"
+        if self.objecto.StartPagination <= 0:
+            self.objecto.ids.ItemsShowed.text = f" Mostrando {str(self.objecto.StartPagination + 1)}-{str(self.objecto.ItemsAccountPagination)} de {str(CountDictionary)}"
 
         #Muestra el valor de StartPagination normalmente, sin la suma del 1
         else:
-            self.ids.ItemsShowed.text = f" Mostrando {str(self.StartPagination)}-{str(self.ItemsAccountPagination)} de {str(CountDictionary)}"
+            self.objecto.ids.ItemsShowed.text = f" Mostrando {str(self.objecto.StartPagination)}-{str(self.objecto.ItemsAccountPagination)} de {str(CountDictionary)}"
 
         #Declaración de la variable donde irá los items y se mostrarán en la tabla
-        self.rv.data = []
+        self.objecto.rv.data = []
 
         #Donde comienza la variable
-        IterationStartPagination = self.StartPagination
+        IterationStartPagination = self.objecto.StartPagination
 
         #Asignando una variable donde calcula desde donde se comenzará la paginación de los items que se iteraran en el ciclo FOR
-        IterationItems = list(dictionary)[self.StartPagination:]
-
+        IterationItems = list(dictionary)[self.objecto.StartPagination:]
 
 
         #FOR al diccionario que contiene los datos de la base de datos
@@ -288,46 +432,31 @@ class RecycleViewTable(MDBoxLayout):
             #IF Statement que permite mostrar la cantidad de items que se visualizaran 
             #Segun la cantidad de items que estimó (el predeterminado es 5)
 
-            if(IterationStartPagination) < self.ItemsAccountPagination:
+            if(IterationStartPagination) < self.objecto.ItemsAccountPagination:
                 
-
+                #crea el diccionario donde se almacenará la información que será enviada al SelectableLabel
                 d = {}
+                #Crear un nuevo diccionario donde se agregará
                 d['dato'] = {}
-                for index, i in enumerate(self.list_table_data):
-                    #d[i] = {dictionary[dic][index]}
+                for index, i in enumerate(self.objecto.list_table_data):
+                    
+                    #crea diccionario con los datos dentro del diccionario, segun los datos escritos en el kivy haciendo lo siguiente en el diccionario,
+                    # {nombre_del_dato, diccionario[datos_que_se_mostraran], indice[posicion_del_dato]}
                     da = { i: dictionary[dic][index]}
-                    #da = dictionary[dic][index]
-                    #d['dato'] = {i: dictionary[dic][index]}
 
-                    #para LISTA 
-                    #d['dato'].append(da)
-                    #para Diccionario
+                    #agrega los datos al diccionario principal
                     d['dato'].update(da)
+
             
-                i = {'on_release': partial(SelectableLabel.ButtonDialog, self, self.modalData)}
+                #crea diccionario el on_release al diccionario principal
+                i = {'on_release': partial(SelectableLabel.ButtonDialog, self.objecto, self.objecto.modalData)}
+                #agrega el on_release
                 d.update(i)
 
-                #Agregar a la tabla los items
-                self.rv.data.append(d)
+                #dictionary donde estará todos los datos de la tabla
+                #Agregar a la tabla los items, activando el selectableLabel y crean un label para cada uno
+                self.objecto.rv.data.append(d)
 
-
-                #print(str(items['nombre']) + " items")
-                #CICLO FOR AQUI OJO
-                #Diccionario que almacena los datos que se mostrarán en la tabla
-                #d[items] = {dictionary[dic][index]}
-
-
-                #d = {
-                #    items: {'text': dictionary[dic][index]}, 
-                    #se llama a la funcion ButtonDialog de la clase SelectableLabel con partial
-                    #self es el primer parametro
-                    # y boton + dic, el segundo parametro
-                    #s'on_release': partial(SelectableLabel.ButtonDialog, self, self.modalData)
-                #}
-
-
-                
-                
                 #Suma el valor a la paginacion
                 IterationStartPagination += 1  
 
@@ -335,44 +464,48 @@ class RecycleViewTable(MDBoxLayout):
                 #Si el comienzo y el final de la paginacion son iguales o mayores, se rompe el ciclo FOR
                 break
 
-        #print(self.DictionaryDataset)
-
-
-    
-    
 class ModalsDialog():
 
     ############
     ###MODALES
 
-    ## CALLBACK PARA CAMBIAR DE PAGINA CON MDTopAppBar BUTTON
+    ## CALLBACK PARA CAMBIAR DE PAGINA
     def ChangePage(self, page, text):
 
+        #obtiene el self principal del kivy
         self_main = intermediary.global_variable_self
+        #cambia segun la pagina querida
         self_main.root.ids.screen_manager.current = page
+        #cambia el titulo del menu de arriba segun el nombre que queramos
         self_main.root.ids.toolbar.title = text
 
+        #Cierra los modales activados
         ModalsDialog.CloseDialog(self, self.dialog.dismiss())
         
-
+    #Modal 1
     def ShowAlertDialog(self, title, text, optionOne, optionTwo, optionThree, releaseOne, releaseTwo, releaseThree):
         
+        #Si no existe, normalmente no, lo crea
         if not self.dialog:
+            #Caracteristicas
             self.dialog = MDDialog(
                 title=title,
                 text= text,
                 buttons=[
+                    #Boton de Cancelar
                     MDFlatButton(
                         text=optionOne,
                         #text_color=self.theme_cls.primary_color,
                         on_press = releaseOne
                     ),
+                    #Boton de modificar o algun otro uso
                     MDRaisedButton(
                         text=optionTwo,
                         md_bg_color="red",
                         text_color="white",
                         on_press = releaseTwo
                     ),
+                    #Boton de Aceptar
                     MDRaisedButton(
                         text=optionThree,
                         md_bg_color="orange",
@@ -381,22 +514,27 @@ class ModalsDialog():
                     ),
                 ],
             )
+        #Abre el modal
         self.dialog.open()
 
     def ShowAlertDialogDelete(self, title, text, textButtonOne, textButtonTwo, releaseButtonOne, releaseButtonTwo):
 
+        #Cierra el modal 1
         ModalsDialog.CloseDialog(self.dialog.dismiss())
         
+        #Si no existe, normalmente no, lo crea
         if not self.dialog2:
             self.dialog2 = MDDialog(
                 title=title,
                 text=text,
                 buttons=[
+                    #Boton de Cancelar
                     MDFlatButton(
                         text=textButtonOne,
                         text_color= "red",
                         on_release = releaseButtonOne
                     ),
+                    #Boton de Aceptar
                     MDRaisedButton(
                         text=textButtonTwo,
                         text_color="white",
@@ -405,17 +543,20 @@ class ModalsDialog():
                     ),
                 ],
             )
+
+        #Abre el modal
         self.dialog2.open()
     
     
     def CloseDialog(self, typeDialog):
 
         #Funcion dinamica para cerrar los dialogs
-        SelectableLabel.CreateLabels(self)
+        #RecycleViewTable.CreateLabels(self)
         typeDialog
 
     def ChangeItemsAmount(self):
 
+        #Reinicia la variable a 0
         RecycleViewTable.StartPagination = 0
 
         #Switch que cambia la cantidad de items a mostrar segun la cantidad que tenia previamente
@@ -434,6 +575,7 @@ class ModalsDialog():
         #Cambia el texto del boton ItemsAmount
         global_rv.ids.ItemsAmount.text = "Items por página: " + str(global_rv.ItemsAccountPagination)
 
+        #Llama la funcion para ver si ambas flechas se desactivan al actualizar los datos
         self.StatusButtonPagination("both")
         #Llama la función TableData para rellenar los datos de la tabla
         global_rv.TableData(global_rv.DictionaryDataset)
@@ -451,6 +593,7 @@ class ModalsDialog():
                 RecycleViewTable.StartPagination = RecycleViewTable.StartPagination - RecycleViewTable.StaticItemsAccountPagination
                 RecycleViewTable.ItemsAccountPagination = RecycleViewTable.ItemsAccountPagination - RecycleViewTable.StaticItemsAccountPagination
 
+                #Llama la funcion para ver si se desactiva la flecha izquierda
                 self.StatusButtonPagination("left")
 
                 
@@ -460,6 +603,7 @@ class ModalsDialog():
                 RecycleViewTable.StartPagination = RecycleViewTable.StartPagination  + RecycleViewTable.StaticItemsAccountPagination
                 RecycleViewTable.ItemsAccountPagination = RecycleViewTable.ItemsAccountPagination + RecycleViewTable.StaticItemsAccountPagination
 
+                #Llama la funcion para ver si se desactiva la flecha derecha
                 self.StatusButtonPagination("right")
                 
                 
@@ -467,11 +611,14 @@ class ModalsDialog():
                 RecycleViewTable.StartPagination = 0
                 RecycleViewTable.ItemsAccountPagination = 5
 
+        #Llama a esta funcion para actualizar los datos
         global_rv.TableData(global_rv.DictionaryDataset)
 
+    #Funcion que sirva para activar o desactivar las flechas de la paginacion en caso tal que no haya más objetos a mostrar
     def StatusButtonPagination(self, side):
 
         match side:
+            #Flecha de la izquierda
             case "left":
 
                 #Activa el boton de la derecha de la paginacion
@@ -488,6 +635,7 @@ class ModalsDialog():
                     global_rv.ids.ButtonLeftPagination.disabled = False
 
                 #global_rv.ButtonLeftPagination.disabled = True if global_rv.StartPagination <= 0 else False 
+            #Flecha de la derecha
             case "right":
 
                 #Activa el boton de la izquierda de la paginacion
@@ -497,9 +645,6 @@ class ModalsDialog():
                 #el DISABLED sera True, en caso contrario será False
                 if global_rv.ItemsAccountPagination >= len(global_rv.DictionaryDataset):
 
-                    #Asigna la cantidad máxima de items del diccionario
-                    #global_rv.ItemsAccountPagination = len(global_rv.DictionaryDataset)
-
                     #Desactiva boton derecho
                     global_rv.ids.ButtonRightPagination.disabled = True
 
@@ -507,6 +652,7 @@ class ModalsDialog():
                     #Activa boton derecho
                     global_rv.ids.ButtonRightPagination.disabled = False
 
+            #Ambas flechas
             case "both":
 
                 #left
@@ -526,9 +672,6 @@ class ModalsDialog():
                 #IF Statement, si la cantidad de items de la paginación es mayor a los items del diccionario
                 #el DISABLED sera True, en caso contrario será False
                 if RecycleViewTable.ItemsAccountPagination >= len(RecycleViewTable.DictionaryDataset):
-
-                    #Asigna la cantidad máxima de items del diccionario
-                    #global_rv.ItemsAccountPagination = len(global_rv.DictionaryDataset)
 
                     #Desactiva boton derecho
                     global_rv.ids.ButtonRightPagination.disabled = True
