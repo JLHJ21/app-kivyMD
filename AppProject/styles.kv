@@ -1,6 +1,3 @@
-
-
-
 ##: import RecycleViewTable templates.table.table
 #:include templates/table/table.kv
 
@@ -69,21 +66,13 @@
 
                 app.root.ids.toolbar.title = self.text
         
-        DrawerClickableItem:
-            icon: "cash-clock"
-            text_right_color: "#4a4939"
-            text: "Presupuesto"
-            on_press:
-                #root.screen_manager.current = "StorePageUpdate"
-
-                app.root.ids.toolbar.title = self.text
         
         DrawerClickableItem:
             icon: "account-cash"
             text_right_color: "#4a4939"
             text: "Cliente"
             on_press:
-                #root.screen_manager.current = "scr 2"
+                root.screen_manager.current = "ClientsPage"
 
                 app.root.ids.toolbar.title = self.text               
 
@@ -101,7 +90,7 @@
             text: "Encargos"
 
             on_press:
-                root.screen_manager.current = "InitialPage"
+                root.screen_manager.current = "ChargePage"
 
                 app.root.ids.toolbar.title = self.text
 
@@ -111,7 +100,7 @@
             text: "Divisas"
 
             on_press:
-                root.screen_manager.current = "InitialPage"
+                root.screen_manager.current = "ForeignExchangePage"
 
                 app.root.ids.toolbar.title = self.text
 
@@ -121,7 +110,7 @@
             text: "Proveedores"
 
             on_press:
-                root.screen_manager.current = "InitialPage"
+                root.screen_manager.current = "SupplierPage"
 
                 app.root.ids.toolbar.title = self.text
         
@@ -131,7 +120,7 @@
             text: "Prestamos"
 
             on_press:
-                root.screen_manager.current = "InitialPage"
+                root.screen_manager.current = "LoanPage"
 
                 app.root.ids.toolbar.title = self.text
 
@@ -141,7 +130,7 @@
             text: "Historial de Ventas"
 
             on_press:
-                root.screen_manager.current = "InitialPage"
+                root.screen_manager.current = "SalesHistoryPage"
 
                 app.root.ids.toolbar.title = self.text
         
@@ -151,7 +140,7 @@
             text: "Historial de Dinero"
 
             on_press:
-                root.screen_manager.current = "InitialPage"
+                root.screen_manager.current = "MoneyHistory"
 
                 app.root.ids.toolbar.title = self.text
 
@@ -170,23 +159,66 @@
             text: "Configuracion"
 
             on_press:
-                root.screen_manager.current = "InitialPage"
+                root.screen_manager.current = "ConfigurationPage"
 
                 app.root.ids.toolbar.title = self.text
 
+
+
+
+
 HeaderAndFooter:
+
+    orientation: "vertical"
+
     MDNavigationLayout:
 
         MDScreenManager:
             id: screen_manager
+            #Pagina de inicio
+            SignIn:
 
+            #Pagina de registrar cuenta
+            SignOn:
+
+            #Pagina de panel de control, o de inicio
             InitialPage:
+
+            #Pagina del cajero
             CashierPage:
                 
-            
+            #Pagina del almacen, junto con su pagina de modificacion y de elegir imagen en orden respectivamente
             StorePage:       
             StoreUpdatePage:
             ChooseImagePage:
+
+            #Pagina de cliente
+            ClientsPage:
+
+            #Pagina de configuracion
+            ConfigurationPage:
+
+            #Pagina de divisas
+            ForeignExchangePage:
+
+            #Pagina de historial de ventas
+            SalesHistoryPage:
+
+            #Pagina de proveedores
+            SupplierPage:
+            SupplierUpdatePage:
+            SupplierAddPage:
+
+            #Pagina de Encargos
+            ChargePage:
+
+            #Pagina de historial de dinero
+            MoneyHistory:
+
+            #Pagina de prestamos
+            LoanPage:
+            LoanUpdatePage:
+            LoanAddPage:
 
 
         MDNavigationDrawer:
@@ -205,7 +237,7 @@ HeaderAndFooter:
 
 <InitialPage>:
     name: "InitialPage"
-    
+
     MDBoxLayout:
         orientation: 'vertical'
         size_hint: 1, 1
@@ -222,6 +254,7 @@ HeaderAndFooter:
                 MDGridLayout:
                     cols: 1                                
                     
+                    #DATOS
                     MDLabel:
                         markup: True
                         padding: dp(50), dp(20), dp(16), dp(1)
@@ -231,52 +264,85 @@ HeaderAndFooter:
                         font_style: "H3"
                         adaptive_height: True       
 
+                    #DATOS DE USUARIO
                     MDBoxLayout:
                         orientation: 'horizontal'
-                        size_hint: 1, None
-                        height:75
+                        #size_hint: 1, None
+                        #height:75
 
 
                         MDGridLayout:
                         
                             cols: 2                             
-                            padding: dp(1), dp(10), dp(1), dp(1)
+                            padding: dp(1), dp(1), dp(1), dp(1)
 
 
-                            MDBoxLayout:
-                                padding: dp(50), dp(1), dp(25), dp(1)
+                            MDGridLayout:
+                                cols: 2
+                                adaptive_height: True
 
-                                MDIcon:
-                                    padding: dp(1), dp(1), dp(10), dp(1)
-                                    icon: "account"
-                                    pos_hint: {"center_x": .5, "center_y": .75} 
-                                    font_size: '36sp' 
-                                MDTextField:
-                                    pos_hint: {"center_x": 1, "center_y": .7} 
-                                    text: "root"
-                                    hint_text: "Nombre de usuario:"
-                                    mode: "rectangle"
-                                    disabled: True 
-                                    focus: True
+                                MDGridLayout:
+                                    adaptive_height: True
+                                    cols: 4
+                                    padding: dp(32), dp(1), dp(32), dp(16)
 
-                            MDBoxLayout:
 
-                                padding: dp(25), dp(1), dp(50), dp(1)
+                                    MDLabel:
+                                        size_hint_x: 0.025
 
-                                MDIcon:
-                                    padding: dp(1), dp(1), dp(10), dp(1)
-                                    icon: "account-hard-hat"
-                                    pos_hint: {"center_x": .5, "center_y": .75} 
-                                    font_size: '36sp' 
-                                MDTextField:
-                                    pos_hint: {"center_x": 1, "center_y": .7} 
-                                    text: "root"
-                                    hint_text: "Nivel de usuario:"
-                                    mode: "rectangle"
-                                    disabled: True 
-                                    focus: True
-                                
 
+                                    MDIcon:
+                                        padding: dp(1), dp(1), dp(1), dp(1)
+                                        icon: "account"
+                                        font_size: '36sp' 
+                                        size_hint_x: 0.4
+
+
+                                    MDLabel:
+                                        size_hint_x: 0.05
+                                        
+                                    MDTextField:
+                                        text: "123aaaaa"
+                                        hint_text: "123123:"
+                                        mode: "rectangle"
+                                        disabled: True 
+                                        focus: True
+                                        size_hint_x: 0.4
+
+                            MDGridLayout:
+                                cols: 2
+                                adaptive_height: True
+
+                                MDGridLayout:
+                                    adaptive_height: True
+                                    cols: 4
+                                    padding: dp(32), dp(1), dp(32), dp(16)
+
+
+                                    MDLabel:
+                                        size_hint_x: 0.025
+
+
+                                    MDIcon:
+                                        padding: dp(1), dp(1), dp(1), dp(1)
+                                        icon: "account-hard-hat"
+                                        font_size: '36sp' 
+                                        size_hint_x: 0.4
+
+
+                                    MDLabel:
+                                        size_hint_x: 0.05
+                                        
+                                    MDTextField:
+                                        text: "root"
+                                        hint_text: "Nivel de usuario:"
+                                        mode: "rectangle"
+                                        disabled: True 
+                                        focus: True
+                                        size_hint_x: 0.4
+
+
+                    #CUENTAS
                     MDLabel:                                
                         markup: True
                         padding: dp(50), dp(1), dp(1), dp(1)
@@ -287,132 +353,240 @@ HeaderAndFooter:
 
                     MDBoxLayout:
                         orientation: 'horizontal'
-                        size_hint: 1, None
-                        height:75
-
+                        #size_hint: 1, None
+                        #height:75
 
                         MDGridLayout:
                         
                             cols: 2                             
-                            padding: dp(1), dp(10), dp(1), dp(1)
+                            padding: dp(1), dp(1), dp(1), dp(1)
 
 
-                            MDBoxLayout:
-                                padding: dp(50), dp(1), dp(25), dp(1)
+                            MDGridLayout:
+                                cols: 2
+                                adaptive_height: True
 
-                                MDIcon:
-                                    padding: dp(1), dp(1), dp(10), dp(1)
-                                    icon: "cash-plus"
-                                    pos_hint: {"center_x": .5, "center_y": .75} 
-                                    font_size: '36sp' 
-                                MDTextField:
-                                    pos_hint: {"center_x": 1, "center_y": .7} 
-                                    text: "100$"
-                                    hint_text: "Dinero Credito:"
-                                    mode: "rectangle"
-                                    disabled: True 
-                                    focus: True
+                                MDGridLayout:
+                                    adaptive_height: True
+                                    cols: 4
+                                    padding: dp(32), dp(1), dp(32), dp(16)
 
-                            MDBoxLayout:
 
-                                padding: dp(25), dp(1), dp(50), dp(1)
+                                    MDLabel:
+                                        size_hint_x: 0.025
 
-                                MDIcon:
-                                    padding: dp(1), dp(1), dp(10), dp(1)
-                                    icon: "cash-minus"
-                                    pos_hint: {"center_x": .5, "center_y": .75} 
-                                    font_size: '36sp' 
-                                MDTextField:
-                                    pos_hint: {"center_x": 1, "center_y": .7} 
-                                    text: "24$"
-                                    hint_text: "Dinero prestado:"
-                                    mode: "rectangle"
-                                    disabled: True 
-                                    focus: True
-                    
+
+                                    MDIcon:
+                                        padding: dp(1), dp(1), dp(1), dp(1)
+                                        icon: "cash-plus"
+                                        font_size: '36sp' 
+                                        size_hint_x: 0.4
+
+
+                                    MDLabel:
+                                        size_hint_x: 0.05
+                                        
+
+                                    
+                                    MDTextField:
+                                        text: "100$"
+                                        hint_text: "Dinero Credito:"
+                                        mode: "rectangle"
+                                        disabled: True 
+                                        focus: True
+                                        size_hint_x: 0.4
+
+                            MDGridLayout:
+                                cols: 2
+                                adaptive_height: True
+
+                                MDGridLayout:
+                                    adaptive_height: True
+                                    cols: 4
+                                    padding: dp(32), dp(1), dp(32), dp(16)
+
+
+                                    MDLabel:
+                                        size_hint_x: 0.025
+
+
+                                    MDIcon:
+                                        padding: dp(1), dp(1), dp(1), dp(1)
+                                        icon: "cash-minus"
+                                        font_size: '36sp' 
+                                        size_hint_x: 0.4
+
+
+                                    MDLabel:
+                                        size_hint_x: 0.05
+                                        
+                                    MDTextField:
+                                        text: "24$"
+                                        hint_text: "Dinero prestado:"
+                                        mode: "rectangle"
+                                        disabled: True 
+                                        focus: True
+                                        size_hint_x: 0.4
+
+                    #DINERO DIVISAS
                     MDBoxLayout:
                         orientation: 'horizontal'
-                        size_hint: 1, None
-                        height:75
-
                         MDGridLayout:
                         
-                            cols: 3                            
-                            padding: dp(1), dp(10), dp(1), dp(1)
+                            cols: 3                             
+                            padding: dp(1), dp(1), dp(1), dp(1)
 
-                            MDBoxLayout:
-                                padding: dp(50), dp(1), dp(1), dp(1)
 
-                                MDIcon:
-                                    padding: dp(1), dp(1), dp(10), dp(1)
-                                    icon: "cash"
-                                    pos_hint: {"center_x": .5, "center_y": .75} 
-                                    font_size: '36sp' 
-                                MDTextField:
-                                    pos_hint: {"center_x": .5, "center_y": .7} 
-                                    text: "100$"
-                                    hint_text: "Dinero en dólares:"
-                                    mode: "rectangle"
-                                    disabled: True 
-                                    focus: True
+                            MDGridLayout:
+                                cols: 2
+                                adaptive_height: True
+
+                                MDGridLayout:
+                                    adaptive_height: True
+                                    cols: 4
+                                    padding: dp(32), dp(1), dp(32), dp(16)
+
+
+                                    MDLabel:
+                                        size_hint_x: 0.025
+
+
+                                    MDIcon:
+                                        padding: dp(1), dp(1), dp(1), dp(1)
+                                        icon: "cash"
+                                        font_size: '36sp' 
+                                        size_hint_x: 0.4
+
+
+                                    MDLabel:
+                                        size_hint_x: 0.05
+                                        
+
+                                    
+                                    MDTextField:
+                                        text: "100$"
+                                        hint_text: "Dinero en dólares:"
+                                        mode: "rectangle"
+                                        disabled: True 
+                                        focus: True
+                                        size_hint_x: 0.4
+
+                            MDGridLayout:
+                                cols: 2
+                                adaptive_height: True
+
+                                MDGridLayout:
+                                    adaptive_height: True
+                                    cols: 4
+                                    padding: dp(32), dp(1), dp(32), dp(16)
+
+
+                                    MDLabel:
+                                        size_hint_x: 0.025
+
+
+                                    MDIcon:
+                                        padding: dp(1), dp(1), dp(1), dp(1)
+                                        icon: "cash-minus"
+                                        font_size: '36sp' 
+                                        size_hint_x: 0.4
+
+
+                                    MDLabel:
+                                        size_hint_x: 0.05
+                                        
+                                    MDTextField:
+                                        text: "24$"
+                                        hint_text: "Dinero en pesos:"
+                                        mode: "rectangle"
+                                        disabled: True 
+                                        focus: True
+                                        size_hint_x: 0.4
+
+                            MDGridLayout:
+                                cols: 2
+                                adaptive_height: True
+
+                                MDGridLayout:
+                                    adaptive_height: True
+                                    cols: 4
+                                    padding: dp(32), dp(1), dp(32), dp(16)
+
+
+                                    MDLabel:
+                                        size_hint_x: 0.025
+
+
+                                    MDIcon:
+                                        padding: dp(1), dp(1), dp(1), dp(1)
+                                        icon: "cash-minus"
+                                        font_size: '36sp' 
+                                        size_hint_x: 0.4
+
+
+                                    MDLabel:
+                                        size_hint_x: 0.05
+                                        
+                                    MDTextField:
+                                        text: "24$"
+                                        hint_text: "Dinero en bolívares:"
+                                        mode: "rectangle"
+                                        disabled: True 
+                                        focus: True
+                                        size_hint_x: 0.4
+
+                    #DINERO MENSUAL
+                    MDBoxLayout:
+                        orientation: 'horizontal'
+                        MDGridLayout:
                         
-                            MDBoxLayout:
-                                padding: dp(30), dp(1), dp(30), dp(1)
+                            cols: 1                             
+                            padding: dp(1), dp(1), dp(1), dp(1)
 
-                                MDIcon:
-                                    padding: dp(1), dp(1), dp(10), dp(1)
-                                    icon: "cash"
-                                    pos_hint: {"center_x": .5, "center_y": .75} 
-                                    font_size: '36sp' 
-                                MDTextField:
-                                    pos_hint: {"center_x": .5, "center_y": .7} 
-                                    text: "100$"
-                                    hint_text: "Dinero en pesos:"
-                                    mode: "rectangle"
-                                    disabled: True 
-                                    focus: True
+
+                            MDGridLayout:
+                                cols: 3
+                                adaptive_height: True
+
+                                MDLabel:
+                                    size_hint_x: 0.2
+
+
+                                MDGridLayout:
+                                    adaptive_height: True
+                                    cols: 4
+                                    padding: dp(32), dp(1), dp(32), dp(16)
+                                    size_hint_x: 0.8
+
+
+                                    MDLabel:
+                                        size_hint_x: 0.025
+
+
+                                    MDIcon:
+                                        padding: dp(1), dp(1), dp(1), dp(1)
+                                        icon: "cash"
+                                        font_size: '36sp' 
+                                        size_hint_x: 0.4
+
+
+                                    MDLabel:
+                                        size_hint_x: 0.025
+                                        
+
+                                    
+                                    MDTextField:
+                                        text: "100$"
+                                        hint_text: "Dinero en mensual:"
+                                        mode: "rectangle"
+                                        disabled: True 
+                                        focus: True
+                                        size_hint_x: 0.4
+
                             
-                            MDBoxLayout:
-                                padding: dp(1), dp(1), dp(50), dp(1)
+                                MDLabel:
+                                    size_hint_x: 0.2
 
-                                MDIcon:
-                                    padding: dp(1), dp(1), dp(10), dp(1)
-                                    icon: "cash"
-                                    pos_hint: {"center_x": .5, "center_y": .75} 
-                                    font_size: '36sp' 
-                                MDTextField:
-                                    pos_hint: {"center_x": .5, "center_y": .7} 
-                                    text: "100$"
-                                    hint_text: "Dinero en bolívares:"
-                                    mode: "rectangle"
-                                    disabled: True 
-                                    focus: True
-
-                    MDBoxLayout:
-                        orientation: 'horizontal'
-                        size_hint: 1, None
-                        height:75
-
-                        MDGridLayout:
-                        
-                            cols: 1                            
-                            padding: dp(1), dp(10), dp(1), dp(1)
-
-                            MDBoxLayout:
-                                padding: dp(230), dp(1), dp(230), dp(1)
-
-                                MDIcon:
-                                    padding: dp(1), dp(1), dp(10), dp(1)
-                                    icon: "cash"
-                                    pos_hint: {"center_x": .5, "center_y": .8} 
-                                    font_size: '36sp' 
-                                MDTextField:
-                                    pos_hint: {"center_x": .5, "center_y": .7} 
-                                    text: "100$"
-                                    hint_text: "Dinero mensual:"
-                                    mode: "rectangle"
-                                    disabled: True 
-                                    focus: True
 
 <StoreUpdatePage>:
     name: "StorePageUpdate"
@@ -744,11 +918,77 @@ HeaderAndFooter:
                 list_table_labels: ["id_imagen", "id_cedula", "id_proveedor", "id_cantidad", "id_precio"]
                 list_table_data: ["imagen", "cedula", "proveedor", "cantidad", "precio"]
                 #dictionaryPrincipal: ["_nombre", "_proveedor", "_cantidad", "_precio"]
-                modalData: 
-                    'ModalsDialog.ShowAlertDialog(global_rv,"¿Que desea realizar?", "Por favor, elija algunas de las opciones presentadas.", "Cancelar", "Eliminar", "Modificar",  lambda x: ModalsDialog.CloseDialog(global_rv, global_rv.dialog.dismiss()),lambda x: ModalsDialog.ShowAlertDialogDelete (global_rv,"¿De verdad quiere eliminar este producto?", "Si es así, adelante","Cancelar","Eliminar",lambda x: ModalsDialog.CloseDialog(global_rv, global_rv.dialog2.dismiss()),lambda x: print("cerrar")    ),lambda x: ModalsDialog.ChangePage(global_rv, "StorePageUpdate", "Almacen - Modificar"))'
+                modalData:
+                    'ModalsDialog.ShowAlertDialog("self","¿Que desea realizar?", "Por favor, elija algunas de las opciones presentadas.", "Cancelar", "Eliminar", "Modificar",  lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog.dismiss()),lambda x: ModalsDialog.ShowAlertDialogDelete ("self","¿De verdad quiere eliminar este producto?", "Si es así, adelante","Cancelar","Eliminar",lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog2.dismiss()),lambda x: print("cerrar")    ),lambda x: ModalsDialog.ChangePage("self", "StorePageUpdate", "Almacen - Modificar"))'
                 test: 
-                    'for i in range(1,21): d = {f"dato{i}": [f"images/logo.jpg", f"dato{i}_cedula", f"dato{i}_proveedor", f"dato{i}_cantidad", f"dato{i}_precio"]};self.DictionaryDataset.update(d)'
+                    'for i in range(1,5): d = {f"dato{i}": [f"images/logo.jpg", f"dato{i}_cedula", f"dato{i}_proveedor", f"dato{i}_cantidad", f"dato{i}_precio"]};self.objecto.DictionaryDataset.update(d)'
                 id_table: "tableAlmacen"
+
+<ClientsPage>:
+    name: "ClientsPage"
+
+    MDBoxLayout:
+        orientation: 'vertical'
+        size_hint: 1, 1
+        MDGridLayout:
+            cols: 1
+            padding: dp(16), dp(root.manager.parent.parent.ids.toolbar.height), dp(16), dp(root.manager.parent.parent.ids.toolbarbottom.height)
+                    
+            MDGridLayout:
+                cols: 5
+                spacing: dp(10)
+                padding: dp(16), dp(16), dp(16), dp(16)
+                size_hint_y: None
+                height: dp(root.manager.parent.parent.ids.toolbar.height)
+                MDTextField:
+                    id: ButtonMenuSearchingClient
+
+                    size_hint_x: None
+                    width: "100dp"
+
+                    text: "TODO"
+                    hint_text: "Tipo:"
+                    icon_right: "arrow-down"
+
+                    mode: "rectangle"
+                    readonly: True 
+                    focus: True
+
+                    on_focus: if self.focus: root.CallbackMenuClients(self)
+
+                MDTextField:
+                    id: SearchProduct
+                    hint_text: 'Buscar cliente'
+                    icon_right: "android"
+                    mode: "rectangle"
+
+                    size_hint_x: None
+                    width: "400dp"
+
+                MDFloatingActionButton:
+                    id: ButtonSearchingClient
+
+                    icon: "book-search"
+                    type: "standard"
+
+                MDLabel:
+
+                MDFloatingActionButton:
+                    icon: "account-multiple-plus"
+                    type: "standard"
+
+                    
+            RecycleViewTable:
+                objecto: self
+                padding: dp(16), dp(root.manager.parent.parent.ids.toolbar.height / 2), dp(16), dp(root.manager.parent.parent.ids.toolbarbottom.height /2)
+                columnas: 5
+                list_table_labels: ["id_imagen", "id_dado", "id_fecha", "id_monto"]
+                list_table_data: ["imagen","dado por", "fecha", "monto"]
+                #dictionaryPrincipal: ["_nombre", "_proveedor", "_cantidad", "_precio"]
+                modalData: 'ModalsDialog.ShowAlertDialog("self","¿Que desea realizar?","Por favor, elija algunas de las opciones presentadas.","Cancelar","Eliminar","Modificar",lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog.dismiss()),lambda x: ModalsDialog.ShowAlertDialogDelete("self","¿De verdad quiere eliminar este producto?","Si es así, adelante","Cancelar","Eliminar",lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog2.dismiss()),lambda x: print("cerrar")),lambda x: ModalsDialog.ChangePage("self","StorePageUpdate", "Almacen - Modificar"))'
+                test: 
+                    'for i in range(1,5): d = {f"dato{i}": [f"images/logo.jpg", f"dato{i}_dado", f"dato{i}_fecha", f"dato{i}_monto"]};self.objecto.DictionaryDataset.update(d)'
+                id_table: "tableCliente"
 
                 
 <HeaderAndFooter>:
@@ -762,7 +1002,7 @@ HeaderAndFooter:
         id: toolbar
         pos_hint: {"top": 1}
         elevation: 4
-        title: "MDNavigationDrawer"
+        title: "Panel de Control"
         use_overflow: True
         left_action_items: [["menu", lambda x: root.ids.nav_drawer.set_state("open")]]
         right_action_items:
@@ -1006,6 +1246,7 @@ HeaderAndFooter:
                         MDGridLayout:
                             cols: 2
                             spacing: dp(10)
+                            adaptive_height: True
                             #height: dp(root.manager.parent.parent.ids.toolbar.height)
 
                             MDTextField:
@@ -1032,32 +1273,51 @@ HeaderAndFooter:
                                 icon: "book-search"
                                 style: "standard"
 
-                    #CashierTableProductsToOffer:
 
                     RecycleViewTable:
                         objecto: self
-                        #padding: dp(16), dp(root.manager.parent.parent.ids.toolbar.height / 2), dp(16), dp(root.manager.parent.parent.ids.toolbarbottom.height /2)
                         columnas: 3
                         list_table_labels: ["id_imagen", "id_cedula", "id_proveedor"]
                         list_table_data: ["imagen", "cedula", "proveedor"]
                         #dictionaryPrincipal: ["_nombre", "_proveedor", "_cantidad", "_precio"]
                         modalData: 
-                            'ModalsDialog.ShowAlertDialog(global_rv,"¿Que desea realizar?", "Por favor, elija algunas de las opciones presentadas.", "Cancelar", "Eliminar", "Modificar",  lambda x: ModalsDialog.CloseDialog(global_rv, global_rv.dialog.dismiss()),lambda x: ModalsDialog.ShowAlertDialogDelete (global_rv,"¿De verdad quiere eliminar este producto?", "Si es así, adelante","Cancelar","Eliminar",lambda x: ModalsDialog.CloseDialog(global_rv, global_rv.dialog2.dismiss()),lambda x: print("cerrar")    ),lambda x: ModalsDialog.ChangePage(global_rv, "StorePageUpdate", "Almacen - Modificar"))'
+                            'ModalsDialog.ShowAlertDialog("self","¿Que desea realizar?", "Por favor, elija algunas de las opciones presentadas.", "Cancelar", "Eliminar", "Modificar",  lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog.dismiss()),lambda x: ModalsDialog.ShowAlertDialogDelete ("self","¿De verdad quiere eliminar este producto?", "Si es así, adelante","Cancelar","Eliminar",lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog2.dismiss()),lambda x: print("cerrar")    ),lambda x: ModalsDialog.ChangePage("self", "StorePageUpdate", "Almacen - Modificar"))'
+
                         test: 
-                            'for i in range(1,21): d = {f"dato{i}": [f"images/logo.jpg", f"dato{i}_cedula", f"dato{i}_proveedor"]};self.DictionaryDataset.update(d)'
+                            'for i in range(1,5): d = {f"dato{i}": [f"images/logo.jpg", f"dato{i}_cedula", f"dato{i}_proveedor"]};self.objecto.DictionaryDataset.update(d)'
                         id_table: "tableCajeroProducto"
 
-                    #RecycleViewTable:
-                    #    padding: dp(16), dp(root.manager.parent.parent.ids.toolbar.height / 2), dp(16), dp(root.manager.parent.parent.ids.toolbarbottom.height /2)
-                    #    list_table_labels: ["id_nombre", "id_proveedor", "id_cantidad", "id_precio"]
-                    #    list_table_data: ["nombre", "proveedor", "cantidad", "precio"]
-                        #dictionaryPrincipal: ["_nombre", "_proveedor", "_cantidad", "_precio"]
-                    #    modalData: 
-                    #        'ModalsDialog.ShowAlertDialog(global_rv,"¿Que desea realizar?", "Por favor, elija algunas de las opciones presentadas.", "Cancelar", "Eliminar", "Modificar",  lambda x: ModalsDialog.CloseDialog(global_rv, global_rv.dialog.dismiss()),lambda x: ModalsDialog.ShowAlertDialogDelete (global_rv,"¿De verdad quiere eliminar este producto?", "Si es así, adelante","Cancelar","Eliminar",lambda x: ModalsDialog.CloseDialog(global_rv, global_rv.dialog2.dismiss()),lambda x: print("cerrar")    ),lambda x: ModalsDialog.ChangePage(global_rv, "StorePageUpdate", "Almacen - Modificar"))'
-                    #    test: 
-                    #        'for i in range(1,21): d = {f"dato{i}": [f"dato{i}_nombre", f"dato{i}_proveedor", f"dato{i}_cantidad", f"dato{i}_precio"]};self.DictionaryDataset.update(d)'
+            MDScrollView:
+                MDGridLayout:
+                    cols: 1
+                    
+                    #MDGridLayout:
+                    #    cols: 1
+                    #    padding: dp(8), dp(32), dp(8), dp(8)
+                    size_hint_y: None
+                    height: self.minimum_height
 
-            CashierTableProductsToSell:
+
+                    #    MDLabel:
+                    #        text: "Proveedores"
+                    #        halign: "center"
+                    #        font_style: "H4"
+                    
+                    RecycleViewTable:
+                    
+                        size_hint_y: None
+                        height: dp(400)
+
+                        objecto: self
+                        padding: dp(16), dp(16), dp(16), dp(root.manager.parent.parent.ids.toolbarbottom.height /2)
+                        columnas: 5
+                        list_table_labels: ["id_imagen", "id_dado", "id_fecha", "id_monto"]
+                        list_table_data: ["imagen","dado por", "fecha", "monto"]
+                        #dictionaryPrincipal: ["_nombre", "_proveedor", "_cantidad", "_precio"]
+                        modalData: 'ModalsDialog.ShowAlertDialog("self","¿Que desea realizar?","Por favor, elija algunas de las opciones presentadas.","Cancelar","Eliminar","Modificar",lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog.dismiss()),lambda x: ModalsDialog.ShowAlertDialogDelete("self","¿De verdad quiere eliminar este producto?","Si es así, adelante","Cancelar","Eliminar",lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog2.dismiss()),lambda x: print("cerrar")),lambda x: ModalsDialog.ChangePage("self","StorePageUpdate", "Almacen - Modificar"))'
+                        test: 
+                            'for i in range(1,5): d = {f"dato{i}": [f"images/logo.jpg", f"dato{i}_dado", f"dato{i}_fecha", f"dato{i}_monto"]};self.objecto.DictionaryDataset.update(d)'
+                        id_table: "tableCashier"
 
 
             MDBoxLayout:
@@ -1083,7 +1343,7 @@ HeaderAndFooter:
 
 
                         MDRaisedButton:
-                            text: "Previsualizar"
+                            text: "Presupuesto"
                             text_color: "white"
                             md_bg_color: "green"
 
@@ -1091,4 +1351,1732 @@ HeaderAndFooter:
                             text: "Aceptar"
                             text_color: "white"
                             md_bg_color: "blue"
+
+
+<ConfigurationPage>:
+    name: "ConfigurationPage"
+                
+    MDBoxLayout:
+
+        padding: dp(1), dp(root.manager.parent.parent.ids.toolbar.height), dp(1), dp(root.manager.parent.parent.ids.toolbarbottom.height)
+        
+        MDGridLayout:
+            cols: 1
+            padding: dp(16), dp(8)
+                    
+            MDGridLayout:
+                cols: 1
+                padding: dp(1), dp(32)
+
+                size_hint_y: None
+                height: self.minimum_height  # required to size GridLayout
+
+                MDLabel:
+                    text: "Modificar datos de la cuenta"
+                    halign: "center"
+                    font_style: "H4"
+
+            MDGridLayout:
+                cols: 3
+                spacing: dp(20)
+                padding: dp(16), dp(0), dp(16), dp(8) 
+                size_hint_y: None
+                height: self.minimum_height  # required to size GridLayout
+                MDLabel:
+                    size_hint_x: 0.38
+                    #width: "250dp"
+                    padding: dp(32), dp(1)
+
+                    text: "Nombre:"
+                    halign: "right"
+                    font_style: "H5"
+                
+                MDTextField:
+
+                    id: name_field
+                    size_hint_x: 0.7
+                    #width: "375dp"
+
+                    hint_text: "Usuario actual"
+                    text: "NOMBREDEUSUARIO"
+
+                    mode: "rectangle"
+                
+                MDFloatingActionButton:
+                    size_hint_x: 0.1
+                    
+                    icon: "account-multiple-plus"
+                    type: "standard"
+
+                    on_release: root.OpenModal("Usuario", "Repetir usuario", "dialogUsername", "Cambiar usuario")
+
+
+            MDGridLayout:
+                cols: 3
+                spacing: dp(20)
+                padding: dp(16), dp(8)
+                #padding: ["16dp", "16dp", "16dp", "16dp"]  if len(inputSupplierMenu.text) == 0 else ["16dp", "8dp", "16dp", "8dp"] 
+                size_hint_y: None
+                height: self.minimum_height  # required to size GridLayout
+                MDLabel:
+                    size_hint_x: 0.38
+                    #width: "250dp"
+                    padding: dp(32), dp(1)
+
+                    text: "Correo:"
+                    halign: "right"
+                    font_style: "H5"
+                
+                MDTextField:
+
+                    id: inputSupplierMenu
+                    size_hint_x: 0.7
+
+                    hint_text: "Correo electrónico actual"
+                    text: "CORREODEPRUEBA@GMAIL.COM"
+
+                    
+                    mode: "rectangle"
+
+                MDFloatingActionButton:
+                    size_hint_x: 0.1
+                    
+                    icon: "account-multiple-plus"
+                    type: "standard"
+
+                    on_release: root.OpenModal("Correo electrónico", "Repetir correo electrónico", "dialogEmail", "Cambiar correo electrónico")
+
+            MDGridLayout:
+                cols: 3
+                spacing: dp(20)
+                padding: dp(16), dp(8)
+                size_hint_y: None
+                height: self.minimum_height  # required to size GridLayout
+                MDLabel:
+                    size_hint_x: 0.38
+                    #width: "250dp"
+                    padding: dp(32), dp(1)
+
+                    text: "Contraseña:"
+                    halign: "right"
+                    font_style: "H5"
+                
+                MDTextField:
+
+                    id: name_field
+                    size_hint_x: 0.7
+                    #width: "375dp"
+
+                    hint_text: "Contraseña actual"
+                    text: "CONTRASEÑAACTUAL"
+
+                    password: True
+                    password_mask: "X"
+
+                    mode: "rectangle"
+                
+                MDFloatingActionButton:
+                    size_hint_x: 0.1
+                    
+                    icon: "account-multiple-plus"
+                    type: "standard"
+
+                    on_release: root.OpenModal("Contraseña", "Repetir contraseña", "dialogPassword", "Cambiar contraseña")
+
+
+#####MODAL DE CONFIGURATION PAGE
+
+<ContentConfigurationPage>:
+    
+    orientation: "vertical"
+    spacing: "12dp"
+    size_hint_y: None
+    height: "120dp"
+
+    MDTextField:
+        id: inputOne
+        hint_text: root.inputOne
+        mode: "rectangle"
+
+
+    MDTextField:
+        id: inputTwo
+        hint_text: root.inputTwo
+        mode: "rectangle"
+
+
+<ForeignExchangePage>:
+    name: "ForeignExchangePage"
+                
+    MDBoxLayout:
+
+        padding: dp(1), dp(root.manager.parent.parent.ids.toolbar.height), dp(1), dp(root.manager.parent.parent.ids.toolbarbottom.height)
+        
+        MDGridLayout:
+            cols: 1
+            padding: dp(16), dp(8)
+                    
+            MDGridLayout:
+                cols: 1
+                padding: dp(1), dp(32)
+
+                size_hint_y: None
+                height: self.minimum_height  # required to size GridLayout
+
+                MDLabel:
+                    text: "Última actualización: 28-04-2024"
+                    halign: "center"
+                    font_style: "H4"
+
+            MDGridLayout:
+                cols: 3
+                spacing: dp(20)
+                padding: dp(16), dp(0), dp(16), dp(8) 
+                size_hint_y: None
+                height: self.minimum_height  # required to size GridLayout
+                MDLabel:
+                    size_hint_x: 0.38
+                    #width: "250dp"
+                    padding: dp(32), dp(1)
+
+                    text: "Dolar:"
+                    halign: "right"
+                    font_style: "H5"
+                
+                MDTextField:
+
+                    id: name_field
+                    size_hint_x: 0.7
+                    #width: "375dp"
+
+                    hint_text: "Tasa de dólares"
+                    text: root.inputDollar
+
+                    mode: "rectangle"
+                    readonly: True
+                
+                MDFloatingActionButton:
+                    size_hint_x: 0.1
+                    
+                    icon: "account-multiple-plus"
+                    type: "standard"
+
+                    on_release: root.ChangeForeignExchange("dolar")
+
+
+
+            MDGridLayout:
+                cols: 3
+                spacing: dp(20)
+                padding: dp(16), dp(8)
+                #padding: ["16dp", "16dp", "16dp", "16dp"]  if len(inputSupplierMenu.text) == 0 else ["16dp", "8dp", "16dp", "8dp"] 
+                size_hint_y: None
+                height: self.minimum_height  # required to size GridLayout
+                MDLabel:
+                    size_hint_x: 0.38
+                    #width: "250dp"
+                    padding: dp(32), dp(1)
+
+                    text: "Pesos:"
+                    halign: "right"
+                    font_style: "H5"
+                
+                MDTextField:
+
+                    id: inputSupplierMenu
+                    size_hint_x: 0.7
+
+                    hint_text: "Tasa de pesos"
+                    text: root.inputPeso
+
+                    
+                    mode: "rectangle"
+                    readonly: True
+
+                MDFloatingActionButton:
+                    size_hint_x: 0.1
+                    
+                    icon: "account-multiple-plus"
+                    type: "standard"
+
+                    on_release: root.ChangeForeignExchange("peso")
+
+
+            MDGridLayout:
+                cols: 3
+                spacing: dp(20)
+                padding: dp(16), dp(8)
+                size_hint_y: None
+                height: self.minimum_height  # required to size GridLayout
+                MDLabel:
+                    size_hint_x: 0.38
+                    #width: "250dp"
+                    padding: dp(32), dp(1)
+
+                    text: "Bolívar:"
+                    halign: "right"
+                    font_style: "H5"
+                
+                MDTextField:
+
+                    id: name_field
+                    size_hint_x: 0.7
+                    #width: "375dp"
+
+                    hint_text: "Tasa de bolívares"
+                    text: root.inputBolivar
+
+                    mode: "rectangle"
+                    readonly: True
+                
+                MDFloatingActionButton:
+                    size_hint_x: 0.1
+                    
+                    icon: "account-multiple-plus"
+                    type: "standard"
+
+                    on_release: root.ChangeForeignExchange("bolivar")
+
+
+#####MODAL DE CONFIGURATION PAGE
+
+<ContentForeignExchangePage>:
+    
+    orientation: "vertical"
+    spacing: "12dp"
+    size_hint_y: None
+    height: "120dp"
+
+    MDTextField:
+        id: inputOne
+        hint_text: root.inputOne
+        mode: "rectangle"
+
+
+    MDTextField:
+        id: inputTwo
+        hint_text: root.inputTwo
+        mode: "rectangle"
+
+<SalesHistoryPage>:
+    name: "SalesHistoryPage"
+
+    MDBoxLayout:
+        orientation: 'vertical'
+        size_hint: 1, 1
+        MDGridLayout:
+            cols: 1
+            padding: dp(16), dp(root.manager.parent.parent.ids.toolbar.height), dp(16), dp(root.manager.parent.parent.ids.toolbarbottom.height)
+                    
+            MDGridLayout:
+                cols: 3
+                spacing: dp(20)
+                padding: dp(16), dp(16), dp(16), dp(16)
+                size_hint_y: None
+                height: dp(root.manager.parent.parent.ids.toolbar.height)
+                MDTextField:
+                    id: ButtonMenuSearchingSalesHistory
+
+                    size_hint_x: None
+                    width: "100dp"
+
+                    text: "TODO"
+                    hint_text: "Tipo:"
+                    icon_right: "arrow-down"
+
+                    mode: "rectangle"
+                    readonly: True 
+                    focus: True
+
+                    on_focus: if self.focus: root.CallbackMenuSalesHistory(self)
+
+                MDTextField:
+                    id: SearchProduct
+                    hint_text: 'Buscar historial de venta'
+                    icon_right: "android"
+                    mode: "rectangle"
+
+                MDFloatingActionButton:
+                    id: ButtonSearchingSalesHistory
+
+                    width: "150dp"
+                    icon: "book-search"
+                    style: "standard"
+                    width: "100dp"
+                    
+            RecycleViewTable:
+                objecto: self
+                padding: dp(16), dp(root.manager.parent.parent.ids.toolbar.height / 2), dp(16), dp(root.manager.parent.parent.ids.toolbarbottom.height /2)
+                columnas: 5
+                list_table_labels: ["id_imagen", "id_cliente", "id_empleado", "id_monto", "id_fecha"]
+                list_table_data: ["imagen","cliente", "empleado", "monto", "fecha"]
+                #dictionaryPrincipal: ["_nombre", "_proveedor", "_cantidad", "_precio"]
+                modalData: 'ModalsDialog.ShowAlertDialog("self","¿Que desea realizar?","Por favor, elija algunas de las opciones presentadas.","Cancelar","Eliminar","Modificar",lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog.dismiss()),lambda x: ModalsDialog.ShowAlertDialogDelete("self","¿De verdad quiere eliminar este producto?","Si es así, adelante","Cancelar","Eliminar",lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog2.dismiss()),lambda x: print("cerrar")),lambda x: ModalsDialog.ChangePage("self","StorePageUpdate", "Almacen - Modificar"))'
+                test: 
+                    'for i in range(1,5): d = {f"dato{i}": [f"images/logo.jpg", f"dato{i}_cliente", f"dato{i}_empleado", f"dato{i}_monto", f"dato{i}_fecha"]};self.objecto.DictionaryDataset.update(d)'
+                id_table: "tableSalesHistory"
+
+# PAGINA DE ENCARGO
+<ChargePage>:
+    name: "ChargePage"
+
+    MDBoxLayout:
+
+        padding: dp(1), dp(root.manager.parent.parent.ids.toolbar.height), dp(1), dp(root.manager.parent.parent.ids.toolbarbottom.height)
+
+        MDGridLayout:
+            cols: 1
+                        
+            MDGridLayout:
+                cols: 5
+                spacing: dp(10)
+                padding: dp(16), dp(16), dp(16), dp(16)
+                size_hint_y: None
+                height: dp(root.manager.parent.parent.ids.toolbar.height)
+                MDTextField:
+                    id: ButtonMenuSearchingCharge
+
+                    size_hint_x: None
+                    width: "100dp"
+
+                    text: "TODO"
+                    hint_text: "Tipo:"
+                    icon_right: "arrow-down"
+
+                    mode: "rectangle"
+                    readonly: True 
+                    focus: True
+
+                    on_focus: if self.focus: root.CallbackMenuCharge(self)
+
+                MDTextField:
+                    id: SearchProduct
+                    hint_text: 'Buscar encargo'
+                    icon_right: "android"
+                    mode: "rectangle"
+
+                    size_hint_x: None
+                    width: "400dp"
+
+                MDFloatingActionButton:
+                    id: ButtonSearchingCharge
+
+                    icon: "book-search"
+                    type: "standard"
+
+                MDLabel:
+
+                MDFloatingActionButton:
+                    icon: "account-multiple-plus"
+                    type: "standard"
+
+            
+            RecycleViewTable:
+            
+                objecto: self
+                padding: dp(16), dp(root.manager.parent.parent.ids.toolbar.height / 2), dp(16), dp(root.manager.parent.parent.ids.toolbarbottom.height /2)
+                columnas: 5
+                list_table_labels: ["id_imagen", "id_id", "id_proveedor", "id_cantidad", "id_gasto"]
+                list_table_data: ["imagen","id", "proveedor", "cantidad", "gasto"]
+                #dictionaryPrincipal: ["_nombre", "_proveedor", "_cantidad", "_precio"]
+                modalData: 'ModalsDialog.ShowAlertDialog("self","¿Que desea realizar?","Por favor, elija algunas de las opciones presentadas.","Cancelar","Eliminar","Modificar",lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog.dismiss()),lambda x: ModalsDialog.ShowAlertDialogDelete("self","¿De verdad quiere eliminar este producto?","Si es así, adelante","Cancelar","Eliminar",lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog2.dismiss()),lambda x: print("cerrar")),lambda x: ModalsDialog.ChangePage("self","StorePageUpdate", "Almacen - Modificar"))'
+                test: 
+                    'for i in range(1,5): d = {f"dato{i}": [f"images/logo.jpg", f"dato{i}_id", f"dato{i}_proveedor", f"dato{i}_cantidad", f"dato{i}_gasto"]};self.objecto.DictionaryDataset.update(d)'
+                id_table: "tableCharge"
+
+<SupplierPage>:
+    name: "SupplierPage"
+
+    MDBoxLayout:
+
+        padding: dp(1), dp(root.manager.parent.parent.ids.toolbar.height), dp(1), dp(root.manager.parent.parent.ids.toolbarbottom.height)
+
+        MDGridLayout:
+            cols: 1
+             
+            #MDGridLayout:
+            #    cols: 1
+            #    padding: dp(8), dp(32), dp(8), dp(8)
+            #    size_hint_y: None
+            #    height: self.minimum_height
+
+
+            #    MDLabel:
+            #        text: "Proveedores"
+            #        halign: "center"
+            #        font_style: "H4"
+
+            MDGridLayout:
+                cols: 5
+                spacing: dp(10)
+                padding: dp(16), dp(16), dp(16), dp(16)
+                size_hint_y: None
+                height: dp(root.manager.parent.parent.ids.toolbar.height)
+                MDTextField:
+                    id: ButtonMenuSearchingSupplier
+
+                    size_hint_x: None
+                    width: "100dp"
+
+                    text: "TODO"
+                    hint_text: "Tipo:"
+                    icon_right: "arrow-down"
+
+                    mode: "rectangle"
+                    readonly: True 
+                    focus: True
+
+                    on_focus: if self.focus: root.CallbackMenuSupplier(self)
+
+                MDTextField:
+                    id: SearchSupplier
+                    hint_text: 'Buscar proveedor'
+                    icon_right: "android"
+                    mode: "rectangle"
+
+                    size_hint_x: None
+                    width: "400dp"
+
+                MDFloatingActionButton:
+                    id: ButtonSearchingSupplier
+
+                    icon: "book-search"
+                    type: "standard"
+
+                MDLabel:
+
+                MDFloatingActionButton:
+                    icon: "account-multiple-plus"
+                    type: "standard"
+
+                    on_release: root.ChangePageSupplierPage()
+
+                    
+            RecycleViewTable:
+
+                objecto: self
+                padding: dp(16), dp(root.manager.parent.parent.ids.toolbar.height / 2), dp(16), dp(root.manager.parent.parent.ids.toolbarbottom.height /2)
+                columnas: 5
+                list_table_labels: ["id_imagen", "id_nombre", "id_ubicacion", "id_rif", "id_telefono"]
+                list_table_data: ["imagen","nombre", "ubicacion", "rif", "telefono"]
+                #dictionaryPrincipal: ["_nombre", "_proveedor", "_cantidad", "_precio"]
+                modalData: 'ModalsDialog.ShowAlertDialog("self","¿Que desea realizar?","Por favor, elija algunas de las opciones presentadas.","Cancelar","Eliminar","Modificar",lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog.dismiss()),lambda x: ModalsDialog.ShowAlertDialogDelete("self","¿De verdad quiere eliminar este producto?","Si es así, adelante","Cancelar","Eliminar",lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog2.dismiss()),lambda x: print("cerrar")),lambda x: ModalsDialog.ChangePage("self","SupplierUpdatePage", "Proveedor - Modificar"))'
+                test: 
+                    'for i in range(1,5): d = {f"dato{i}": [f"images/logo.jpg", f"dato{i}_nombre", f"dato{i}_ubicacion", f"dato{i}_rif", f"dato{i}_telefono"]};self.objecto.DictionaryDataset.update(d)'
+                id_table: "tableSuppliers"
+
+
+<SupplierUpdatePage>:
+    name: "SupplierUpdatePage"
+                
+    MDBoxLayout:
+
+        padding: dp(1), dp(root.manager.parent.parent.ids.toolbar.height), dp(1), dp(root.manager.parent.parent.ids.toolbarbottom.height)
+        
+        MDScrollView:
+            MDBoxLayout:
+
+                orientation: 'horizontal'
+                size_hint: 1, 1
+                adaptive_height: True
+
+                MDGridLayout:
+                    cols: 1
+                    padding: dp(16), dp(8)
+                    size_hint_y: None
+                    height: self.minimum_height  # required to size GridLayout
+
+                            
+                    MDGridLayout:
+                        cols: 1
+                        padding: dp(1), dp(32)
+
+                        size_hint_y: None
+                        height: self.minimum_height  # required to size GridLayout
+
+                        MDLabel:
+                            text: "Cambiar proveedor"
+                            halign: "center"
+                            font_style: "H4"
+
+                    MDGridLayout:
+                        cols: 3
+                        spacing: dp(20)
+                        padding: dp(16), dp(0), dp(16), dp(8) 
+                        size_hint_y: None
+                        height: self.minimum_height  # required to size GridLayout
+                        MDLabel:
+                            size_hint_x: 0.38
+                            #width: "250dp"
+                            padding: dp(32), dp(1)
+
+                            text: "Nombre:"
+                            halign: "right"
+                            font_style: "H5"
+                        
+                        MDTextField:
+
+                            id: name_field
+                            size_hint_x: 0.7
+                            #width: "375dp"
+
+                            hint_text: "Nombre del proveedor:"
+
+                            mode: "rectangle"
+                        
+                        MDLabel:
+                            size_hint_x: 0.1
+
+                    MDGridLayout:
+                        cols: 3
+                        spacing: dp(20)
+                        padding: dp(16), dp(8)
+                        #padding: ["16dp", "16dp", "16dp", "16dp"]  if len(inputSupplierMenu.text) == 0 else ["16dp", "8dp", "16dp", "8dp"] 
+                        size_hint_y: None
+                        height: self.minimum_height  # required to size GridLayout
+                        MDLabel:
+                            size_hint_x: 0.38
+                            #width: "250dp"
+                            padding: dp(32), dp(1)
+
+                            text: "Ubicación:"
+                            halign: "right"
+                            font_style: "H5"
+                        
+                        MDTextField:
+
+                            id: inputSupplierMenu
+                            size_hint_x: 0.7
+                            #width: "375dp"
+                            text: ""
+                            hint_text: "Ubicación del proveedor:"
+                            
+                            mode: "rectangle"
+                        
+                        MDLabel:
+                            size_hint_x: 0.1
+                    MDGridLayout:
+                        cols: 3
+                        spacing: dp(20)
+                        padding: dp(16), dp(8)
+                        size_hint_y: None
+                        height: self.minimum_height  # required to size GridLayout
+                        MDLabel:
+                            size_hint_x: 0.38
+                            #width: "250dp"
+                            padding: dp(32), dp(1)
+
+                            text: "RIF:"
+                            halign: "right"
+                            font_style: "H5"
+                        
+                        MDTextField:
+
+                            id: name_field
+                            size_hint_x: 0.7
+
+                            hint_text: "RIF del proveedor"
+
+                            mode: "rectangle"
+                        
+                        MDLabel:
+                            size_hint_x: 0.1
+
+                    MDGridLayout:
+                        cols: 3
+                        spacing: dp(20)
+                        padding: dp(16), dp(8)
+                        size_hint_y: None
+                        height: self.minimum_height  # required to size GridLayout
+                        MDLabel:
+                            size_hint_x: 0.38
+                            #width: "250dp"
+                            padding: dp(32), dp(1)
+
+                            text: "Teléfono:"
+                            halign: "right"
+                            font_style: "H5"
+                        
+                        MDTextField:
+
+                            id: name_field
+                            size_hint_x: 0.7
+
+                            hint_text: "Teléfono del proveedor"
+
+                            mode: "rectangle"
+                        
+                        MDLabel:
+                            size_hint_x: 0.1
+
+                    MDGridLayout:
+                        cols: 2
+                        spacing: dp(20)
+                        padding: dp(16), dp(8)
+                        size_hint_y: None
+                        
+                        height: self.minimum_height  # required to size GridLayout
+
+                        MDRectangleFlatButton:
+                            size_hint_x: 0.5
+                            text: "Cancelar"
+                            line_color: "red"
+                            text_color: "red"
+
+                        MDRaisedButton:
+                            size_hint_x: 0.5
+                            text: "Modificar"
+                            text_color: "white"
+                            line_color: "blue"
+                            md_bg_color: "blue"
+
+<SupplierAddPage>:
+    name: "SupplierAddPage"
+                
+    MDBoxLayout:
+
+        padding: dp(1), dp(root.manager.parent.parent.ids.toolbar.height), dp(1), dp(root.manager.parent.parent.ids.toolbarbottom.height)
+        
+        MDScrollView:
+            MDBoxLayout:
+
+                orientation: 'horizontal'
+                size_hint: 1, 1
+                adaptive_height: True
+
+                MDGridLayout:
+                    cols: 1
+                    padding: dp(16), dp(8)
+                    size_hint_y: None
+                    height: self.minimum_height  # required to size GridLayout
+
+                            
+                    MDGridLayout:
+                        cols: 1
+                        padding: dp(1), dp(32)
+
+                        size_hint_y: None
+                        height: self.minimum_height  # required to size GridLayout
+
+                        MDLabel:
+                            text: "Añadir proveedor"
+                            halign: "center"
+                            font_style: "H4"
+
+                    MDGridLayout:
+                        cols: 3
+                        spacing: dp(20)
+                        padding: dp(16), dp(0), dp(16), dp(8) 
+                        size_hint_y: None
+                        height: self.minimum_height  # required to size GridLayout
+                        MDLabel:
+                            size_hint_x: 0.38
+                            #width: "250dp"
+                            padding: dp(32), dp(1)
+
+                            text: "Nombre:"
+                            halign: "right"
+                            font_style: "H5"
+                        
+                        MDTextField:
+
+                            id: name_field
+                            size_hint_x: 0.7
+                            #width: "375dp"
+
+                            hint_text: "Nombre del proveedor:"
+
+                            mode: "rectangle"
+                            required: True
+                            line_color_normal: "red" if len(self.text) == 0 else "blue"
+                        
+                        MDLabel:
+                            size_hint_x: 0.1
+
+                    MDGridLayout:
+                        cols: 3
+                        spacing: dp(20)
+                        padding: dp(16), dp(8)
+                        #padding: ["16dp", "16dp", "16dp", "16dp"]  if len(inputSupplierMenu.text) == 0 else ["16dp", "8dp", "16dp", "8dp"] 
+                        size_hint_y: None
+                        height: self.minimum_height  # required to size GridLayout
+                        MDLabel:
+                            size_hint_x: 0.38
+                            #width: "250dp"
+                            padding: dp(32), dp(1)
+
+                            text: "Ubicación:"
+                            halign: "right"
+                            font_style: "H5"
+
+                        
+                        MDTextField:
+
+                            id: inputSupplierMenu
+                            size_hint_x: 0.7
+                            #width: "375dp"
+                            text: ""
+                            hint_text: "Ubicación del proveedor:"
+                            
+                            mode: "rectangle"
+                            required: True
+                            line_color_normal: "red" if len(self.text) == 0 else "blue"
+                        
+                        MDLabel:
+                            size_hint_x: 0.1
+                    MDGridLayout:
+                        cols: 3
+                        spacing: dp(20)
+                        padding: dp(16), dp(8)
+                        size_hint_y: None
+                        height: self.minimum_height  # required to size GridLayout
+                        MDLabel:
+                            size_hint_x: 0.38
+                            #width: "250dp"
+                            padding: dp(32), dp(1)
+
+                            text: "RIF:"
+                            halign: "right"
+                            font_style: "H5"
+                        
+                        MDTextField:
+
+                            id: name_field
+                            size_hint_x: 0.7
+
+                            hint_text: "RIF del proveedor"
+
+                            mode: "rectangle"
+                            required: True
+                            line_color_normal: "red" if len(self.text) == 0 else "blue"
+                        
+                        MDLabel:
+                            size_hint_x: 0.1
+
+                    MDGridLayout:
+                        cols: 3
+                        spacing: dp(20)
+                        padding: dp(16), dp(8)
+                        size_hint_y: None
+                        height: self.minimum_height  # required to size GridLayout
+                        MDLabel:
+                            size_hint_x: 0.38
+                            #width: "250dp"
+                            padding: dp(32), dp(1)
+
+                            text: "Teléfono:"
+                            halign: "right"
+                            font_style: "H5"
+                        
+                        MDTextField:
+
+                            id: name_field
+                            size_hint_x: 0.7
+
+                            hint_text: "Teléfono del proveedor"
+                            required: True
+                            line_color_normal: "red" if len(self.text) == 0 else "blue"
+
+                            mode: "rectangle"
+                        
+                        MDLabel:
+                            size_hint_x: 0.1
+
+                    MDGridLayout:
+                        cols: 2
+                        spacing: dp(20)
+                        padding: dp(16), dp(8)
+                        size_hint_y: None
+                        
+                        height: self.minimum_height  # required to size GridLayout
+
+                        MDRectangleFlatButton:
+                            size_hint_x: 0.5
+                            text: "Cancelar"
+                            line_color: "red"
+                            text_color: "red"
+
+                        MDRaisedButton:
+                            size_hint_x: 0.5
+                            text: "Agregar"
+                            text_color: "white"
+                            line_color: "blue"
+                            md_bg_color: "blue"
+
+
+
+<ChargePage>:
+    name: "ChargePage"
+
+    MDBoxLayout:
+
+        padding: dp(1), dp(root.manager.parent.parent.ids.toolbar.height), dp(1), dp(root.manager.parent.parent.ids.toolbarbottom.height)
+
+        MDGridLayout:
+            cols: 1
+                        
+            MDGridLayout:
+                cols: 5
+                spacing: dp(10)
+                padding: dp(16), dp(16), dp(16), dp(16)
+                size_hint_y: None
+                height: dp(root.manager.parent.parent.ids.toolbar.height)
+                MDTextField:
+                    id: ButtonMenuSearchingCharge
+
+                    size_hint_x: None
+                    width: "100dp"
+
+                    text: "TODO"
+                    hint_text: "Tipo:"
+                    icon_right: "arrow-down"
+
+                    mode: "rectangle"
+                    readonly: True 
+                    focus: True
+
+                    on_focus: if self.focus: root.CallbackMenuCharge(self)
+
+                MDTextField:
+                    id: SearchProduct
+                    hint_text: 'Buscar encargo'
+                    icon_right: "android"
+                    mode: "rectangle"
+
+                    size_hint_x: None
+                    width: "400dp"
+
+                MDFloatingActionButton:
+                    id: ButtonSearchingCharge
+
+                    icon: "book-search"
+                    type: "standard"
+
+                MDLabel:
+
+                MDFloatingActionButton:
+                    icon: "account-multiple-plus"
+                    type: "standard"
+
+            
+            RecycleViewTable:
+            
+                objecto: self
+                padding: dp(16), dp(root.manager.parent.parent.ids.toolbar.height / 2), dp(16), dp(root.manager.parent.parent.ids.toolbarbottom.height /2)
+                columnas: 5
+                list_table_labels: ["id_imagen", "id_id", "id_proveedor", "id_cantidad", "id_gasto"]
+                list_table_data: ["imagen","id", "proveedor", "cantidad", "gasto"]
+                #dictionaryPrincipal: ["_nombre", "_proveedor", "_cantidad", "_precio"]
+                modalData: 'ModalsDialog.ShowAlertDialog("self","¿Que desea realizar?","Por favor, elija algunas de las opciones presentadas.","Cancelar","Eliminar","Modificar",lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog.dismiss()),lambda x: ModalsDialog.ShowAlertDialogDelete("self","¿De verdad quiere eliminar este producto?","Si es así, adelante","Cancelar","Eliminar",lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog2.dismiss()),lambda x: print("cerrar")),lambda x: ModalsDialog.ChangePage("self","StorePageUpdate", "Almacen - Modificar"))'
+                test: 
+                    'for i in range(1,5): d = {f"dato{i}": [f"images/logo.jpg", f"dato{i}_id", f"dato{i}_proveedor", f"dato{i}_cantidad", f"dato{i}_gasto"]};self.objecto.DictionaryDataset.update(d)'
+                id_table: "tableCharge"
+
+
+<MoneyHistory>:
+    name: "MoneyHistory"
+    
+    MDBoxLayout:
+        orientation: 'vertical'
+        size_hint: 1, 1
+        
+        
+        MDGridLayout:
+            cols:1
+            padding: dp(16), dp(root.manager.parent.parent.ids.toolbar.height), dp(16), dp(root.manager.parent.parent.ids.toolbarbottom.height)
+            
+            MDGridLayout:
+                cols: 2
+                                          
+                MDScrollView:
+
+                    MDBoxLayout:
+
+                        orientation: 'horizontal'
+                        size_hint: 1, 1
+                        adaptive_height: True
+                        MDGridLayout:
+                            cols: 1
+                            padding: dp(16), dp(8)
+                            size_hint_y: None
+                            height: self.minimum_height  # required to size GridLayout
+
+                            MDGridLayout:
+                                cols: 1
+                                padding: dp(1), dp(32), dp(1), dp(48)
+
+                                size_hint_y: None
+                                height: self.minimum_height  # required to size GridLayout
+
+                                MDLabel:
+                                    id: MoneyHistoryTitle
+                                    text: "MES"
+                                    halign: "center"
+                                    font_style: "H4"
+                                
+
+                            MDGridLayout:
+                                cols: 2
+                                spacing: dp(20)
+                                padding: dp(16), dp(18)
+
+                                size_hint_y: None
+                                height: self.minimum_height  # required to size GridLayout
+                                MDLabel:
+
+                                    size_hint_x: 0.4
+                                    text: "Ventas:"
+                                    halign: "left"
+                                    font_style: "H6"
+                                    #md_bg_color: "red"
+
+                                MDLabel:
+
+                                    id: LabelSalesProducts
+                                    size_hint_x: 0.4
+
+                                    halign: "center"
+
+                                    text: "-XXX$"
+                                    mode: "rectangle"
+
+                            MDGridLayout:
+                                cols: 2
+                                spacing: dp(20)
+                                padding: dp(16), dp(18)
+
+                                size_hint_y: None
+                                height: self.minimum_height  # required to size GridLayout
+                                MDLabel:
+
+                                    size_hint_x: 0.4
+                                    text: "Encargos:"
+                                    halign: "left"
+                                    font_style: "H6"
+                                    #md_bg_color: "red"
+
+                                MDLabel:
+                                
+                                    id: LabelChargeProducts
+                                    size_hint_x: 0.4
+
+                                    halign: "center"
+
+                                    text: "-XXX$"
+                                    mode: "rectangle"
+
+                            MDGridLayout:
+                                cols: 2
+                                spacing: dp(20)
+                                padding: dp(16), dp(18)
+
+                                size_hint_y: None
+                                height: self.minimum_height  # required to size GridLayout
+                                MDLabel:
+                                    size_hint_x: 0.4
+                                MDLabel:
+
+                                    id: LabelTotalMoney
+                                    size_hint_x: 0.4
+
+                                    halign: "center"
+                                    underline: True
+
+                                    text: "XXX$"
+                                    mode: "rectangle"
+
+                MDBoxLayout:
+                    orientation: 'vertical'
+                    size_hint: 1, 1
+                    padding: dp(1), dp(16), dp(1), dp(1)
+                    #spacing: dp(-60)
+
+                    MDGridLayout:
+                        cols:1
+
+                        
+                        AnchorLayout:
+                            anchor_x:'center'
+                            anchor_y:'top'
+
+                            MDRaisedButton:
+                                text: "Elegir fecha"
+                                font_style: "H5"
+
+                                on_release: app.datePicker.show_date_picker()  
+
+                           
+
+                        AnchorLayout:
+                            anchor_x:'center'
+                            anchor_y:'center'
+
+                            MDRaisedButton:
+                                id: buttonChangeTypeMoneyHistory
+                                text: "Cambiar a: TOTAL"
+                                font_style: "H5"
+                                on_release: root.ChangeTypeHistoryMoney()  
+
+
+
+            MDScrollView:
+                MDGridLayout:
+                    cols: 1
+                    
+                    #MDGridLayout:
+                    #    cols: 1
+                    #    padding: dp(8), dp(32), dp(8), dp(8)
+                    size_hint_y: None
+                    height: self.minimum_height
+
+
+                    #    MDLabel:
+                    #        text: "Proveedores"
+                    #        halign: "center"
+                    #        font_style: "H4"
+                    MDGridLayout:
+                        cols: 5
+                        spacing: dp(10)
+                        padding: dp(16), dp(1)
+                        size_hint_y: None
+                        height: dp(root.manager.parent.parent.ids.toolbar.height)
+                        MDTextField:
+                            id: ButtonMenuSearchingMoneyHistory
+
+                            size_hint_x: None
+                            width: "100dp"
+
+                            text: "TODO"
+                            hint_text: "Tipo:"
+                            icon_right: "arrow-down"
+
+                            mode: "rectangle"
+                            readonly: True 
+                            focus: True
+
+                            #on_focus: if self.focus: root.CallbackMenuSupplier(self)
+
+                        MDTextField:
+                            id: SearchMoneyHistory
+                            hint_text: 'Buscar historial de dinero'
+                            icon_right: "android"
+                            mode: "rectangle"
+
+                            size_hint_x: None
+                            width: "400dp"
+
+                        MDFloatingActionButton:
+                            id: ButtonSearchingMoneyHistory
+
+                            icon: "book-search"
+                            type: "standard"
+
+                        MDLabel:
+
+                        MDFloatingActionButton:
+                            icon: "account-multiple-plus"
+                            type: "standard"
+
+                    
+                    RecycleViewTable:
+                    
+                        size_hint_y: None
+                        height: dp(400)
+
+                        objecto: self
+                        padding: dp(16), dp(16), dp(16), dp(root.manager.parent.parent.ids.toolbarbottom.height /2)
+                        columnas: 5
+                        list_table_labels: ["id_imagen", "id_dado", "id_fecha", "id_monto"]
+                        list_table_data: ["imagen","dado por", "fecha", "monto"]
+                        #dictionaryPrincipal: ["_nombre", "_proveedor", "_cantidad", "_precio"]
+                        modalData: 'ModalsDialog.ShowAlertDialog("self","¿Que desea realizar?","Por favor, elija algunas de las opciones presentadas.","Cancelar","Eliminar","Modificar",lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog.dismiss()),lambda x: ModalsDialog.ShowAlertDialogDelete("self","¿De verdad quiere eliminar este producto?","Si es así, adelante","Cancelar","Eliminar",lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog2.dismiss()),lambda x: print("cerrar")),lambda x: ModalsDialog.ChangePage("self","StorePageUpdate", "Almacen - Modificar"))'
+                        test: 
+                            'for i in range(1,5): d = {f"dato{i}": [f"images/logo.jpg", f"dato{i}_dado", f"dato{i}_fecha", f"dato{i}_monto"]};self.objecto.DictionaryDataset.update(d)'
+                        id_table: "tableMoneyHistory"
+
+<LoanPage>:
+
+    name: "LoanPage"
+    
+    MDBoxLayout:
+        orientation: 'vertical'
+        size_hint: 1, 1
+        
+        
+        MDGridLayout:
+            cols:1
+            padding: dp(16), dp(root.manager.parent.parent.ids.toolbar.height), dp(16), dp(root.manager.parent.parent.ids.toolbarbottom.height)
+            
+            MDGridLayout:
+                cols: 2
+                                          
+                MDScrollView:
+
+                    MDBoxLayout:
+
+                        orientation: 'horizontal'
+                        size_hint: 1, 1
+                        adaptive_height: True
+                        MDGridLayout:
+                            cols: 1
+                            padding: dp(16), dp(8)
+                            size_hint_y: None
+                            height: self.minimum_height  # required to size GridLayout
+
+                            MDGridLayout:
+                                cols: 1
+                                padding: dp(1), dp(32), dp(1), dp(48)
+
+                                size_hint_y: None
+                                height: self.minimum_height  # required to size GridLayout
+
+                                MDLabel:
+                                    id: MoneyHistoryTitle
+                                    text: "MES"
+                                    halign: "center"
+                                    font_style: "H4"
+
+                            
+                            MDGridLayout:
+                                id: gridLayoutLoanItems
+                                cols: 1
+
+                                size_hint_y: None
+                                height: self.minimum_height  # required to size GridLayout
+                                
+                                #AQUI APARECERAN OJO
+                MDBoxLayout:
+                    orientation: 'vertical'
+                    size_hint: 1, 1
+                    padding: dp(1), dp(16), dp(1), dp(1)
+                    #spacing: dp(-60)
+
+                    MDGridLayout:
+                        cols:1
+
+                        
+                        AnchorLayout:
+                            anchor_x:'center'
+                            anchor_y:'top'
+
+                            MDRaisedButton:
+                                text: "Elegir fecha"
+                                font_style: "H5"
+
+                                on_release: app.datePicker.show_date_picker()  
+
+                           
+
+                        AnchorLayout:
+                            anchor_x:'center'
+                            anchor_y:'center'
+
+                            MDRaisedButton:
+                                id: buttonChangeTypeMoneyHistory
+                                text: "Cambiar a: TOTAL"
+                                font_style: "H5"
+                                on_release: root.ChangeItemsGrid('total') if self.text == 'Cambiar a: TOTAL' else root.ChangeItemsGrid('mes')
+
+
+
+            MDScrollView:
+                MDGridLayout:
+                    cols: 1
+                    
+                    #MDGridLayout:
+                    #    cols: 1
+                    #    padding: dp(8), dp(32), dp(8), dp(8)
+                    size_hint_y: None
+                    height: self.minimum_height
+
+
+                    #    MDLabel:
+                    #        text: "Proveedores"
+                    #        halign: "center"
+                    #        font_style: "H4"
+                    MDGridLayout:
+                        cols: 5
+                        spacing: dp(10)
+                        padding: dp(16), dp(1)
+                        size_hint_y: None
+                        height: dp(root.manager.parent.parent.ids.toolbar.height)
+                        MDTextField:
+                            id: ButtonMenuSearchingMoneyHistory
+
+                            size_hint_x: None
+                            width: "100dp"
+
+                            text: "TODO"
+                            hint_text: "Tipo:"
+                            icon_right: "arrow-down"
+
+                            mode: "rectangle"
+                            readonly: True 
+                            focus: True
+
+                            #on_focus: if self.focus: root.CallbackMenuSupplier(self)
+
+                        MDTextField:
+                            id: SearchMoneyHistory
+                            hint_text: 'Buscar historial de dinero'
+                            icon_right: "android"
+                            mode: "rectangle"
+
+                            size_hint_x: None
+                            width: "400dp"
+
+                        MDFloatingActionButton:
+                            id: ButtonSearchingMoneyHistory
+
+                            icon: "book-search"
+                            type: "standard"
+
+                        MDLabel:
+
+                        MDFloatingActionButton:
+                            icon: "account-multiple-plus"
+                            type: "standard"
+
+                            on_release: root.ChangePageLoanPage()
+
+                    
+                    RecycleViewTable:
+                    
+                        size_hint_y: None
+                        height: dp(400)
+
+                        objecto: self
+                        padding: dp(16), dp(16), dp(16), dp(root.manager.parent.parent.ids.toolbarbottom.height /2)
+                        columnas: 5
+                        list_table_labels: ["id_imagen", "id_dado", "id_fecha", "id_monto"]
+                        list_table_data: ["imagen","dado por", "fecha", "monto"]
+                        #dictionaryPrincipal: ["_nombre", "_proveedor", "_cantidad", "_precio"]
+                        modalData: 'ModalsDialog.ShowAlertDialog("self","¿Que desea realizar?","Por favor, elija algunas de las opciones presentadas.","Cancelar","Eliminar","Modificar",lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog.dismiss()),lambda x: ModalsDialog.ShowAlertDialogDelete("self","¿De verdad quiere eliminar este producto?","Si es así, adelante","Cancelar","Eliminar",lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog2.dismiss()),lambda x: print("cerrar")),lambda x: ModalsDialog.ChangePage("self","LoanUpdatePage", "Prestamo - Modificar"))'
+                        test: 
+                            'for i in range(1,5): d = {f"dato{i}": [f"images/logo.jpg", f"dato{i}_dado", f"dato{i}_fecha", f"dato{i}_monto"]};self.objecto.DictionaryDataset.update(d)'
+                        id_table: "tableLoan"
+
+
+<LoanUpdatePage>:
+    name: "LoanUpdatePage"
+                
+    MDBoxLayout:
+
+        padding: dp(1), dp(root.manager.parent.parent.ids.toolbar.height), dp(1), dp(root.manager.parent.parent.ids.toolbarbottom.height)
+        
+        MDScrollView:
+            MDBoxLayout:
+
+                orientation: 'horizontal'
+                size_hint: 1, 1
+                adaptive_height: True
+
+                MDGridLayout:
+                    cols: 1
+                    padding: dp(16), dp(8)
+                    size_hint_y: None
+                    height: self.minimum_height  # required to size GridLayout
+
+                            
+                    MDGridLayout:
+                        cols: 1
+                        padding: dp(1), dp(32)
+
+                        size_hint_y: None
+                        height: self.minimum_height  # required to size GridLayout
+
+                        MDLabel:
+                            text: "Cambiar Prestamo"
+                            halign: "center"
+                            font_style: "H4"
+
+                    MDGridLayout:
+                        cols: 3
+                        spacing: dp(20)
+                        padding: dp(16), dp(0), dp(16), dp(8) 
+                        size_hint_y: None
+                        height: self.minimum_height  # required to size GridLayout
+                        MDLabel:
+                            size_hint_x: 0.38
+                            #width: "250dp"
+                            padding: dp(32), dp(1)
+
+                            text: "Dado por:"
+                            halign: "right"
+                            font_style: "H5"
+                        
+                        MDTextField:
+
+                            id: name_field
+                            size_hint_x: 0.7
+                            #width: "375dp"
+
+                            hint_text: "Dado por el empleado:"
+
+                            mode: "rectangle"
+                        
+                        MDLabel:
+                            size_hint_x: 0.1
+
+                    MDGridLayout:
+                        cols: 3
+                        spacing: dp(20)
+                        padding: dp(16), dp(8)
+                        #padding: ["16dp", "16dp", "16dp", "16dp"]  if len(inputSupplierMenu.text) == 0 else ["16dp", "8dp", "16dp", "8dp"] 
+                        size_hint_y: None
+                        height: self.minimum_height  # required to size GridLayout
+                        MDLabel:
+                            size_hint_x: 0.38
+                            #width: "250dp"
+                            padding: dp(32), dp(1)
+
+                            text: "Fecha:"
+                            halign: "right"
+                            font_style: "H5"
+                        
+                        MDTextField:
+
+                            id: inputSupplierMenu
+                            size_hint_x: 0.7
+                            #width: "375dp"
+                            text: ""
+                            hint_text: "Fecha realizada:"
+                            
+                            mode: "rectangle"
+
+                            on_focus: if self.focus: app.datePicker.show_date_picker() 
+                        
+                        MDLabel:
+                            size_hint_x: 0.1
+                    MDGridLayout:
+                        cols: 3
+                        spacing: dp(20)
+                        padding: dp(16), dp(8)
+                        size_hint_y: None
+                        height: self.minimum_height  # required to size GridLayout
+                        MDLabel:
+                            size_hint_x: 0.38
+                            #width: "250dp"
+                            padding: dp(32), dp(1)
+
+                            text: "Monto:"
+                            halign: "right"
+                            font_style: "H5"
+                        
+                        MDTextField:
+
+                            id: name_field
+                            size_hint_x: 0.7
+
+                            hint_text: "Monto del prestamo"
+
+                            mode: "rectangle"
+                        
+                        MDLabel:
+                            size_hint_x: 0.1
+
+                    MDGridLayout:
+                        cols: 2
+                        spacing: dp(20)
+                        padding: dp(16), dp(8)
+                        size_hint_y: None
+                        
+                        height: self.minimum_height  # required to size GridLayout
+
+                        MDRectangleFlatButton:
+                            size_hint_x: 0.5
+                            text: "Cancelar"
+                            line_color: "red"
+                            text_color: "red"
+
+                        MDRaisedButton:
+                            size_hint_x: 0.5
+                            text: "Modificar"
+                            text_color: "white"
+                            line_color: "blue"
+                            md_bg_color: "blue"
+
+
+<LoanAddPage>:
+    name: "LoanAddPage"
+                
+    MDBoxLayout:
+
+        padding: dp(1), dp(root.manager.parent.parent.ids.toolbar.height), dp(1), dp(root.manager.parent.parent.ids.toolbarbottom.height)
+        
+        MDScrollView:
+            MDBoxLayout:
+
+                orientation: 'horizontal'
+                size_hint: 1, 1
+                adaptive_height: True
+
+                MDGridLayout:
+                    cols: 1
+                    padding: dp(16), dp(8)
+                    size_hint_y: None
+                    height: self.minimum_height  # required to size GridLayout
+
+                            
+                    MDGridLayout:
+                        cols: 1
+                        padding: dp(1), dp(32)
+
+                        size_hint_y: None
+                        height: self.minimum_height  # required to size GridLayout
+
+                        MDLabel:
+                            text: "Cambiar Prestamo"
+                            halign: "center"
+                            font_style: "H4"
+
+                    MDGridLayout:
+                        cols: 3
+                        spacing: dp(20)
+                        padding: dp(16), dp(0), dp(16), dp(8) 
+                        size_hint_y: None
+                        height: self.minimum_height  # required to size GridLayout
+                        MDLabel:
+                            size_hint_x: 0.38
+                            #width: "250dp"
+                            padding: dp(32), dp(1)
+
+                            text: "Dado por:"
+                            halign: "right"
+                            font_style: "H5"
+                        
+                        MDTextField:
+
+                            id: name_field
+                            size_hint_x: 0.7
+                            #width: "375dp"
+
+                            hint_text: "Dado por el empleado:"
+                            required: True
+                            line_color_normal: "red" if len(self.text) == 0 else "blue"
+
+
+                            mode: "rectangle"
+                        
+                        MDLabel:
+                            size_hint_x: 0.1
+
+                    MDGridLayout:
+                        cols: 3
+                        spacing: dp(20)
+                        padding: dp(16), dp(8)
+                        #padding: ["16dp", "16dp", "16dp", "16dp"]  if len(inputSupplierMenu.text) == 0 else ["16dp", "8dp", "16dp", "8dp"] 
+                        size_hint_y: None
+                        height: self.minimum_height  # required to size GridLayout
+                        MDLabel:
+                            size_hint_x: 0.38
+                            #width: "250dp"
+                            padding: dp(32), dp(1)
+
+                            text: "Fecha:"
+                            halign: "right"
+                            font_style: "H5"
+                        
+                        MDTextField:
+
+                            id: inputSupplierMenu
+                            size_hint_x: 0.7
+                            #width: "375dp"
+                            text: ""
+                            hint_text: "Fecha realizada:"
+
+                            required: True
+                            line_color_normal: "red" if len(self.text) == 0 else "blue"
+
+                            
+                            mode: "rectangle"
+
+                            on_focus: if self.focus: app.datePicker.show_date_picker() 
+                        
+                        MDLabel:
+                            size_hint_x: 0.1
+                    MDGridLayout:
+                        cols: 3
+                        spacing: dp(20)
+                        padding: dp(16), dp(8)
+                        size_hint_y: None
+                        height: self.minimum_height  # required to size GridLayout
+                        MDLabel:
+                            size_hint_x: 0.38
+                            #width: "250dp"
+                            padding: dp(32), dp(1)
+
+                            text: "Monto:"
+                            halign: "right"
+                            font_style: "H5"
+                        
+                        MDTextField:
+
+                            id: name_field
+                            size_hint_x: 0.7
+
+                            hint_text: "Monto del prestamo"
+
+                            required: True
+                            line_color_normal: "red" if len(self.text) == 0 else "blue"
+
+
+                            mode: "rectangle"
+                        
+                        MDLabel:
+                            size_hint_x: 0.1
+
+                    MDGridLayout:
+                        cols: 2
+                        spacing: dp(20)
+                        padding: dp(16), dp(8)
+                        size_hint_y: None
+                        
+                        height: self.minimum_height  # required to size GridLayout
+
+                        MDRectangleFlatButton:
+                            size_hint_x: 0.5
+                            text: "Cancelar"
+                            line_color: "red"
+                            text_color: "red"
+
+                        MDRaisedButton:
+                            size_hint_x: 0.5
+                            text: "Agregar"
+                            text_color: "white"
+                            line_color: "blue"
+                            md_bg_color: "blue"
+
+
+<SignIn>:
+    name: "SignIn"
+
+
+    MDBoxLayout:
+        orientation: 'horizontal'
+        padding: dp(100)
+
+        MDGridLayout:
+            cols: 1
+
+            MDLabel:
+                text: 'INICIAR SESION'
+                font_style: "H3"
+                halign: 'center'
+                adaptive_height: True
+            
+            MDGridLayout:
+                cols: 1
+                padding: dp(50)
+                spacing: dp(20)
+                adaptive_height: True
+
+                MDTextField:
+                    icon_left: "key-variant"
+                    hint_text: 'Escribir nombre de usuario'
+                    mode: 'rectangle'
+
+                MDTextField:
+                    icon_left: "key-variant"
+                    hint_text: 'Escribir contraseña'
+                    mode: 'rectangle'
+                    password: True
+            
+            MDGridLayout:
+                cols: 3
+                spacing: dp(20)
+                adaptive_height: True
+                padding: dp(16), dp(32), dp(16), dp(8)
+
+                MDRectangleFlatButton:
+                    text: 'Crear cuenta'
+                    font_style: 'H5'
+                    size_hint_x: 0.4
+
+                    on_release: root.ChangePageToSignOn()
+
+                MDLabel:
+                    size_hint_x: 0.1
+
+                MDRaisedButton:
+                    text: 'Enviar'
+                    font_style: 'H5'
+                    size_hint_x: 0.4
+
+                    on_release: root.OpenSystem('self')
+
+
+<SignOn>:
+    name: "SignOn"
+
+    MDScrollView:
+        MDBoxLayout:
+            adaptive_height: True
+            orientation: 'horizontal'
+            padding: dp(100)
+
+            MDGridLayout:
+                cols: 1
+                adaptive_height: True
+
+                MDLabel:
+                    text: 'REGISTRAR CUENTA'
+                    font_style: "H3"
+                    halign: 'center'
+                    adaptive_height: True
+                
+                MDGridLayout:
+                    cols: 1
+                    padding: dp(50)
+                    spacing: dp(20)
+                    adaptive_height: True
+
+                    MDTextField:
+                        icon_left: "key-variant"
+                        hint_text: 'Escribir nombre de usuario'
+                        mode: 'rectangle'
+
+                    MDTextField:
+                        icon_left: "key-variant"
+                        hint_text: 'Escribir correo electrónico'
+                        mode: 'rectangle'
+                        validator: "email"
+
+                    MDTextField:
+                        icon_left: "key-variant"
+                        hint_text: 'Escribir contraseña'
+                        mode: 'rectangle'
+                        password: True
+                    
+                    MDTextField:
+                        icon_left: "key-variant"
+                        hint_text: 'Repetir contraseña'
+                        mode: 'rectangle'
+                        password: True
+                
+                MDGridLayout:
+                    cols: 3
+                    spacing: dp(20)
+                    adaptive_height: True
+                    padding: dp(16), dp(32), dp(16), dp(8)
+
+                    MDRectangleFlatButton:
+                        text: 'Iniciar sesión'
+                        font_style: 'H5'
+                        size_hint_x: 0.4
+
+                        on_release: root.ChangePageToSignIn()
+
+                    MDLabel:
+                        size_hint_x: 0.1
+
+                    MDRaisedButton:
+                        text: 'Enviar'
+                        font_style: 'H5'
+                        size_hint_x: 0.4
+
+                        #on_release: root.OpenSystem('self')
+
+
+
 

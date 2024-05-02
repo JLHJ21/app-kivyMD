@@ -2,6 +2,7 @@
 global_variable_self = None
 
 class GlobalVariables():
+
     def GetGlobalSelf(self):
         
         global global_variable_self

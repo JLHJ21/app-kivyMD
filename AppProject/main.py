@@ -5,6 +5,7 @@
 #Carga la variable KV, que contiene informacion .kv
 from kivy.lang import Builder
 from kivy.metrics import dp
+from kivy.clock import Clock
 from kivy.properties import ObjectProperty, StringProperty
 import os
 
@@ -25,6 +26,11 @@ from kivymd.uix.scrollview import MDScrollView
 from kivymd.toast import toast
 from kivymd.uix.filemanager import MDFileManager
 
+from kivymd.uix.gridlayout import MDGridLayout
+from kivymd.uix.label import MDLabel
+
+from kivymd.uix.pickers import MDDatePicker
+
 
 #Permite pasar a otras paginas o ventas
 from kivymd.uix.scrollview import MDScrollView
@@ -37,6 +43,7 @@ from kivy.core.window import Window
 import intermediary
 from templates.table.table import RecycleViewTable, ModalsDialog
 
+import weakref
 
 #Window.size = (600, 800)
 
@@ -46,18 +53,36 @@ from templates.table.table import RecycleViewTable, ModalsDialog
 #DrawerClickableItem           
 
 #VARIABLE QUE ALMACENA EL SELF, PERMITE CAMBIAR DE SCREN (PANTALLA) AUN SI SON DIFERENTES CLASES
-global_self = global_self_client = ''
-self_store_page = None
+intermediary.global_variable_self = global_self_client = ''
+self_store_page = self_ClientsPage = self_sales_history = self_SupplierCharge = self_charge_page = self_money_history = None
 
+#MENU LATERAL
 class ContentNavigationDrawer(MDScrollView):
     screen_manager = ObjectProperty()
     nav_drawer = ObjectProperty()
 
 
+#CABECERA Y PIE DE PAGINA DE LA PAGINA
 class HeaderAndFooter(MDScreen):
     pass
 
+
+#PAGINA DE REGISTRAR CUENTA
+class SignOn(MDScreen):
+    def ChangePageToSignIn(self):
+        
+        #obtiene el self principal del kivy
+        self_main = intermediary.global_variable_self
+        #cambia segun la pagina querida
+        self_main.root.ids.screen_manager.current = 'SignIn'
+        #cambia el titulo del menu de arriba segun el nombre que queramos
+        self_main.root.ids.toolbar.title = 'Iniciar Sesión'
+    pass
+
+#PAGINA DE INICIO
 class InitialPage(MDScreen):
+
+    
     pass
 
 class CashierPage(MDScreen):
@@ -69,22 +94,349 @@ class CashierPage(MDScreen):
 
     def CallbackMenuCashierPaymentType(self, button):
 
-        global_self.MenuCashierPaymentType.caller = button
-        global_self.MenuCashierPaymentType.open()
+        intermediary.global_variable_self.MenuCashierPaymentType.caller = button
+        intermediary.global_variable_self.MenuCashierPaymentType.open()
 
     ## CALLBACK DEL SELECT BUSCADOR DEL MENU ALMACEN
     def CashierPaymentType(self = None, instance = ""):
         
         self_cashier_page.ids.ButtonMenuCashierPaymentType.text = instance
-        global_self.MenuCashierPaymentType.dismiss()
+        intermediary.global_variable_self.MenuCashierPaymentType.dismiss()
 
     pass
 
-class StoreUpdatePage(MDScreen):
+#PAGINA DE DIVISAS
+
+class ForeignExchangePage(MDScreen):
+
+    inputDollar = StringProperty(None)
+    inputPeso = StringProperty(None)
+    inputBolivar = StringProperty(None)
+
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+        self.ChangeForeignExchange("dolar")
+
+
+
+    def ChangeForeignExchange(self, text):
+
+        match (text):
+            case 'bolivar':
+
+                dolar = 'Dolar a Bolívar: 1$ == 36.00bs'
+                peso = 'Pesos a bolivares: 1000$$ == 10.5bs'
+                bolivar = 'PREFERIDO'
+
+            case 'dolar':
+                dolar = 'PREFERIDO'
+                peso = 'Pesos a dólares: 1000$$ == 0.25$'
+                bolivar = 'Bolívar a dólar: 36.00bs == 1$'
+
+            case 'peso':
+                dolar = 'Dólar a pesos: 1$ == 3964$$'
+                peso = 'PREFERIDO'
+                bolivar = 'Bólivar a peso: 10.5bs == 1000$$'
+
+            case _:
+                dolar = 'Dolar a Bolívar: 1$ == 36.00bs'
+                peso = 'Pesos a bolivares: 1000$$ == 10.5bs'
+                bolivar = 'PREFERIDO'
+
+
+        self.inputDollar = dolar
+        self.inputPeso = peso
+        self.inputBolivar = bolivar
+
+
+#PAGINA DE INICIAR SESION
+class SignIn(MDScreen):
+
+
+    def ChangePageToSignOn(self):
+        
+        #obtiene el self principal del kivy
+        self_main = intermediary.global_variable_self
+        #cambia segun la pagina querida
+        self_main.root.ids.screen_manager.current = 'SignOn'
+        #cambia el titulo del menu de arriba segun el nombre que queramos
+        self_main.root.ids.toolbar.title = 'Registrarse'
+
+    def OpenSystem(self, page):
+        
+        
+        #obtiene el self principal del kivy
+        self_main = intermediary.global_variable_self
+        #cambia segun la pagina querida
+        #print(self.parent)
+        #print( self_main.root.ids.screen_manager.children )
+        self_main.root.ids.screen_manager.current = 'InitialPage'
+
+        #self_main.root.ids.screen_manager.current = 'headerandfooter'
+        #cambia el titulo del menu de arriba segun el nombre que queramos
+        #self_main.root.ids.toolbar.title = text
+
+
+    pass
+
+        
+
+#PAGINA DE PRESTAMOS
+class LoanPage(MDScreen):
+
+
     
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+
+        Clock.schedule_once(lambda dt: self.ChangeItemsGrid('mes'))
+
+    def ChangePageLoanPage(self):
+
+        #obtiene el self principal del kivy
+        self_main = intermediary.global_variable_self
+        #cambia segun la pagina querida
+        self_main.root.ids.screen_manager.current = 'LoanAddPage'
+        #cambia el titulo del menu de arriba segun el nombre que queramos
+        self_main.root.ids.toolbar.title = 'Prestamo - Agregar'
+
+    def ChangeItemsGrid(self, typeLoan):
+
+
+        self.ids.gridLayoutLoanItems.clear_widgets()
+
+
+        match typeLoan:
+            case 'total':
+                self.ids.buttonChangeTypeMoneyHistory.text = "Cambiar a: MES"
+                self.ids.MoneyHistoryTitle.text = 'TOTAL'
+                textAmountMoney = 'total XXX'
+                pass
+            case 'mes':
+                self.ids.buttonChangeTypeMoneyHistory.text = "Cambiar a: TOTAL"
+                self.ids.MoneyHistoryTitle.text = 'MES'
+
+                textAmountMoney = 'mes XXX'
+                pass
+            case _:
+                self.ids.buttonChangeTypeMoneyHistory.text = "Cambiar a: TOTAL"
+                self.ids.MoneyHistoryTitle.text = 'TOTAL'
+
+                textAmountMoney = 'total XXX'
+            
+                pass
+
+        for i in range(0, 5):
+        
+            NewGridLayout = MDGridLayout(
+                cols= 2,
+                spacing= dp(20),
+                padding= [dp(16), dp(18)],
+
+                size_hint_y= None,
+                height= dp(40)
+            )
+
+            NewLabels1 = MDLabel(
+                        size_hint_x= 0.4,
+                        text= "Ventas",
+                        halign= "left",
+                        font_style= "H6",
+                    )
+            
+
+            NewLabels2 = MDLabel(
+
+                    size_hint_x= 0.4,
+                    halign= "right",
+
+                    text= textAmountMoney,
+                    mode= "rectangle",
+                )
+
+
+
+            NewGridLayout.add_widget(NewLabels1)
+            NewGridLayout.add_widget(NewLabels2)
+
+            self.ids.gridLayoutLoanItems.add_widget(NewGridLayout)
+
+
+        NewLabels3 = MDLabel(
+                        size_hint_x= 0.4,
+                    )
+            
+
+        NewLabels4 = MDLabel(
+                padding= [ dp(1), dp(40), dp(1), dp(1)],
+
+                size_hint_x= 0.4,
+                halign= "right",
+
+                text= textAmountMoney,
+                mode= "rectangle",
+                underline= True,
+
+            )
+        
+
+        NewGridLayout.add_widget(NewLabels3)
+        NewGridLayout.add_widget(NewLabels4)
+
+        #self.ids.gridLayoutLoanItems.add_widget(NewGridLayout)
+
+       # self.ids.gridLayoutLoanItems
+        
+        
+        pass
+
+
+class LoanUpdatePage(MDScreen):
     pass
 
+class LoanAddPage(MDScreen):
 
+    pass
+
+    
+
+#PAGINA DE HISTORIAL DE DINERO/DIVISAS
+class MoneyHistory(MDScreen):
+
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        global self_money_history
+        self_money_history = self
+
+    
+    def ChangeTypeHistoryMoney(self):
+
+        textTitle = self_money_history.ids.MoneyHistoryTitle.text
+
+        match textTitle:
+            case 'MES':
+                variableTitle = 'TOTAL'
+                variableLabelSales = '100'
+                variableLabelCharge = '-60'
+                variableTotalMoney = '40'
+                variableChangeTypeMoneyHistory = 'Cambiar a: MES'
+
+            case 'TOTAL':
+
+                variableTitle = 'MES'
+                variableLabelSales = '1000'
+                variableLabelCharge = '-600'
+                variableTotalMoney = '400'
+                variableChangeTypeMoneyHistory = 'Cambiar a: TOTAL'
+            case _:
+                pass
+
+
+
+        self_money_history.ids.MoneyHistoryTitle.text = variableTitle
+
+        self_money_history.ids.LabelSalesProducts.text = variableLabelSales
+
+        self_money_history.ids.LabelChargeProducts.text = variableLabelCharge
+
+        self_money_history.ids.LabelTotalMoney.text = variableTotalMoney
+
+        self_money_history.ids.buttonChangeTypeMoneyHistory.text = variableChangeTypeMoneyHistory
+
+
+
+
+class ScrollViewWidget(MDScrollView):
+    pass
+
+    
+#PAGINA DE HISTORIAL DE VENTAS
+class SalesHistoryPage(MDScreen):
+
+    
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        global self_sales_history
+        self_sales_history = self
+
+
+    def CallbackMenuSalesHistory(self, button):
+
+        MenuAndTitleSelect.DropMenu("self", button, intermediary.global_variable_self.MenuTypeSalesHistory)
+
+
+    ## CALLBACK DEL SELECT BUSCADOR DEL MENU ALMACEN
+    def ChangeSearchingTypeSalesHistory(self, Text):
+
+
+        MenuAndTitleSelect.ChangeNameDropMenu(self_sales_history, intermediary.global_variable_self.MenuTypeSalesHistory, "ButtonMenuSearchingSalesHistory", Text)
+
+        
+        
+#PAGINA DE CONFIGURACION
+class ContentConfigurationPage(MDBoxLayout):
+
+
+
+    inputOne= StringProperty(None)
+    inputTwo= StringProperty(None)
+
+    
+    def Variables(nameInputOne, nameInputTwo):
+        ContentConfigurationPage.inputOne = nameInputOne
+        ContentConfigurationPage.inputTwo = nameInputTwo
+
+
+        #print(ContentConfigurationPage.inputOne )
+
+
+class ConfigurationPage(MDScreen):
+
+    dialogUsername = dialogPassword = dialogEmail = None
+
+    def OpenModal(self, inputOneName, inputTwoName, dialogName, title):
+        ContentConfigurationPage.Variables(inputOneName, inputTwoName)
+
+        match dialogName:
+            case 'dialogUsername':
+                self_name = self.dialogUsername
+            
+            case 'dialogEmail':
+                self_name = self.dialogEmail
+            
+            case 'dialogPassword':
+                self_name = self.dialogPassword
+
+            case _:
+                self_name = self.dialogUsername
+
+
+        if not self_name:
+            self_name = MDDialog(
+                title=title,
+                type="custom",
+                content_cls=ContentConfigurationPage(),
+                buttons=[
+                    MDFlatButton(
+                        text="Cancelar",
+                        md_bg_color="red",
+                        text_color="white",
+                    ),
+                    MDRaisedButton(
+                        text="Aceptar",
+                        md_bg_color="blue",
+                        #text_color=self.theme_cls.primary_color,
+                    ),
+                ],
+            )
+        self_name.open()
+
+
+#PAGINA DE ALMACEN
 class StorePage(MDScreen):
     
     
@@ -95,17 +447,29 @@ class StorePage(MDScreen):
 
     def CallbackMenuProduct(self, button):
 
-        global_self.MenuProductoTypeStore.caller = button
-        global_self.MenuProductoTypeStore.open()
+        MenuAndTitleSelect.DropMenu("self", button, intermediary.global_variable_self.MenuProductoTypeStore)
+
+        #intermediary.global_variable_self.MenuProductoTypeStore.caller = button
+        #intermediary.global_variable_self.MenuProductoTypeStore.open()
 
 
     ## CALLBACK DEL SELECT BUSCADOR DEL MENU ALMACEN
-    def ChangeSearchingTypeStore(self = None, instance = ""):
-        
-        self_store_page.ids.ButtonMenuSearchingStore.text = instance
-        global_self.MenuProductoTypeStore.dismiss()
+    def ChangeSearchingTypeStore(self, Text):
 
+        #print(self_store_page.ids)
+        #print(instance)
+
+
+        MenuAndTitleSelect.ChangeNameDropMenu(self_store_page, intermediary.global_variable_self.MenuProductoTypeStore, "ButtonMenuSearchingStore", Text)
+        
+        #self_store_page.ids.ButtonMenuSearchingStore.text = instance
+        #intermediary.global_variable_self.MenuProductoTypeStore.dismiss()
+
+    
+class StoreUpdatePage(MDScreen):
+    
     pass
+
 
 #Clase para la seleccion de fotos, pagina
 class ChooseImagePage(MDScreen):
@@ -163,24 +527,146 @@ class ChooseImagePage(MDScreen):
             if self.manager_open:
                 self.file_manager.back()
         return True
+
+
+class MenuAndTitleSelect():
+
+    def DropMenu(self, button, DropMenu):
+
+        DropMenu.caller = button
+        DropMenu.open()
+
+
+    ## CALLBACK DEL SELECT BUSCADOR DEL MENU ALMACEN
+    def ChangeNameDropMenu(self, DropMenu, IdButton, Text = ""):
+        
+        self.ids[IdButton].text = Text
+        DropMenu.dismiss()
+
+#PAGINA DEL CLIENTE
+class ClientsPage(MDScreen):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        global self_ClientsPage
+        self_ClientsPage = self
+
+
+    def CallbackMenuClients(self, button):
+
+        MenuAndTitleSelect.DropMenu("self", button, intermediary.global_variable_self.MenuTypeClientsPage)
+
+
+    ## CALLBACK DEL SELECT BUSCADOR DEL MENU ALMACEN
+    def ChangeSearchingTypeClients(self = None, Text = ""):
+        MenuAndTitleSelect.ChangeNameDropMenu(self_ClientsPage, intermediary.global_variable_self.MenuTypeClientsPage, "ButtonMenuSearchingClient", Text)
+
+
+class ChargePage(MDScreen):
+    
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        global self_charge_page
+        self_charge_page = self
+
+    def CallbackMenuCharge(self, button):
+
+
+        MenuAndTitleSelect.DropMenu("self", button, intermediary.global_variable_self.MenuTypeChargePage)
+
+
+    ## CALLBACK DEL SELECT BUSCADOR DEL MENU ALMACEN
+    def ChangeSearchingTypeCharge(self = None, Text = ""):
+
+        MenuAndTitleSelect.ChangeNameDropMenu(self_charge_page, intermediary.global_variable_self.MenuTypeChargePage, "ButtonMenuSearchingCharge", Text)
+
+
+#PAGINA DE PROVEEDOR
+class SupplierPage(MDScreen):
+
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        global self_SupplierCharge
+        self_SupplierCharge = self
+
+    
+    def ChangePageSupplierPage(self):
+
+        #obtiene el self principal del kivy
+        self_main = intermediary.global_variable_self
+        #cambia segun la pagina querida
+        self_main.root.ids.screen_manager.current = 'SupplierAddPage'
+        #cambia el titulo del menu de arriba segun el nombre que queramos
+        self_main.root.ids.toolbar.title = 'Proveedor - Agregar'
+    
+
+    def CallbackMenuSupplier(self, button):
+
+        MenuAndTitleSelect.DropMenu("self", button, intermediary.global_variable_self.MenuTypeSupplierPage)
+
+
+    ## CALLBACK DEL SELECT BUSCADOR DEL MENU ALMACEN
+    def ChangeSearchingTypeSupplier(self = None, Text = ""):
+
+        MenuAndTitleSelect.ChangeNameDropMenu(self_SupplierCharge, intermediary.global_variable_self.MenuTypeSupplierPage, 'ButtonMenuSearchingSupplier', Text)
+
+class SupplierUpdatePage(MDScreen):
+    pass
+
+class SupplierAddPage(MDScreen):
+    pass
+
+#CLASE DE DATEPICKER
+class DatePicker():
+
+    datePicker = None
+
+    def on_save(self, instance, value, date_range):
+        '''
+        Events called when the "OK" dialog box button is clicked.
+
+        :type instance: <kivymd.uix.picker.MDDatePicker object>;
+        :param value: selected date;
+        :type value: <class 'datetime.date'>;
+        :param date_range: list of 'datetime.date' objects in the selected range;
+        :type date_range: <class 'list'>;
+        '''
+
+        print(instance, value, date_range)
+
+    def on_cancel(self, instance, value):
+        '''Events called when the "CANCEL" dialog box button is clicked.'''
+
+    def show_date_picker(self):
+
+        if not self.datePicker:
+            self.datePicker =  MDDatePicker(mode="range")
+            self.datePicker.bind(on_save=self.on_save, on_cancel=self.on_cancel)
+
+        self.datePicker.open()
+
+#CLASE DE LA APLICACION
 class App(MDApp):
 
     modals = ModalsDialog()
+    datePicker = DatePicker()
 
     #LO PRIMERO QUE SE CARGA
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        
+
+        #Crea la variable global, self de la aplicación para poder ser utilizada en otras clases y archivos .py
+        intermediary.GlobalVariables.GetGlobalSelf(self)
+
+
         #CARGA LOS DATOS DE .KV
         self.screen = Builder.load_file("styles.kv")
 
         #PROCESO QUE ALMACENA DE FORMA GLOBAL LOS DATOS DE SELF EN GLOBAL_SELF
-        global global_self
-        global_self = intermediary.GlobalVariables.GetGlobalSelf(self)
 
         ##  MENU 1RA MANERA, PARA SOLO MDTopAppBar
         #TASA DE MONEDA
-        menu_items = [
+        menu_foreign_exchange_header = [
             
             {
                 "text": "Dolar",
@@ -200,7 +686,7 @@ class App(MDApp):
         ]
         self.menu = MDDropdownMenu(
             border_margin=dp(4),
-            items=menu_items,
+            items=menu_foreign_exchange_header,
             width=dp(240),
             hor_growth="left",
             #radius=[24, 0, 24, 24],
@@ -209,7 +695,7 @@ class App(MDApp):
 
     
         #PERFIL DE USUARIO
-        menu_items2 = [
+        menu_configuration_header = [
             {
                 "text": "Configuración",
                 "leading_icon": "account-settings",
@@ -223,7 +709,7 @@ class App(MDApp):
         ]
         self.menu2 = MDDropdownMenu(
             border_margin=dp(4),
-            items=menu_items2,
+            items=menu_configuration_header,
             width=dp(240),
             hor_growth="left",
             #radius=[24, 0, 24, 24],
@@ -234,7 +720,7 @@ class App(MDApp):
         #Menu almacen 
 
 
-        menu_items3 = [
+        menu_store = [
             
             {
                 "text": "TODO",
@@ -266,15 +752,15 @@ class App(MDApp):
         self.MenuProductoTypeStore = MDDropdownMenu(
             #caller=self.screen.ids.ButtonMenuSearchingStore,
             border_margin=dp(4),
-            items=menu_items3,
+            items=menu_store,
             hor_growth="right",
             ver_growth="down",
             #radius=[24, 0, 24, 24],
             elevation= 4
         )
 
-        menu_items4 = [
-{
+        menu_foreign_exchange = [
+            {
                 "text": "Dolar",
                 "leading_icon": "cash-100",
                 "on_press": lambda x='Item Dolar': CashierPage.CashierPaymentType(x, 'Dólar'),
@@ -294,7 +780,164 @@ class App(MDApp):
         self.MenuCashierPaymentType = MDDropdownMenu(
             #caller=self.screen.ids.ButtonMenuSearchingStore,
             border_margin=dp(4),
-            items=menu_items4,
+            items=menu_foreign_exchange,
+            #hor_growth="center",
+            ver_growth="down",
+            position="bottom",
+            #radius=[24, 0, 24, 24],
+            elevation= 4
+        )
+
+
+        menu_sale_history = [
+
+            {
+                "text": "TODO",
+                "leading_icon": "account-arrow-left",
+                "on_press": lambda x='TODO': SalesHistoryPage.ChangeSearchingTypeSalesHistory("",x),
+            },
+            {
+                "text": "CLIENTE",
+                "leading_icon": "account-arrow-left",
+                "on_press": lambda x='CLIENTE': SalesHistoryPage.ChangeSearchingTypeSalesHistory("",x),
+            },
+            {
+                "text": "EMPLEADO",
+                "leading_icon": "account-arrow-left",
+                "on_press": lambda x='EMPLEADO': SalesHistoryPage.ChangeSearchingTypeSalesHistory("",x),
+            },
+            {
+                "text": "FECHA ASC",
+                "leading_icon": "account-arrow-left",
+                "on_press": lambda x='FECHA ASC': SalesHistoryPage.ChangeSearchingTypeSalesHistory("",x),
+            },
+            {
+                "text": "FECHA DESC",
+                "leading_icon": "account-arrow-left",
+                "on_press": lambda x='FECHA DESC': SalesHistoryPage.ChangeSearchingTypeSalesHistory("",x),
+            },
+        ]
+
+        self.MenuTypeSalesHistory = MDDropdownMenu(
+
+            border_margin=dp(4),
+            items=menu_sale_history,
+            #hor_growth="center",
+            ver_growth="down",
+            position="bottom",
+            #radius=[24, 0, 24, 24],
+            elevation= 4
+        )
+
+
+        menu_clients = [
+
+            {
+                "text": "TODO",
+                "leading_icon": "account-arrow-left",
+                "on_press": lambda x='TODO': ClientsPage.ChangeSearchingTypeClients("",x),
+            },
+            {
+                "text": "DADO POR",
+                "leading_icon": "account-arrow-left",
+                "on_press": lambda x='DADO POR': ClientsPage.ChangeSearchingTypeClients("",x),
+            },
+            {
+                "text": "FECHA ASC",
+                "leading_icon": "account-arrow-left",
+                "on_press": lambda x='FECHA ASC': ClientsPage.ChangeSearchingTypeClients("",x),
+            },
+            {
+                "text": "FECHA DESC",
+                "leading_icon": "account-arrow-left",
+                "on_press": lambda x='FECHA DESC': ClientsPage.ChangeSearchingTypeClients("",x),
+            },
+        ]
+
+        self.MenuTypeClientsPage = MDDropdownMenu(
+
+            border_margin=dp(4),
+            items=menu_clients,
+            #hor_growth="center",
+            ver_growth="down",
+            position="bottom",
+            #radius=[24, 0, 24, 24],
+            elevation= 4
+        )
+
+        menu_supplier = [
+
+            {
+                "text": "TODO",
+                "leading_icon": "account-arrow-left",
+                "on_press": lambda x='TODO': SupplierPage.ChangeSearchingTypeSupplier("",x),
+            },
+            {
+                "text": "NOMBRE",
+                "leading_icon": "account-arrow-left",
+                "on_press": lambda x='NOMBRE': SupplierPage.ChangeSearchingTypeSupplier("",x),
+            },
+            {
+                "text": "UBICACION",
+                "leading_icon": "account-arrow-left",
+                "on_press": lambda x='UBICACION': SupplierPage.ChangeSearchingTypeSupplier("",x),
+            },
+            {
+                "text": "RIF",
+                "leading_icon": "account-arrow-left",
+                "on_press": lambda x='RIF': SupplierPage.ChangeSearchingTypeSupplier("",x),
+            },
+            {
+                "text": "TELÉFONO",
+                "leading_icon": "account-arrow-left",
+                "on_press": lambda x='TELÉFONO': SupplierPage.ChangeSearchingTypeSupplier("",x),
+            },
+        ]
+
+        self.MenuTypeSupplierPage = MDDropdownMenu(
+
+            border_margin=dp(4),
+            items=menu_supplier,
+            #hor_growth="center",
+            ver_growth="down",
+            position="bottom",
+            #radius=[24, 0, 24, 24],
+            elevation= 4
+        )
+
+        menu_charge = [
+
+            {
+                "text": "TODO",
+                "leading_icon": "account-arrow-left",
+                "on_press": lambda x='TODO': ChargePage.ChangeSearchingTypeCharge("",x),
+            },
+            {
+                "text": "ID",
+                "leading_icon": "account-arrow-left",
+                "on_press": lambda x='ID': ChargePage.ChangeSearchingTypeCharge("",x),
+            },
+            {
+                "text": "PROVEEDOR",
+                "leading_icon": "account-arrow-left",
+                "on_press": lambda x='PROVEEDOR': ChargePage.ChangeSearchingTypeCharge("",x),
+            },
+            {
+                "text": "CANTIDAD",
+                "leading_icon": "account-arrow-left",
+                "on_press": lambda x='CANTIDAD': ChargePage.ChangeSearchingTypeCharge("",x),
+            },
+            {
+                "text": "GASTO",
+                "leading_icon": "account-arrow-left",
+                "on_press": lambda x='GASTO': ChargePage.ChangeSearchingTypeCharge("",x),
+            },
+        ]
+
+        self.MenuTypeChargePage = MDDropdownMenu(
+
+            border_margin=dp(4),
+            items=menu_charge,
             #hor_growth="center",
             ver_growth="down",
             position="bottom",
@@ -375,8 +1018,8 @@ class App(MDApp):
             self.root.ids.screen_manager.current = page
             self.root.ids.toolbar.title = text
 
-            global global_self
-            global_self = intermediary.GlobalVariables.GetGlobalSelf(self)
+            global intermediary.global_variable_self
+            intermediary.global_variable_self = intermediary.GlobalVariables.GetGlobalSelf(self)
             
 
         elif dontSelf == True:
@@ -387,12 +1030,12 @@ class App(MDApp):
                 case _:
                     pass
 
-            global_self.root.ids.screen_manager.current = page
-            global_self.root.ids.toolbar.title = text
+            intermediary.global_variable_self.root.ids.screen_manager.current = page
+            intermediary.global_variable_self.root.ids.toolbar.title = text
     '''
 
     def ShowImage(self, path):
-        global_self.root.ids.imageProduct.source = path
+        intermediary.global_variable_self.root.ids.imageProduct.source = path
 
 
 ## CLASE PARA MOSTRAR LA TABLA, MDDATATABLE

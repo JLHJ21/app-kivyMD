@@ -158,7 +158,7 @@
                 icon_color: "orange"
 
                 on_release:
-                    app.modals.ChangeItemsAmount()
+                    app.modals.ChangeItemsAmount(rv)
 
         AnchorLayout:
             size_hint_y: None
@@ -185,7 +185,7 @@
                     disabled: True
 
                     on_release:
-                        app.modals.ChangeItemsAmountButtons("left")
+                        app.modals.ChangeItemsAmountButtons(rv, "left")
 
                 MDFloatingActionButton:
                     id: ButtonRightPagination
@@ -198,5 +198,5 @@
                     disabled: False
 
                     on_release:
-                        app.modals.ChangeItemsAmountButtons("right")
+                        app.modals.ChangeItemsAmountButtons(rv, "right")
 #############

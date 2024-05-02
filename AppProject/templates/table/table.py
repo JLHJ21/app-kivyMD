@@ -110,7 +110,7 @@ class SelectableLabel(RecycleDataViewBehavior, MDFlatButton):
             for index, p in enumerate(dictionary): 
 
 
-                print(str(dictionary) + " createlabelswidget")
+                #print(str(dictionary) + " createlabelswidget")
 
                 if index == 0:
 
@@ -158,7 +158,7 @@ class SelectableLabel(RecycleDataViewBehavior, MDFlatButton):
 
         global have_labels_cols
         global global_gridSelectableLabelChildren
-        global global_dictionary
+        #global global_dictionary
 
         #print(global_rv.objecto.id_table)
         #print(global_dictionary_table_data[global_rv.objecto.id_table])
@@ -290,6 +290,8 @@ class RecycleViewTable(MDBoxLayout):
 
         #Mediante el uso de Clock, ya que __init__ inicia antes de que el .kv exista
         #Clock.schedule_once(lambda dt: SelectableLabel.CreateLabelsWidgets(global_selectable))
+
+
         Clock.schedule_once(lambda dt: self.CreateLabels(self))
         #Clock.schedule_once(lambda dt: self.on_window_resize)
         Clock.schedule_once(lambda dt: self.TableData(self.DictionaryDataset))
@@ -313,6 +315,8 @@ class RecycleViewTable(MDBoxLayout):
     #TITULO
     def CreateLabels(self, *args):
 
+
+
         global global_id_table, global_columnas, global_dictionary_table_data
 
         
@@ -321,11 +325,7 @@ class RecycleViewTable(MDBoxLayout):
         item = {self.objecto.rv: self}
         #global_rv[self.objecto.rv] = {}
         global_rv.update(item)
-
-        #print(global_rv)
-
-
-        #print(str(global_rv) + " createLabels")
+        
         global_id_table = self.objecto.id_table
 
         global_dictionary_table_data[self.objecto.id_table] = []
@@ -348,9 +348,9 @@ class RecycleViewTable(MDBoxLayout):
 
         #print(self.ids.hello)
 
-        global global_dictionary
+        #global global_dictionary
 
-        global_dictionary = []
+        #global_dictionary = []
 
         #Permite eliegir el numero de columnas dinamicamente
         self.objecto.children[2].children[0].cols = self.objecto.columnas
@@ -382,26 +382,45 @@ class RecycleViewTable(MDBoxLayout):
                 #se agrega al mdgridlayout para que se muestre
                 self.objecto.scroll_box_layout.add_widget(label)           
 
-        for i in self.objecto.list_table_data:
-            global_dictionary.append(i)
-        
+        #for i in self.objecto.list_table_data:
+        #    global_dictionary.append(i)
 
 
     def TableData(self, dictionary):
 
         if self.objecto.boleana:
 
+
+
             #ejecuta lo escrito en el kv, normalmente es donde se ejecutará el codigo mongodb que nos dará los datos de la base de datos
             exec(self.objecto.test)
 
             dictionary = self.objecto.DictionaryDataset
-
-
+            
             #permite que se active solamente una vez
             self.objecto.boleana = False
 
 
 
+        print(str(dictionary) + " <--- diccionario")
+
+        ##################################################################
+
+        #print(self.objecto.DictionaryDataset)
+
+        #global global_dictionary            
+
+        #d = {self.objecto : [self.DictionaryDataset]}
+        #global_dictionary.append(dictionary)
+        #global_dictionary[self.objecto.rv].update(d)
+
+        #print()
+        #print(global_dictionary)
+        
+
+        #print(global_dictionary)
+        #print()
+            
         #Cuenta la cantidad de items que tiene el diccionario
         CountDictionary = len(dictionary)
 
@@ -480,15 +499,15 @@ class ModalsDialog():
         self_main.root.ids.toolbar.title = text
 
         #Cierra los modales activados
-        ModalsDialog.CloseDialog(self, self.dialog.dismiss())
+        ModalsDialog.CloseDialog('self', RecycleViewTable.dialog.dismiss())
         
     #Modal 1
     def ShowAlertDialog(self, title, text, optionOne, optionTwo, optionThree, releaseOne, releaseTwo, releaseThree):
         
         #Si no existe, normalmente no, lo crea
-        if not self.dialog:
+        if not RecycleViewTable.dialog:
             #Caracteristicas
-            self.dialog = MDDialog(
+            RecycleViewTable.dialog = MDDialog(
                 title=title,
                 text= text,
                 buttons=[
@@ -515,16 +534,17 @@ class ModalsDialog():
                 ],
             )
         #Abre el modal
-        self.dialog.open()
+        RecycleViewTable.dialog.open()
+        
 
     def ShowAlertDialogDelete(self, title, text, textButtonOne, textButtonTwo, releaseButtonOne, releaseButtonTwo):
 
         #Cierra el modal 1
-        ModalsDialog.CloseDialog(self.dialog.dismiss())
+        ModalsDialog.CloseDialog('self',RecycleViewTable.dialog.dismiss())
         
         #Si no existe, normalmente no, lo crea
-        if not self.dialog2:
-            self.dialog2 = MDDialog(
+        if not RecycleViewTable.dialog2:
+            RecycleViewTable.dialog2 = MDDialog(
                 title=title,
                 text=text,
                 buttons=[
@@ -545,7 +565,7 @@ class ModalsDialog():
             )
 
         #Abre el modal
-        self.dialog2.open()
+        RecycleViewTable.dialog2.open()
     
     
     def CloseDialog(self, typeDialog):
@@ -554,33 +574,34 @@ class ModalsDialog():
         #RecycleViewTable.CreateLabels(self)
         typeDialog
 
-    def ChangeItemsAmount(self):
+    def ChangeItemsAmount(self, rv):
 
         #Reinicia la variable a 0
-        RecycleViewTable.StartPagination = 0
+        global_rv[rv].objecto.StartPagination = 0
 
         #Switch que cambia la cantidad de items a mostrar segun la cantidad que tenia previamente
-        match RecycleViewTable.ItemsAccountPagination:
+        match global_rv[rv].objecto.ItemsAccountPagination:
             case 5:
-                RecycleViewTable.ItemsAccountPagination = RecycleViewTable.StaticItemsAccountPagination = 10
+                global_rv[rv].objecto.ItemsAccountPagination = global_rv[rv].objecto.StaticItemsAccountPagination = 10
             case 10:
-                RecycleViewTable.ItemsAccountPagination = RecycleViewTable.StaticItemsAccountPagination = 15
+                global_rv[rv].objecto.ItemsAccountPagination = global_rv[rv].objecto.StaticItemsAccountPagination = 15
             case 15:
-                RecycleViewTable.ItemsAccountPagination = RecycleViewTable.StaticItemsAccountPagination = 5
+                global_rv[rv].objecto.ItemsAccountPagination = global_rv[rv].objecto.StaticItemsAccountPagination = 5
             case _:
-                RecycleViewTable.ItemsAccountPagination = RecycleViewTable.StaticItemsAccountPagination = 5
+                global_rv[rv].objecto.ItemsAccountPagination = global_rv[rv].objecto.StaticItemsAccountPagination = 5
 
         
 
         #Cambia el texto del boton ItemsAmount
-        global_rv.ids.ItemsAmount.text = "Items por página: " + str(global_rv.ItemsAccountPagination)
+
+        global_rv[rv].objecto.ids.ItemsAmount.text = "Items por página: " + str(global_rv[rv].objecto.ItemsAccountPagination)
 
         #Llama la funcion para ver si ambas flechas se desactivan al actualizar los datos
-        self.StatusButtonPagination("both")
+        #self.StatusButtonPagination("both")
         #Llama la función TableData para rellenar los datos de la tabla
-        global_rv.TableData(global_rv.DictionaryDataset)
-
-    def ChangeItemsAmountButtons(self, button):
+        #global_rv[rv].objecto.TableData(global_rv[rv].objecto.DictionaryDataset)
+        #print(rv)
+    def ChangeItemsAmountButtons(self, rv, button):
         
 
         #Asignacion del nuevo valor del inicio de la paginacion, (primera variable, primer número 'Mostrando AQUI - X)
@@ -590,67 +611,67 @@ class ModalsDialog():
             case "left":
 
                 #RESTA
-                RecycleViewTable.StartPagination = RecycleViewTable.StartPagination - RecycleViewTable.StaticItemsAccountPagination
-                RecycleViewTable.ItemsAccountPagination = RecycleViewTable.ItemsAccountPagination - RecycleViewTable.StaticItemsAccountPagination
+                global_rv[rv].objecto.StartPagination = global_rv[rv].objecto.StartPagination - global_rv[rv].objecto.StaticItemsAccountPagination
+                global_rv[rv].objecto.ItemsAccountPagination = global_rv[rv].objecto.ItemsAccountPagination - global_rv[rv].objecto.StaticItemsAccountPagination
 
                 #Llama la funcion para ver si se desactiva la flecha izquierda
-                self.StatusButtonPagination("left")
+                self.StatusButtonPagination(rv, "left")
 
                 
             case "right":
 
                 #SUMA
-                RecycleViewTable.StartPagination = RecycleViewTable.StartPagination  + RecycleViewTable.StaticItemsAccountPagination
-                RecycleViewTable.ItemsAccountPagination = RecycleViewTable.ItemsAccountPagination + RecycleViewTable.StaticItemsAccountPagination
+                global_rv[rv].objecto.StartPagination = global_rv[rv].objecto.StartPagination  + global_rv[rv].objecto.StaticItemsAccountPagination
+                global_rv[rv].objecto.ItemsAccountPagination = global_rv[rv].objecto.ItemsAccountPagination + global_rv[rv].objecto.StaticItemsAccountPagination
 
                 #Llama la funcion para ver si se desactiva la flecha derecha
-                self.StatusButtonPagination("right")
+                self.StatusButtonPagination(rv, "right")
                 
                 
             case _:
-                RecycleViewTable.StartPagination = 0
-                RecycleViewTable.ItemsAccountPagination = 5
+                global_rv[rv].objecto.StartPagination = 0
+                global_rv[rv].objecto.ItemsAccountPagination = 5
 
         #Llama a esta funcion para actualizar los datos
-        global_rv.TableData(global_rv.DictionaryDataset)
+        global_rv[rv].objecto.TableData(global_rv[rv].objecto.DictionaryDataset)
 
     #Funcion que sirva para activar o desactivar las flechas de la paginacion en caso tal que no haya más objetos a mostrar
-    def StatusButtonPagination(self, side):
+    def StatusButtonPagination(self, rv, side):
 
         match side:
             #Flecha de la izquierda
             case "left":
 
                 #Activa el boton de la derecha de la paginacion
-                global_rv.ids.ButtonRightPagination.disabled = False
+                global_rv[rv].objecto.ids.ButtonRightPagination.disabled = False
 
                 #IF Statement, si el inicio de la paginación es 0 DISABLED es True desactivando el boton izquierdo 
                 #caso contrario DISABLED es False activando el boton 
-                if global_rv.StartPagination <= 0:
+                if global_rv[rv].objecto.StartPagination <= 0:
                     #Desactiva boton izquierdo
-                    global_rv.ids.ButtonLeftPagination.disabled = True 
+                    global_rv[rv].objecto.ids.ButtonLeftPagination.disabled = True 
 
                 else:
                     #Activa boton izquierdo
-                    global_rv.ids.ButtonLeftPagination.disabled = False
+                    global_rv[rv].objecto.ids.ButtonLeftPagination.disabled = False
 
                 #global_rv.ButtonLeftPagination.disabled = True if global_rv.StartPagination <= 0 else False 
             #Flecha de la derecha
             case "right":
 
                 #Activa el boton de la izquierda de la paginacion
-                global_rv.ids.ButtonLeftPagination.disabled = False
+                global_rv[rv].objecto.ids.ButtonLeftPagination.disabled = False
 
                 #IF Statement, si la cantidad de items de la paginación es mayor a los items del diccionario
                 #el DISABLED sera True, en caso contrario será False
-                if global_rv.ItemsAccountPagination >= len(global_rv.DictionaryDataset):
+                if global_rv[rv].objecto.ItemsAccountPagination >= len(global_rv[rv].objecto.DictionaryDataset):
 
                     #Desactiva boton derecho
-                    global_rv.ids.ButtonRightPagination.disabled = True
+                    global_rv[rv].objecto.ids.ButtonRightPagination.disabled = True
 
                 else: 
                     #Activa boton derecho
-                    global_rv.ids.ButtonRightPagination.disabled = False
+                    global_rv[rv].objecto.ids.ButtonRightPagination.disabled = False
 
             #Ambas flechas
             case "both":
@@ -661,24 +682,24 @@ class ModalsDialog():
                 #caso contrario DISABLED es False activando el boton 
                 if RecycleViewTable.StartPagination <= 0:
                     #Desactiva boton izquierdo
-                    global_rv.ids.ButtonLeftPagination.disabled = True 
+                    global_rv[rv].objecto.ids.ButtonLeftPagination.disabled = True 
 
                 else:
                     #Activa boton izquierdo
-                    global_rv.ids.ButtonLeftPagination.disabled = False
+                    global_rv[rv].objecto.ids.ButtonLeftPagination.disabled = False
 
                 #right
 
                 #IF Statement, si la cantidad de items de la paginación es mayor a los items del diccionario
                 #el DISABLED sera True, en caso contrario será False
-                if RecycleViewTable.ItemsAccountPagination >= len(RecycleViewTable.DictionaryDataset):
+                if global_rv[rv].objecto.ItemsAccountPagination >= len(global_rv[rv].objecto.DictionaryDataset):
 
                     #Desactiva boton derecho
-                    global_rv.ids.ButtonRightPagination.disabled = True
+                    global_rv[rv].objecto.ids.ButtonRightPagination.disabled = True
 
                 else: 
                     #Activa boton derecho
-                    global_rv.ids.ButtonRightPagination.disabled = False
+                    global_rv[rv].objecto.ids.ButtonRightPagination.disabled = False
             case _:
                 pass
 
