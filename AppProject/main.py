@@ -85,7 +85,11 @@ class InitialPage(MDScreen):
     
     pass
 
+#Pagina de cajero
 class CashierPage(MDScreen):
+
+    dialogShowUpdate = None
+
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -102,8 +106,6 @@ class CashierPage(MDScreen):
         
         self_cashier_page.ids.ButtonMenuCashierPaymentType.text = instance
         intermediary.global_variable_self.MenuCashierPaymentType.dismiss()
-
-    pass
 
 #PAGINA DE DIVISAS
 

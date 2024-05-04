@@ -905,24 +905,27 @@ HeaderAndFooter:
 
                 MDFloatingActionButton:
                     id: ButtonSearchingStore
-
-                    width: "150dp"
                     icon: "book-search"
                     style: "standard"
                     width: "100dp"
                     
             RecycleViewTable:
-                objecto: self
+
+                id_table: "tableAlmacen"
+
                 padding: dp(16), dp(root.manager.parent.parent.ids.toolbar.height / 2), dp(16), dp(root.manager.parent.parent.ids.toolbarbottom.height /2)
+
+                objecto: self
                 columnas: 5
+
                 list_table_labels: ["id_imagen", "id_cedula", "id_proveedor", "id_cantidad", "id_precio"]
                 list_table_data: ["imagen", "cedula", "proveedor", "cantidad", "precio"]
-                #dictionaryPrincipal: ["_nombre", "_proveedor", "_cantidad", "_precio"]
+
                 modalData:
                     'ModalsDialog.ShowAlertDialog("self","¿Que desea realizar?", "Por favor, elija algunas de las opciones presentadas.", "Cancelar", "Eliminar", "Modificar",  lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog.dismiss()),lambda x: ModalsDialog.ShowAlertDialogDelete ("self","¿De verdad quiere eliminar este producto?", "Si es así, adelante","Cancelar","Eliminar",lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog2.dismiss()),lambda x: print("cerrar")    ),lambda x: ModalsDialog.ChangePage("self", "StorePageUpdate", "Almacen - Modificar"))'
+
                 test: 
-                    'for i in range(1,5): d = {f"dato{i}": [f"images/logo.jpg", f"dato{i}_cedula", f"dato{i}_proveedor", f"dato{i}_cantidad", f"dato{i}_precio"]};self.objecto.DictionaryDataset.update(d)'
-                id_table: "tableAlmacen"
+                    'for i in range(1,20): d = {f"dato{i}": [f"images/logo.jpg", f"dato20_{i}_cedula", f"dato20_{i}_proveedor", f"dato20_{i}_cantidad", f"dato20_{i}_precio"]};self.objecto.DictionaryDataset.update(d)'
 
 <ClientsPage>:
     name: "ClientsPage"
@@ -979,16 +982,22 @@ HeaderAndFooter:
 
                     
             RecycleViewTable:
-                objecto: self
-                padding: dp(16), dp(root.manager.parent.parent.ids.toolbar.height / 2), dp(16), dp(root.manager.parent.parent.ids.toolbarbottom.height /2)
-                columnas: 5
-                list_table_labels: ["id_imagen", "id_dado", "id_fecha", "id_monto"]
-                list_table_data: ["imagen","dado por", "fecha", "monto"]
-                #dictionaryPrincipal: ["_nombre", "_proveedor", "_cantidad", "_precio"]
-                modalData: 'ModalsDialog.ShowAlertDialog("self","¿Que desea realizar?","Por favor, elija algunas de las opciones presentadas.","Cancelar","Eliminar","Modificar",lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog.dismiss()),lambda x: ModalsDialog.ShowAlertDialogDelete("self","¿De verdad quiere eliminar este producto?","Si es así, adelante","Cancelar","Eliminar",lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog2.dismiss()),lambda x: print("cerrar")),lambda x: ModalsDialog.ChangePage("self","StorePageUpdate", "Almacen - Modificar"))'
-                test: 
-                    'for i in range(1,5): d = {f"dato{i}": [f"images/logo.jpg", f"dato{i}_dado", f"dato{i}_fecha", f"dato{i}_monto"]};self.objecto.DictionaryDataset.update(d)'
                 id_table: "tableCliente"
+
+                padding: dp(16), dp(root.manager.parent.parent.ids.toolbar.height / 2), dp(16), dp(root.manager.parent.parent.ids.toolbarbottom.height /2)
+
+                objecto: self
+                need_image: False
+                columnas: 3
+
+                list_table_labels: ["id_dado", "id_fecha", "id_monto"]
+                list_table_data: ["dado por cliente", "fecha", "monto"]
+                
+                modalData: 
+                    'ModalsDialog.ShowAlertDialog("self","¿Que desea realizar?","Por favor, elija algunas de las opciones presentadas.","Cancelar","Eliminar","Modificar",lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog.dismiss()),lambda x: ModalsDialog.ShowAlertDialogDelete("self","¿De verdad quiere eliminar a este cliente?","Si es así, adelante","Cancelar","Eliminar",lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog2.dismiss()),lambda x: print("cerrar")),lambda x: ModalsDialog.ChangePage("self","StorePageUpdate", "Almacen - Modificar"))'
+                
+                test: 
+                    'for i in range(1,5): d = {f"dato{i}": [f"dato_cliente{i}_dado", f"dato_cliente{i}_fecha", f"dato_cliente{i}_monto"]};self.objecto.DictionaryDataset.update(d)'
 
                 
 <HeaderAndFooter>:
@@ -1029,6 +1038,30 @@ HeaderAndFooter:
             ["cash-register", lambda x: app.callback(x), "", "Cajero"],             
             ["store", lambda x: app.callback(x), "", "Almacen"],             
             ]
+
+
+#PAGINA DE CAJERO
+
+#####MODAL DE CASHIER PAGE
+
+<ContentCashierPage>:
+    
+    orientation: "vertical"
+    spacing: "12dp"
+    size_hint_y: None
+    height: "120dp"
+
+    MDTextField:
+        text: 'Producto Número 31'
+        hint_text: 'Nombre del producto'
+        mode: "rectangle"
+        readonly: True
+
+
+    MDTextField:
+        text: '40'
+        hint_text: 'Cantidad del producto'
+        mode: "rectangle"
 
 <CashierPage>:
     name: "CashierPage"
@@ -1226,6 +1259,8 @@ HeaderAndFooter:
 
                                     mode: "rectangle"
                             
+                    
+
                 MDBoxLayout:
                     orientation: 'vertical'
                     size_hint: 1, 1
@@ -1238,54 +1273,62 @@ HeaderAndFooter:
                         Line:
                             width: 2
                             rectangle: self.x, self.y, self.width, self.height - 13
-
                     MDGridLayout:
                         cols: 1
-                        padding: dp(16), dp(1), dp(16), dp(1)
                                 
                         MDGridLayout:
-                            cols: 2
-                            spacing: dp(10)
-                            adaptive_height: True
-                            #height: dp(root.manager.parent.parent.ids.toolbar.height)
-
+                            cols: 3
+                            spacing: dp(20)
+                            padding: dp(16), dp(16), dp(16), dp(16)
+                            size_hint_y: None
+                            height: dp(root.manager.parent.parent.ids.toolbar.height)
                             MDTextField:
-                                id: SearchProductMenu
-                                hint_text: 'Buscar producto'
-                                icon_right: "android"
-                                mode: "rectangle"                                
-                                
-                                
+                                id: ButtonMenuSearchingStore
 
                                 size_hint_x: None
-                                width: 300
-                                max_height: dp(20)
+                                width: "100dp"
 
-                                text: 'Sample Text'
-                                font_size: int(self.max_height)   # the size changes the height of the widge
-                                multiline: False
-                                
+                                text: "TODO"
+                                hint_text: "Tipo:"
+                                icon_right: "arrow-down"
 
+                                mode: "rectangle"
+                                readonly: True 
+                                focus: True
+
+                                on_focus: if self.focus: root.CallbackMenuProduct(self)
+
+                            MDTextField:
+                                id: SearchProduct
+                                hint_text: 'Buscar producto'
+                                icon_right: "android"
+                                mode: "rectangle"
 
                             MDFloatingActionButton:
-                                id: ButtonSearchingStoreMenu
-
+                                id: ButtonSearchingStore
                                 icon: "book-search"
                                 style: "standard"
+                                width: "100dp"
+                                
+                        RecycleViewTable:
 
+                            id_table: "tableCajeroProducto"
 
-                    RecycleViewTable:
-                        objecto: self
-                        columnas: 3
-                        list_table_labels: ["id_imagen", "id_cedula", "id_proveedor"]
-                        list_table_data: ["imagen", "cedula", "proveedor"]
-                        #dictionaryPrincipal: ["_nombre", "_proveedor", "_cantidad", "_precio"]
-                        modalData: 
-                            'ModalsDialog.ShowAlertDialog("self","¿Que desea realizar?", "Por favor, elija algunas de las opciones presentadas.", "Cancelar", "Eliminar", "Modificar",  lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog.dismiss()),lambda x: ModalsDialog.ShowAlertDialogDelete ("self","¿De verdad quiere eliminar este producto?", "Si es así, adelante","Cancelar","Eliminar",lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog2.dismiss()),lambda x: print("cerrar")    ),lambda x: ModalsDialog.ChangePage("self", "StorePageUpdate", "Almacen - Modificar"))'
+                            padding: dp(16), dp(root.manager.parent.parent.ids.toolbar.height / 2), dp(16), dp(root.manager.parent.parent.ids.toolbarbottom.height /2)
 
-                        test: 
-                            'for i in range(1,5): d = {f"dato{i}": [f"images/logo.jpg", f"dato{i}_cedula", f"dato{i}_proveedor"]};self.objecto.DictionaryDataset.update(d)'
-                        id_table: "tableCajeroProducto"
+                            objecto: self
+                            need_image: True
+                            columnas: 5
+
+                            list_table_labels: ["id_imagen", "id_cedula", "id_proveedor"]
+                            list_table_data: ["imagen", "cedula", "proveedor"]
+
+                            modalData: 
+                                'ModalsDialog.ShowAlertDialog("self","¿Que desea realizar?", "Por favor, elija algunas de las opciones presentadas.", "", "Cancelar", "Agregar",  lambda x: print("click cancerlar"),       lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog.dismiss()),        lambda x: ModalsDialog.ChangePage("self", "StorePageUpdate", "Almacen - Modificar"))'
+                            
+                            test: 
+                                'for i in range(1,5): d = {f"dato{i}": [f"images/logo.jpg", f"dato{i}_cedula", f"dato{i}_proveedor"]};self.objecto.DictionaryDataset.update(d)'
+
 
             MDScrollView:
                 MDGridLayout:
@@ -1305,19 +1348,24 @@ HeaderAndFooter:
                     
                     RecycleViewTable:
                     
+                        id_table: "tableCashier"
+
                         size_hint_y: None
                         height: dp(400)
+                        padding: dp(16), dp(16), dp(16), dp(root.manager.parent.parent.ids.toolbarbottom.height /2)
 
                         objecto: self
-                        padding: dp(16), dp(16), dp(16), dp(root.manager.parent.parent.ids.toolbarbottom.height /2)
                         columnas: 5
+                        need_image: True
+                        
                         list_table_labels: ["id_imagen", "id_dado", "id_fecha", "id_monto"]
                         list_table_data: ["imagen","dado por", "fecha", "monto"]
-                        #dictionaryPrincipal: ["_nombre", "_proveedor", "_cantidad", "_precio"]
-                        modalData: 'ModalsDialog.ShowAlertDialog("self","¿Que desea realizar?","Por favor, elija algunas de las opciones presentadas.","Cancelar","Eliminar","Modificar",lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog.dismiss()),lambda x: ModalsDialog.ShowAlertDialogDelete("self","¿De verdad quiere eliminar este producto?","Si es así, adelante","Cancelar","Eliminar",lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog2.dismiss()),lambda x: print("cerrar")),lambda x: ModalsDialog.ChangePage("self","StorePageUpdate", "Almacen - Modificar"))'
+
+                        modalData: 
+                            'ModalsDialog.ShowAlertDialog("self","¿Que desea realizar?","Por favor, elija algunas de las opciones presentadas.","Cancelar","Eliminar","Modificar",     lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog.dismiss()),    lambda x: ModalsDialog.ShowAlertDialogDelete("self","¿De verdad quiere eliminar este producto?","Si es así, adelante","Cancelar","Eliminar",lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog2.dismiss()),lambda x: print("cerrar")),     lambda x: ModalsDialog.ChangeAmountProductModal("self", "Cambiar cantidad del producto"))'
+
                         test: 
                             'for i in range(1,5): d = {f"dato{i}": [f"images/logo.jpg", f"dato{i}_dado", f"dato{i}_fecha", f"dato{i}_monto"]};self.objecto.DictionaryDataset.update(d)'
-                        id_table: "tableCashier"
 
 
             MDBoxLayout:
@@ -1705,16 +1753,24 @@ HeaderAndFooter:
                     width: "100dp"
                     
             RecycleViewTable:
-                objecto: self
+
+                id_table: "tableSalesHistory"
+
                 padding: dp(16), dp(root.manager.parent.parent.ids.toolbar.height / 2), dp(16), dp(root.manager.parent.parent.ids.toolbarbottom.height /2)
+
+                need_image: True
+                objecto: self
                 columnas: 5
+
                 list_table_labels: ["id_imagen", "id_cliente", "id_empleado", "id_monto", "id_fecha"]
                 list_table_data: ["imagen","cliente", "empleado", "monto", "fecha"]
-                #dictionaryPrincipal: ["_nombre", "_proveedor", "_cantidad", "_precio"]
-                modalData: 'ModalsDialog.ShowAlertDialog("self","¿Que desea realizar?","Por favor, elija algunas de las opciones presentadas.","Cancelar","Eliminar","Modificar",lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog.dismiss()),lambda x: ModalsDialog.ShowAlertDialogDelete("self","¿De verdad quiere eliminar este producto?","Si es así, adelante","Cancelar","Eliminar",lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog2.dismiss()),lambda x: print("cerrar")),lambda x: ModalsDialog.ChangePage("self","StorePageUpdate", "Almacen - Modificar"))'
+
+                modalData: 
+                    'ModalsDialog.ShowAlertDialog("self","¿Que desea realizar?","Por favor, elija algunas de las opciones presentadas.","Cancelar","Eliminar","Modificar",lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog.dismiss()),lambda x: ModalsDialog.ShowAlertDialogDelete("self","¿De verdad quiere eliminar este producto?","Si es así, adelante","Cancelar","Eliminar",lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog2.dismiss()),lambda x: print("cerrar")),lambda x: ModalsDialog.ChangePage("self","StorePageUpdate", "Almacen - Modificar"))'
+                
                 test: 
                     'for i in range(1,5): d = {f"dato{i}": [f"images/logo.jpg", f"dato{i}_cliente", f"dato{i}_empleado", f"dato{i}_monto", f"dato{i}_fecha"]};self.objecto.DictionaryDataset.update(d)'
-                id_table: "tableSalesHistory"
+                
 
 # PAGINA DE ENCARGO
 <ChargePage>:
@@ -1772,17 +1828,23 @@ HeaderAndFooter:
 
             
             RecycleViewTable:
+
+                id_table: "tableCharge"
+
+                padding: dp(16), dp(root.manager.parent.parent.ids.toolbar.height / 2), dp(16), dp(root.manager.parent.parent.ids.toolbarbottom.height /2)
             
                 objecto: self
-                padding: dp(16), dp(root.manager.parent.parent.ids.toolbar.height / 2), dp(16), dp(root.manager.parent.parent.ids.toolbarbottom.height /2)
+                need_image: True
                 columnas: 5
+
                 list_table_labels: ["id_imagen", "id_id", "id_proveedor", "id_cantidad", "id_gasto"]
                 list_table_data: ["imagen","id", "proveedor", "cantidad", "gasto"]
-                #dictionaryPrincipal: ["_nombre", "_proveedor", "_cantidad", "_precio"]
-                modalData: 'ModalsDialog.ShowAlertDialog("self","¿Que desea realizar?","Por favor, elija algunas de las opciones presentadas.","Cancelar","Eliminar","Modificar",lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog.dismiss()),lambda x: ModalsDialog.ShowAlertDialogDelete("self","¿De verdad quiere eliminar este producto?","Si es así, adelante","Cancelar","Eliminar",lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog2.dismiss()),lambda x: print("cerrar")),lambda x: ModalsDialog.ChangePage("self","StorePageUpdate", "Almacen - Modificar"))'
+
+                modalData: 
+                    'ModalsDialog.ShowAlertDialog("self","¿Que desea realizar?","Por favor, elija algunas de las opciones presentadas.","Cancelar","Eliminar","Modificar",lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog.dismiss()),lambda x: ModalsDialog.ShowAlertDialogDelete("self","¿De verdad quiere eliminar este producto?","Si es así, adelante","Cancelar","Eliminar",lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog2.dismiss()),lambda x: print("cerrar")),lambda x: ModalsDialog.ChangePage("self","StorePageUpdate", "Almacen - Modificar"))'
+                
                 test: 
                     'for i in range(1,5): d = {f"dato{i}": [f"images/logo.jpg", f"dato{i}_id", f"dato{i}_proveedor", f"dato{i}_cantidad", f"dato{i}_gasto"]};self.objecto.DictionaryDataset.update(d)'
-                id_table: "tableCharge"
 
 <SupplierPage>:
     name: "SupplierPage"
@@ -1854,16 +1916,22 @@ HeaderAndFooter:
                     
             RecycleViewTable:
 
-                objecto: self
+                id_table: "tableSuppliers"
+
                 padding: dp(16), dp(root.manager.parent.parent.ids.toolbar.height / 2), dp(16), dp(root.manager.parent.parent.ids.toolbarbottom.height /2)
+
+                objecto: self
+                need_image: True
                 columnas: 5
+
                 list_table_labels: ["id_imagen", "id_nombre", "id_ubicacion", "id_rif", "id_telefono"]
                 list_table_data: ["imagen","nombre", "ubicacion", "rif", "telefono"]
-                #dictionaryPrincipal: ["_nombre", "_proveedor", "_cantidad", "_precio"]
-                modalData: 'ModalsDialog.ShowAlertDialog("self","¿Que desea realizar?","Por favor, elija algunas de las opciones presentadas.","Cancelar","Eliminar","Modificar",lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog.dismiss()),lambda x: ModalsDialog.ShowAlertDialogDelete("self","¿De verdad quiere eliminar este producto?","Si es así, adelante","Cancelar","Eliminar",lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog2.dismiss()),lambda x: print("cerrar")),lambda x: ModalsDialog.ChangePage("self","SupplierUpdatePage", "Proveedor - Modificar"))'
+
+                modalData: 
+                    'ModalsDialog.ShowAlertDialog("self","¿Que desea realizar?","Por favor, elija algunas de las opciones presentadas.","Cancelar","Eliminar","Modificar",lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog.dismiss()),lambda x: ModalsDialog.ShowAlertDialogDelete("self","¿De verdad quiere eliminar este producto?","Si es así, adelante","Cancelar","Eliminar",lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog2.dismiss()),lambda x: print("cerrar")),lambda x: ModalsDialog.ChangePage("self","SupplierUpdatePage", "Proveedor - Modificar"))'
+                
                 test: 
                     'for i in range(1,5): d = {f"dato{i}": [f"images/logo.jpg", f"dato{i}_nombre", f"dato{i}_ubicacion", f"dato{i}_rif", f"dato{i}_telefono"]};self.objecto.DictionaryDataset.update(d)'
-                id_table: "tableSuppliers"
 
 
 <SupplierUpdatePage>:
@@ -2205,74 +2273,6 @@ HeaderAndFooter:
 
 
 
-<ChargePage>:
-    name: "ChargePage"
-
-    MDBoxLayout:
-
-        padding: dp(1), dp(root.manager.parent.parent.ids.toolbar.height), dp(1), dp(root.manager.parent.parent.ids.toolbarbottom.height)
-
-        MDGridLayout:
-            cols: 1
-                        
-            MDGridLayout:
-                cols: 5
-                spacing: dp(10)
-                padding: dp(16), dp(16), dp(16), dp(16)
-                size_hint_y: None
-                height: dp(root.manager.parent.parent.ids.toolbar.height)
-                MDTextField:
-                    id: ButtonMenuSearchingCharge
-
-                    size_hint_x: None
-                    width: "100dp"
-
-                    text: "TODO"
-                    hint_text: "Tipo:"
-                    icon_right: "arrow-down"
-
-                    mode: "rectangle"
-                    readonly: True 
-                    focus: True
-
-                    on_focus: if self.focus: root.CallbackMenuCharge(self)
-
-                MDTextField:
-                    id: SearchProduct
-                    hint_text: 'Buscar encargo'
-                    icon_right: "android"
-                    mode: "rectangle"
-
-                    size_hint_x: None
-                    width: "400dp"
-
-                MDFloatingActionButton:
-                    id: ButtonSearchingCharge
-
-                    icon: "book-search"
-                    type: "standard"
-
-                MDLabel:
-
-                MDFloatingActionButton:
-                    icon: "account-multiple-plus"
-                    type: "standard"
-
-            
-            RecycleViewTable:
-            
-                objecto: self
-                padding: dp(16), dp(root.manager.parent.parent.ids.toolbar.height / 2), dp(16), dp(root.manager.parent.parent.ids.toolbarbottom.height /2)
-                columnas: 5
-                list_table_labels: ["id_imagen", "id_id", "id_proveedor", "id_cantidad", "id_gasto"]
-                list_table_data: ["imagen","id", "proveedor", "cantidad", "gasto"]
-                #dictionaryPrincipal: ["_nombre", "_proveedor", "_cantidad", "_precio"]
-                modalData: 'ModalsDialog.ShowAlertDialog("self","¿Que desea realizar?","Por favor, elija algunas de las opciones presentadas.","Cancelar","Eliminar","Modificar",lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog.dismiss()),lambda x: ModalsDialog.ShowAlertDialogDelete("self","¿De verdad quiere eliminar este producto?","Si es así, adelante","Cancelar","Eliminar",lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog2.dismiss()),lambda x: print("cerrar")),lambda x: ModalsDialog.ChangePage("self","StorePageUpdate", "Almacen - Modificar"))'
-                test: 
-                    'for i in range(1,5): d = {f"dato{i}": [f"images/logo.jpg", f"dato{i}_id", f"dato{i}_proveedor", f"dato{i}_cantidad", f"dato{i}_gasto"]};self.objecto.DictionaryDataset.update(d)'
-                id_table: "tableCharge"
-
-
 <MoneyHistory>:
     name: "MoneyHistory"
     
@@ -2480,19 +2480,26 @@ HeaderAndFooter:
                     
                     RecycleViewTable:
                     
+                        id_table: "tableMoneyHistory"
+
                         size_hint_y: None
                         height: dp(400)
+                        padding: dp(16), dp(16), dp(16), dp(root.manager.parent.parent.ids.toolbarbottom.height /2)
 
                         objecto: self
-                        padding: dp(16), dp(16), dp(16), dp(root.manager.parent.parent.ids.toolbarbottom.height /2)
+                        need_image: True
                         columnas: 5
+
                         list_table_labels: ["id_imagen", "id_dado", "id_fecha", "id_monto"]
                         list_table_data: ["imagen","dado por", "fecha", "monto"]
-                        #dictionaryPrincipal: ["_nombre", "_proveedor", "_cantidad", "_precio"]
-                        modalData: 'ModalsDialog.ShowAlertDialog("self","¿Que desea realizar?","Por favor, elija algunas de las opciones presentadas.","Cancelar","Eliminar","Modificar",lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog.dismiss()),lambda x: ModalsDialog.ShowAlertDialogDelete("self","¿De verdad quiere eliminar este producto?","Si es así, adelante","Cancelar","Eliminar",lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog2.dismiss()),lambda x: print("cerrar")),lambda x: ModalsDialog.ChangePage("self","StorePageUpdate", "Almacen - Modificar"))'
+
+                        dictionaryPrincipal: ["_nombre", "_proveedor", "_cantidad", "_precio"]
+                        
+                        modalData: 
+                            'ModalsDialog.ShowAlertDialog("self","¿Que desea realizar?","Por favor, elija algunas de las opciones presentadas.","Cancelar","Eliminar","Modificar",lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog.dismiss()),lambda x: ModalsDialog.ShowAlertDialogDelete("self","¿De verdad quiere eliminar este producto?","Si es así, adelante","Cancelar","Eliminar",lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog2.dismiss()),lambda x: print("cerrar")),lambda x: ModalsDialog.ChangePage("self","StorePageUpdate", "Almacen - Modificar"))'
+                        
                         test: 
                             'for i in range(1,5): d = {f"dato{i}": [f"images/logo.jpg", f"dato{i}_dado", f"dato{i}_fecha", f"dato{i}_monto"]};self.objecto.DictionaryDataset.update(d)'
-                        id_table: "tableMoneyHistory"
 
 <LoanPage>:
 
@@ -2642,19 +2649,24 @@ HeaderAndFooter:
                     
                     RecycleViewTable:
                     
+                        id_table: "tableLoan"
+
                         size_hint_y: None
                         height: dp(400)
+                        padding: dp(16), dp(16), dp(16), dp(root.manager.parent.parent.ids.toolbarbottom.height /2)
 
                         objecto: self
-                        padding: dp(16), dp(16), dp(16), dp(root.manager.parent.parent.ids.toolbarbottom.height /2)
+                        need_image: True
                         columnas: 5
+
                         list_table_labels: ["id_imagen", "id_dado", "id_fecha", "id_monto"]
                         list_table_data: ["imagen","dado por", "fecha", "monto"]
-                        #dictionaryPrincipal: ["_nombre", "_proveedor", "_cantidad", "_precio"]
-                        modalData: 'ModalsDialog.ShowAlertDialog("self","¿Que desea realizar?","Por favor, elija algunas de las opciones presentadas.","Cancelar","Eliminar","Modificar",lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog.dismiss()),lambda x: ModalsDialog.ShowAlertDialogDelete("self","¿De verdad quiere eliminar este producto?","Si es así, adelante","Cancelar","Eliminar",lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog2.dismiss()),lambda x: print("cerrar")),lambda x: ModalsDialog.ChangePage("self","LoanUpdatePage", "Prestamo - Modificar"))'
+
+                        modalData: 
+                            'ModalsDialog.ShowAlertDialog("self","¿Que desea realizar?","Por favor, elija algunas de las opciones presentadas.","Cancelar","Eliminar","Modificar",lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog.dismiss()),lambda x: ModalsDialog.ShowAlertDialogDelete("self","¿De verdad quiere eliminar este prestamo?","Si es así, adelante","Cancelar","Eliminar",lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog2.dismiss()),lambda x: print("cerrar")),lambda x: ModalsDialog.ChangePage("self","LoanUpdatePage", "Prestamo - Modificar"))'
+                        
                         test: 
                             'for i in range(1,5): d = {f"dato{i}": [f"images/logo.jpg", f"dato{i}_dado", f"dato{i}_fecha", f"dato{i}_monto"]};self.objecto.DictionaryDataset.update(d)'
-                        id_table: "tableLoan"
 
 
 <LoanUpdatePage>:

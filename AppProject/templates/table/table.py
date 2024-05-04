@@ -36,9 +36,9 @@ from retry import retry
 ###TABLA
 
 ''' Global rv '''
-global_selectable = global_gridSelectableLabelChildren = global_id_table = global_columnas  = None
+global_selectable = global_gridSelectableLabelChildren = global_id_table = global_columnas  = global_need_image = None
 
-global_labels_order = have_labels_cols = False
+global_labels_order = have_labels_cols = global_need_image = False
 
 global_dictionary = []
 
@@ -47,6 +47,11 @@ global_rv = {}
 global_dictionary_table_data = {}
 
         
+
+
+class ContentCashierPage(MDBoxLayout):
+    pass
+
 class SelectableRecycleBoxLayout(FocusBehavior, LayoutSelectionBehavior,
                                  RecycleBoxLayout):
     ''' Adds selection and focus behaviour to the view. '''
@@ -77,7 +82,7 @@ class SelectableLabel(RecycleDataViewBehavior, MDFlatButton):
         #self.CreateLabelsWidgets()
     
     #Columnas de las tablas y el nombre que tendrán
-    def CreateLabelsWidgets(self, dictionary, stop = False):        
+    def CreateLabelsWidgets(self, dictionary, need_image):        
 
         #se agrega al mdgridlayout para que se muestre
         #self.gridSelectableLabel.add_widget(label)           
@@ -93,6 +98,8 @@ class SelectableLabel(RecycleDataViewBehavior, MDFlatButton):
         else:
 
 
+            #RecycleViewTable.GetValueFromKivy(global_rv.objecto)
+            
             #print(global_dictionary_table_data)
 
 
@@ -110,23 +117,27 @@ class SelectableLabel(RecycleDataViewBehavior, MDFlatButton):
             for index, p in enumerate(dictionary): 
 
 
-                #print(str(dictionary) + " createlabelswidget")
+                if index == 0 :
 
-                if index == 0:
+                    if need_image:
 
-                    l=Image(
-                        source= "",
-                        #fit_mode= True,
-                        #keep_ratio= False,
-                        fit_mode= "scale-down",
-                        size_hint= [1, 1],
-                    )
+                        l=Image(
+                            source= "",
+                            fit_mode= "scale-down",
+                            size_hint= [1, 1],
+                        )
 
-                    
+                    else:
+
+                        l=MDLabel(
+                            text=str(p) + str(index),
+                            halign="center",
+                            font_style = "H6",
+                            markup= True,
+                        )
+
+
                     id_label = "id_" + str(p)
-
-                    #self.children[0].ids[global_id_table].add_widget(l)
-                    #self.children[0].ids[global_id_table].ids[id_label] = weakref.ref(l)
 
                     self.ids.GridSelectableLabel.add_widget(l)
                     self.ids.GridSelectableLabel.ids[id_label] = weakref.ref(l)
@@ -143,16 +154,10 @@ class SelectableLabel(RecycleDataViewBehavior, MDFlatButton):
                     )
 
                     id_label = "id_" + str(p)
-
-                    #self.children[0].ids[global_id_table].add_widget(l)
-                    #self.children[0].ids[global_id_table].ids[id_label] = weakref.ref(l)
-
                     
                     self.ids.GridSelectableLabel.add_widget(l)
                     self.ids.GridSelectableLabel.ids[id_label] = weakref.ref(l)
 
-            if stop == True:
-                return
             
     def refresh_view_attrs(self, rv, index, data):
 
@@ -171,6 +176,7 @@ class SelectableLabel(RecycleDataViewBehavior, MDFlatButton):
                 
                 self_objecto_tabla = global_rv[i].objecto
 
+                # RecycleViewTable.GetValueFromKivy(global_rv.objecto)
 
                 #print(global_rv[i].objecto.list_table_data)
                 #for i in global_rv[i].objecto.list_table_data:
@@ -187,7 +193,9 @@ class SelectableLabel(RecycleDataViewBehavior, MDFlatButton):
                 pass
 
         except IndexError:
-            self.CreateLabelsWidgets(self_objecto_tabla.list_table_labels, True)
+
+            #MUY IMPORTANTE OJO, PERMITE QUE SE PUEDA PASAR EL VALOR DEL SELF DE CADA OBJECTO INDIVIDUAL AL SELECTABLE LABEL
+            self.CreateLabelsWidgets(self_objecto_tabla.list_table_labels, self_objecto_tabla.need_image)
 
         #print(str(global_rv['tableCajeroProducto'].objecto.list_table_data) + " refresh")        
 
@@ -259,7 +267,7 @@ class RecycleViewTable(MDBoxLayout):
     
     ''' Variables de los modales Dialogs'''
     
-    dialog = dialog2 = dialog3 = None
+    dialog = dialog2 = dialog3  =  dialogShowUpdate = None
 
 
     list_table_labels = ListProperty([])
@@ -270,6 +278,7 @@ class RecycleViewTable(MDBoxLayout):
     columnas = NumericProperty(1)
     id_table = StringProperty(None)
     objecto = ObjectProperty(None)
+    need_image = BooleanProperty(True)
     boleana = True
 
     #Cantidad de items que se mostrará en el RecycleView
@@ -283,6 +292,12 @@ class RecycleViewTable(MDBoxLayout):
     #Diccionario donde se almacenaran los datos
     DictionaryDataset = {}
 
+    def GetValueFromKivy(variable):
+        
+        value = variable
+        
+        return value
+
     def __init__(self, **kwargs):
         super(RecycleViewTable, self).__init__(**kwargs)
      
@@ -294,7 +309,7 @@ class RecycleViewTable(MDBoxLayout):
 
         Clock.schedule_once(lambda dt: self.CreateLabels(self))
         #Clock.schedule_once(lambda dt: self.on_window_resize)
-        Clock.schedule_once(lambda dt: self.TableData(self.DictionaryDataset))
+        Clock.schedule_once(lambda dt: self.TableData(self.objecto.DictionaryDataset))
         #Clock.schedule_once(lambda dt: self.Test())
 
         #self.TableData(self.DictionaryDataset)
@@ -317,10 +332,14 @@ class RecycleViewTable(MDBoxLayout):
 
 
 
-        global global_id_table, global_columnas, global_dictionary_table_data
+        global global_id_table, global_columnas, global_dictionary_table_data, global_need_image
 
-        
+
+        global_need_image = self.objecto.need_image
+
+
         global global_rv
+
 
         item = {self.objecto.rv: self}
         #global_rv[self.objecto.rv] = {}
@@ -331,7 +350,9 @@ class RecycleViewTable(MDBoxLayout):
         global_dictionary_table_data[self.objecto.id_table] = []
 
 
-        lista = self.list_table_labels
+
+
+        lista = self.objecto.list_table_labels
 
         global_dictionary_table_data[self.objecto.id_table].append(lista)
 
@@ -362,26 +383,52 @@ class RecycleViewTable(MDBoxLayout):
         #Crea las cabeceras de la tabla
         for index, i in enumerate(self.objecto.list_table_data):
 
+
+
+            #Capitaliza el inicio de la palabra
+            i = (i).title()
+
+            #Caracteristicas que tendrá el widget, en este caso un MDLabel
+            label = MDLabel(
+                    #text = "[size="+ str(font_size) +"]"+str(i)+"[/size]",
+                    text = i,
+                    halign="center",
+                    font_style = "H6",
+                    #font_size= ,
+                    markup= True,
+                )
+
+            #se agrega al mdgridlayout para que se muestre
+            self.objecto.scroll_box_layout.add_widget(label)
+
+            '''
             if index == 0:
+                #print(i)
+
+                if self.objecto.need_image == False:
+                    #print(' imagen no es necesitada')
+                    pass
                 pass
             else:
+
+                print(i)
 
                 #Capitaliza el inicio de la palabra
                 i = (i).title()
 
                 #Caracteristicas que tendrá el widget, en este caso un MDLabel
                 label = MDLabel(
-                            #text = "[size="+ str(font_size) +"]"+str(i)+"[/size]",
-                            text = i,
-                            halign="center",
-                            font_style = "H6",
-                            #font_size= ,
-                            markup= True,
-                        )
+                        #text = "[size="+ str(font_size) +"]"+str(i)+"[/size]",
+                        text = i,
+                        halign="center",
+                        font_style = "H6",
+                        #font_size= ,
+                        markup= True,
+                    )
 
                 #se agrega al mdgridlayout para que se muestre
                 self.objecto.scroll_box_layout.add_widget(label)           
-
+            '''
         #for i in self.objecto.list_table_data:
         #    global_dictionary.append(i)
 
@@ -390,39 +437,25 @@ class RecycleViewTable(MDBoxLayout):
 
         if self.objecto.boleana:
 
-
+            self.objecto.DictionaryDataset = {}
 
             #ejecuta lo escrito en el kv, normalmente es donde se ejecutará el codigo mongodb que nos dará los datos de la base de datos
             exec(self.objecto.test)
 
             dictionary = self.objecto.DictionaryDataset
+
+            #self.objecto.dictionary = self.objecto.DictionaryDataset
             
             #permite que se active solamente una vez
             self.objecto.boleana = False
 
-
-
-        print(str(dictionary) + " <--- diccionario")
-
+            ModalsDialog.StatusButtonPagination('self', self.objecto.rv, "both")
+            
         ##################################################################
 
-        #print(self.objecto.DictionaryDataset)
-
-        #global global_dictionary            
-
-        #d = {self.objecto : [self.DictionaryDataset]}
-        #global_dictionary.append(dictionary)
-        #global_dictionary[self.objecto.rv].update(d)
-
-        #print()
-        #print(global_dictionary)
-        
-
-        #print(global_dictionary)
-        #print()
-            
         #Cuenta la cantidad de items que tiene el diccionario
         CountDictionary = len(dictionary)
+        #print(CountDictionary)
 
         #Cambia el texto del Label ShowItems, a los que haya en el diccionario
         #Si el valor es 0, le suma un 1 solo visualmente
@@ -461,10 +494,13 @@ class RecycleViewTable(MDBoxLayout):
                     
                     #crea diccionario con los datos dentro del diccionario, segun los datos escritos en el kivy haciendo lo siguiente en el diccionario,
                     # {nombre_del_dato, diccionario[datos_que_se_mostraran], indice[posicion_del_dato]}
+
+
                     da = { i: dictionary[dic][index]}
 
                     #agrega los datos al diccionario principal
                     d['dato'].update(da)
+                    
 
             
                 #crea diccionario el on_release al diccionario principal
@@ -503,38 +539,95 @@ class ModalsDialog():
         
     #Modal 1
     def ShowAlertDialog(self, title, text, optionOne, optionTwo, optionThree, releaseOne, releaseTwo, releaseThree):
-        
+ 
         #Si no existe, normalmente no, lo crea
-        if not RecycleViewTable.dialog:
-            #Caracteristicas
-            RecycleViewTable.dialog = MDDialog(
-                title=title,
-                text= text,
-                buttons=[
-                    #Boton de Cancelar
-                    MDFlatButton(
-                        text=optionOne,
-                        #text_color=self.theme_cls.primary_color,
-                        on_press = releaseOne
-                    ),
-                    #Boton de modificar o algun otro uso
-                    MDRaisedButton(
-                        text=optionTwo,
-                        md_bg_color="red",
-                        text_color="white",
-                        on_press = releaseTwo
-                    ),
-                    #Boton de Aceptar
-                    MDRaisedButton(
-                        text=optionThree,
-                        md_bg_color="orange",
-                        on_release= releaseThree
-                                                        
-                    ),
-                ],
-            )
+        #if not RecycleViewTable.dialog:
+        #Caracteristicas
+        RecycleViewTable.dialog = MDDialog(
+            title=title,
+            text= text,
+            buttons=[
+                #Boton de Cancelar
+                MDFlatButton(
+                    text=optionOne,
+                    #text_color=self.theme_cls.primary_color,
+                    on_press = releaseOne
+                ),
+                #Boton de modificar o algun otro uso
+                MDRaisedButton(
+                    text=optionTwo,
+                    md_bg_color="red",
+                    text_color="white",
+                    on_press = releaseTwo
+                ),
+                #Boton de Aceptar
+                MDRaisedButton(
+                    text=optionThree,
+                    md_bg_color="orange",
+                    on_release= releaseThree
+                                                    
+                ),
+            ],
+        )
         #Abre el modal
         RecycleViewTable.dialog.open()
+
+    def ChangeAmountProductModal(self, title):
+
+        ModalsDialog.CloseDialog("self", RecycleViewTable.dialog.dismiss())
+
+        dialogShowUpdate = MDDialog(
+            title=title,
+            type="custom",
+            content_cls=ContentCashierPage(),
+            buttons=[
+                MDFlatButton(
+                    text="Cancelar",
+                    md_bg_color="red",
+                    text_color="white",
+                ),
+                MDRaisedButton(
+                    text="Aceptar",
+                    md_bg_color="blue",
+                    #text_color=self.theme_cls.primary_color,
+                ),
+            ],
+        )
+        dialogShowUpdate.open()
+
+    def ShowUpdateDataModal(self, title, text, optionOne, optionTwo, optionThree, releaseOne, releaseTwo, releaseThree):
+ 
+        #Si no existe, normalmente no, lo crea
+        #if not RecycleViewTable.dialog:
+        #Caracteristicas
+        RecycleViewTable.dialogShowUpdate = MDDialog(
+            title=title,
+            text= text,
+            buttons=[
+                #Boton de Cancelar
+                MDFlatButton(
+                    text=optionOne,
+                    #text_color=self.theme_cls.primary_color,
+                    on_press = releaseOne
+                ),
+                #Boton de modificar o algun otro uso
+                MDRaisedButton(
+                    text=optionTwo,
+                    md_bg_color="red",
+                    text_color="white",
+                    on_press = releaseTwo
+                ),
+                #Boton de Aceptar
+                MDRaisedButton(
+                    text=optionThree,
+                    md_bg_color="orange",
+                    on_release= releaseThree
+                                                    
+                ),
+            ],
+        )
+        #Abre el modal
+        RecycleViewTable.dialogShowUpdate.open()
         
 
     def ShowAlertDialogDelete(self, title, text, textButtonOne, textButtonTwo, releaseButtonOne, releaseButtonTwo):
@@ -543,26 +636,26 @@ class ModalsDialog():
         ModalsDialog.CloseDialog('self',RecycleViewTable.dialog.dismiss())
         
         #Si no existe, normalmente no, lo crea
-        if not RecycleViewTable.dialog2:
-            RecycleViewTable.dialog2 = MDDialog(
-                title=title,
-                text=text,
-                buttons=[
-                    #Boton de Cancelar
-                    MDFlatButton(
-                        text=textButtonOne,
-                        text_color= "red",
-                        on_release = releaseButtonOne
-                    ),
-                    #Boton de Aceptar
-                    MDRaisedButton(
-                        text=textButtonTwo,
-                        text_color="white",
-                        md_bg_color="red",
-                        on_release = releaseButtonTwo
-                    ),
-                ],
-            )
+        #if not RecycleViewTable.dialog2:
+        RecycleViewTable.dialog2 = MDDialog(
+            title=title,
+            text=text,
+            buttons=[
+                #Boton de Cancelar
+                MDFlatButton(
+                    text=textButtonOne,
+                    text_color= "red",
+                    on_release = releaseButtonOne
+                ),
+                #Boton de Aceptar
+                MDRaisedButton(
+                    text=textButtonTwo,
+                    text_color="white",
+                    md_bg_color="red",
+                    on_release = releaseButtonTwo
+                ),
+            ],
+        )
 
         #Abre el modal
         RecycleViewTable.dialog2.open()
@@ -572,6 +665,7 @@ class ModalsDialog():
 
         #Funcion dinamica para cerrar los dialogs
         #RecycleViewTable.CreateLabels(self)
+        #print(RecycleViewTable.dialog)
         typeDialog
 
     def ChangeItemsAmount(self, rv):
@@ -597,12 +691,16 @@ class ModalsDialog():
         global_rv[rv].objecto.ids.ItemsAmount.text = "Items por página: " + str(global_rv[rv].objecto.ItemsAccountPagination)
 
         #Llama la funcion para ver si ambas flechas se desactivan al actualizar los datos
-        #self.StatusButtonPagination("both")
+        self.StatusButtonPagination(rv, "both")
         #Llama la función TableData para rellenar los datos de la tabla
-        #global_rv[rv].objecto.TableData(global_rv[rv].objecto.DictionaryDataset)
+
+        #print()
+        #print(global_rv[rv].objecto.DictionaryDataset)
+
+        global_rv[rv].objecto.TableData(global_rv[rv].objecto.DictionaryDataset)
         #print(rv)
+
     def ChangeItemsAmountButtons(self, rv, button):
-        
 
         #Asignacion del nuevo valor del inicio de la paginacion, (primera variable, primer número 'Mostrando AQUI - X)
         #Asignacion del nuevo valor de los items mostrados del diccionario (segunda variable, segundo número 'Mostrando X - AQUI)
