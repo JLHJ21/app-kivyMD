@@ -5,7 +5,7 @@ from kivy.uix.recycleboxlayout import RecycleBoxLayout
 from kivy.uix.behaviors import FocusBehavior
 from kivy.uix.recycleview.layout import LayoutSelectionBehavior
 
-from kivymd.uix.gridlayout import MDGridLayout
+#from kivymd.uix.gridlayout import MDGridLayout
 from kivymd.uix.boxlayout import MDBoxLayout
 
 from kivymd.uix.dialog import MDDialog
@@ -13,24 +13,24 @@ from kivymd.uix.button import MDFlatButton, MDRaisedButton
 
 
 from kivy.clock import Clock
-from kivy.lang import Builder
-from kivy.uix.behaviors import ButtonBehavior
+#from kivy.lang import Builder
+#from kivy.uix.behaviors import ButtonBehavior
 from kivy.core.window import Window
 from kivy.metrics import dp
-from kivy.core.text import Label as CoreLabel
-from kivy.core.text.markup import MarkupLabel
+#from kivy.core.text import Label as CoreLabel
+#from kivy.core.text.markup import MarkupLabel
 
-from kivy.uix.recycleview import RecycleView
+#from kivy.uix.recycleview import RecycleView
 
 from kivymd.uix.label import MDLabel
-from kivy.uix.label import Label
+#from kivy.uix.label import Label
 
-from kivy.factory import Factory
+#from kivy.factory import Factory
 from kivy.uix.image import Image
 
 import intermediary
 import weakref
-from retry import retry
+#from retry import retry
 
 ############
 ###TABLA
@@ -67,7 +67,6 @@ class SelectableLabel(RecycleDataViewBehavior, MDFlatButton):
 
     ''' Add selection support to the Label '''
     index = None
-    #selected = BooleanProperty(False)
     selectable = BooleanProperty(True)
 
     def __init__(self, **kwargs):
@@ -76,43 +75,17 @@ class SelectableLabel(RecycleDataViewBehavior, MDFlatButton):
         #global que permite usar el self de SelectableLabel en otras clases
         global global_selectable
         global_selectable = self
-
-        
-
-        #self.CreateLabelsWidgets()
     
     #Columnas de las tablas y el nombre que tendrán
     def CreateLabelsWidgets(self, dictionary, need_image):        
-
-        #se agrega al mdgridlayout para que se muestre
-        #self.gridSelectableLabel.add_widget(label)           
-
-        #self.gridSelectableLabel.ids["id_" + str(i)] = weakref.ref(label)
-            
-        #print(str(RecycleViewTable.list_table_data) + " <--- list table data")
         
         if (self == None):
-            #Clock.schedule_once(lambda dt: RecycleViewTable.CreateLabels(global_rv))
             
             pass
         else:
 
 
-            #RecycleViewTable.GetValueFromKivy(global_rv.objecto)
-            
-            #print(global_dictionary_table_data)
-
-
-            self.children[0].cols = global_columnas
-
-
-            #print(self.ids['GridSelectableLabel'].children)
-
-
-            #NOMBRE DEL ID = OBJETO QUE SE LE AGREGARA ESO
-            #self.ids[global_id_table] = weakref.ref(self.children[0])
-            
-            #self.scroll_box_layout.add_widget(label)           
+            self.children[0].cols = global_columnas    
             
             for index, p in enumerate(dictionary): 
 
@@ -136,7 +109,6 @@ class SelectableLabel(RecycleDataViewBehavior, MDFlatButton):
                             markup= True,
                         )
 
-
                     id_label = "id_" + str(p)
 
                     self.ids.GridSelectableLabel.add_widget(l)
@@ -148,9 +120,7 @@ class SelectableLabel(RecycleDataViewBehavior, MDFlatButton):
                         text=str(p) + str(index),
                         halign="center",
                         font_style = "H6",
-                        #font_size= ,
                         markup= True,
-                        #is_image=False
                     )
 
                     id_label = "id_" + str(p)
@@ -163,30 +133,14 @@ class SelectableLabel(RecycleDataViewBehavior, MDFlatButton):
 
         global have_labels_cols
         global global_gridSelectableLabelChildren
-        #global global_dictionary
-
-        #print(global_rv.objecto.id_table)
-        #print(global_dictionary_table_data[global_rv.objecto.id_table])
 
         for i in global_rv:
 
-            #print(str(global_rv[i].objecto.rv) + " GLOBAL RV")        
+                 
 
             if global_rv[i].objecto.rv == rv:
                 
                 self_objecto_tabla = global_rv[i].objecto
-
-                # RecycleViewTable.GetValueFromKivy(global_rv.objecto)
-
-                #print(global_rv[i].objecto.list_table_data)
-                #for i in global_rv[i].objecto.list_table_data:
-                #    global_dictionary = []
-                #    global_dictionary.append(i)
-
-
-                #print(self_objecto_tabla.list_table_labels[::-1])
-
-            #(str(rv) + " <--- RV")
         
         try:
             if self.gridSelectableLabel.children[0]:
@@ -197,51 +151,25 @@ class SelectableLabel(RecycleDataViewBehavior, MDFlatButton):
             #MUY IMPORTANTE OJO, PERMITE QUE SE PUEDA PASAR EL VALOR DEL SELF DE CADA OBJECTO INDIVIDUAL AL SELECTABLE LABEL
             self.CreateLabelsWidgets(self_objecto_tabla.list_table_labels, self_objecto_tabla.need_image)
 
-        #print(str(global_rv['tableCajeroProducto'].objecto.list_table_data) + " refresh")        
-
         ''' Catch and handle the view changes '''
-
-        #print(global_rv.objecto.list_table_data)
-
-
-        #print(str(global_rv[rv]['tableCajeroProducto']) + "refresh")
-
-        #print(str(global_rv))        
-
 
         
             
 
 
         self.index = index
-        #self.ids["a"] = weakref.ref(self.gridSelectableLabel.parent)
-
-
-        #OJO
-        #print(self.ids.a.children[0])
-        #print(self.ids.a.ids.GridSelectableLabel.children)
-
 
         #ciclo FOR que agrega los datos en la tabla segun lo escrito en el .kv
         #Une las listas de list_table_labels y list_table_data con el zip, para que la iteracion sea 0:0 1:1
         
         for index, (label, itemData) in enumerate(zip(self_objecto_tabla.list_table_labels[::-1], self_objecto_tabla.list_table_data[::-1])):
 
-            #print(str(len(global_rv.list_table_labels)) + " len")
-            
-            #print(self.ids.GridSelectableLabel.children)
-
-            #print(global_rv.list_table_data[::-1])
-
-
+        
             try:
-                
-                print(str(self.gridSelectableLabel.children[index].source) + " <--- SOURCE")
-
+                #Si es vacío el valor imagen, significa que es una imagen
                 self.gridSelectableLabel.children[index].source = data['dato'][itemData]
                 
             except AttributeError:
-                #print(str(self.gridSelectableLabel.children[index].text) + " <--- TEXT")
 
                 self.gridSelectableLabel.children[index].text = data['dato'][itemData]
                 
@@ -272,7 +200,6 @@ class RecycleViewTable(MDBoxLayout):
 
     list_table_labels = ListProperty([])
     list_table_data = ListProperty([])
-    #dictionaryPrincipal = ListProperty([])
     modalData = StringProperty(None)
     test = StringProperty(None)
     columnas = NumericProperty(1)
@@ -292,11 +219,6 @@ class RecycleViewTable(MDBoxLayout):
     #Diccionario donde se almacenaran los datos
     DictionaryDataset = {}
 
-    def GetValueFromKivy(variable):
-        
-        value = variable
-        
-        return value
 
     def __init__(self, **kwargs):
         super(RecycleViewTable, self).__init__(**kwargs)

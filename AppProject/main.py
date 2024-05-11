@@ -45,9 +45,9 @@ from kivy.core.window import Window
 #Enlazar archivo templates/table/table.py
 import intermediary
 from templates.table.table import RecycleViewTable, ModalsDialog
+from database.database import DatabaseClass
 
 import weakref
-
 #Window.size = (600, 800)
 
 #OJO
@@ -57,7 +57,12 @@ import weakref
 
 #VARIABLE QUE ALMACENA EL SELF, PERMITE CAMBIAR DE SCREN (PANTALLA) AUN SI SON DIFERENTES CLASES
 intermediary.global_variable_self = global_self_client = ''
-self_store_page = self_ClientsPage = self_sales_history = self_SupplierCharge = self_charge_page = self_money_history = None
+self_store_page = self_ClientsPage = self_sales_history = self_SupplierCharge = self_charge_page = self_money_history = global_foreign_exchange_update = None
+
+# LLAMADA A LA BASE DE DATOS
+DatabaseClass.Conexion()
+#DatabaseClass.InsertData()
+
 
 #MENU LATERAL
 class ContentNavigationDrawer(MDScrollView):
@@ -112,6 +117,51 @@ class CashierPage(MDScreen):
 
 #PAGINA DE DIVISAS
 
+class UpdateForeignExchangePage(MDScreen):
+
+
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+        global global_foreign_exchange_update
+        global_foreign_exchange_update = self
+
+    def ChangeDataForeignExchange(self, inputDollar, inputPeso, inputBolivar):
+        
+        DatabaseClass.UpdateForeignExchangeData(inputDollar, inputPeso, inputBolivar)
+
+        
+        #obtiene el self principal del kivy
+        self_main = intermediary.global_variable_self
+        #cambia segun la pagina querida
+        self_main.root.ids.screen_manager.current = 'ForeignExchangePage'
+        #cambia el titulo del menu de arriba segun el nombre que queramos
+        self_main.root.ids.toolbar.title = 'Divisas'
+        
+        pass
+
+    def ChangeTextUpdatePage(self, listItems):
+
+        #DOLAR
+        global_foreign_exchange_update.ids.updateForeignExchangeLabelDollar.text = listItems[0] #LABEL
+        global_foreign_exchange_update.ids.updateForeignExchangeTextFieldDollar.readonly = listItems[1] #TextField
+
+        #PESO
+        global_foreign_exchange_update.ids.updateForeignExchangeLabelPeso.text = listItems[2] #LABEL
+        global_foreign_exchange_update.ids.updateForeignExchangeTextFieldPeso.readonly = listItems[3] #TextField
+
+        #BOLIVAR
+        global_foreign_exchange_update.ids.updateForeignExchangeLabelBolivar.text = listItems[4] #LABEL
+        global_foreign_exchange_update.ids.updateForeignExchangeTextFieldBolivar.readonly = listItems[5] #TextField
+
+        global_foreign_exchange_update.ids.TitleUpdateForeignExchange.text = listItems[6] #TextField
+
+        #print(global_foreign_exchange_update.ids.updateForeignExchangeLabelBolivar.text)
+
+
+    pass
+
 class ForeignExchangePage(MDScreen):
 
     inputDollar = StringProperty(None)
@@ -121,39 +171,147 @@ class ForeignExchangePage(MDScreen):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.UpdateForeignExchange()
 
-        self.ChangeForeignExchange("dolar")
+
+    def on_pre_enter(self):
+        self.UpdateForeignExchange()
+        
+
+    def UpdateForeignExchange(self):
+        listData = DatabaseClass.ChangePreferenceExchangeForeign()
+
+        match (listData[3]):
+            case 'dolar':
+                    
+                self.inputDollar = 'PREFERIDO'
+                self.inputPeso = f'Dólar a Peso: {listData[0]}$ == {listData[1]}$$'
+                self.inputBolivar = f'Dólar a Bolívar: {listData[0]}$ == {listData[2]}bs'
+
+            case 'peso':
+                    
+                self.inputDollar = f'Peso a Dólar: {listData[0]}$$ == 1$'
+                self.inputPeso = 'PREFERIDO'
+                self.inputBolivar = f'Peso a Bolívar: {listData[1]}$$ == {listData[2]}bs'
+
+            case 'bolivar':
+                    
+                self.inputDollar = f'Bolívar a Dolar: {listData[0]}bs == 1$'
+                self.inputPeso = f'Bolívar a Peso: {listData[1]}bs == 1000$$'
+                self.inputBolivar = 'PREFERIDO'
+
+    def ChangePageUpdateExchangeForeign(self):
+
+
+        if self.inputDollar == 'PREFERIDO':
+
+            title = 'Modificar tasa de cambio del DÓLAR'
+
+            #Dolar
+            inputLabel1 = 'Cambio de dólar a dólar:'
+            stateInputLabel1 = True
+            
+            #Peso
+            inputLabel2 = 'Cambio de dólar a peso:'
+            stateInputLabel2 = False
+
+            #Bolivar
+            inputLabel3 = 'Cambio de dólar a bolívar:'
+            stateInputLabel3 = False
+
+        elif self.inputPeso == 'PREFERIDO':
+
+            title = 'Modificar tasa de cambio del PESO'
+
+            #Dolar
+            inputLabel1 = 'Cambio de peso a dólar:'
+            stateInputLabel1 = False
+
+            #Peso
+            inputLabel2 = 'Cambio de peso a peso:'
+            stateInputLabel2 = True
+
+            #Bolivar
+            inputLabel3 = 'Cambio de peso a bolívar:'
+            stateInputLabel3 = False
+
+        elif self.inputBolivar == 'PREFERIDO':
+
+            title = 'Modificar tasa de cambio del BOLÍVAR'
+
+            #Dolar
+            inputLabel1 = 'Cambio de bolívar a dólar:'
+            stateInputLabel1 = False
+            
+            #Peso
+            inputLabel2 = 'Cambio de bolívar a peso:'
+            stateInputLabel2 = False
+
+            #Bolivar
+            inputLabel3 = 'Cambio de bolívar a bolívar:'
+            stateInputLabel3 = True
+
+        
+        listTextChange = []
+
+        listTextChange.extend([inputLabel1, stateInputLabel1, inputLabel2, stateInputLabel2, inputLabel3, stateInputLabel3, title])
+
+
+        
+        
+
+        UpdateForeignExchangePage.ChangeTextUpdatePage('self', listTextChange)
+
+        #obtiene el self principal del kivy
+        self_main = intermediary.global_variable_self
+        #cambia segun la pagina querida
+        self_main.root.ids.screen_manager.current = 'UpdateForeignExchangePage'
+        #cambia el titulo del menu de arriba segun el nombre que queramos
+        self_main.root.ids.toolbar.title = 'Modificar - Divisa'
 
 
 
     def ChangeForeignExchange(self, text):
 
         match (text):
-            case 'bolivar':
-
-                dolar = 'Dolar a Bolívar: 1$ == 36.00bs'
-                peso = 'Pesos a bolivares: 1000$$ == 10.5bs'
-                bolivar = 'PREFERIDO'
-
             case 'dolar':
-                dolar = 'PREFERIDO'
-                peso = 'Pesos a dólares: 1000$$ == 0.25$'
-                bolivar = 'Bolívar a dólar: 36.00bs == 1$'
+                if self.inputDollar == 'PREFERIDO':
+                    pass
+                else:
+                    listData = DatabaseClass.ChangePreferenceExchangeForeign(text)
+
+                    self.inputDollar = 'PREFERIDO'
+                    self.inputPeso = f'Dólar a Peso: {listData[0]}$ == {listData[1]}$$'
+                    self.inputBolivar = f'Dólar a Bolívar: {listData[0]}$ == {listData[2]}bs'
 
             case 'peso':
-                dolar = 'Dólar a pesos: 1$ == 3964$$'
-                peso = 'PREFERIDO'
-                bolivar = 'Bólivar a peso: 10.5bs == 1000$$'
+                if self.inputPeso == 'PREFERIDO':
+                    pass
+                else:
+                    listData = DatabaseClass.ChangePreferenceExchangeForeign(text)
+
+                    self.inputDollar = f'Peso a Dólar: {listData[0]}$$ == 1$'
+                    self.inputPeso = 'PREFERIDO'
+                    self.inputBolivar = f'Peso a Bolívar: {listData[1]}$$ == {listData[2]}bs'
+            
+            case 'bolivar':
+
+                if self.inputBolivar == 'PREFERIDO':
+                    pass
+                else:
+                    listData = DatabaseClass.ChangePreferenceExchangeForeign(text)
+                    
+                    self.inputDollar = f'Bolívar a Dolar: {listData[0]}bs == 1$'
+                    self.inputPeso = f'Bolívar a Peso: {listData[1]}bs == 1000$$'
+                    self.inputBolivar = 'PREFERIDO'
 
             case _:
-                dolar = 'Dolar a Bolívar: 1$ == 36.00bs'
-                peso = 'Pesos a bolivares: 1000$$ == 10.5bs'
-                bolivar = 'PREFERIDO'
+                print('Error')
 
 
-        self.inputDollar = dolar
-        self.inputPeso = peso
-        self.inputBolivar = bolivar
+        #self.inputDollar = Dollar
+        #self.inputPeso = Peso
+        #self.inputBolivar = Bolivar
 
 
 #PAGINA DE INICIAR SESION
@@ -642,7 +800,7 @@ class ChargeAddPage(MDScreen):
                     )
 
                 #Actualiza numero de columnas
-                self.ids.BoxLayoutChargeAdd.children[1].cols = 6
+                self.ids.BoxLayoutChargeAdd.children[1].cols = 5
                 #Lo añade al Padre
                 self.ids.BoxLayoutChargeAdd.children[1].add_widget(NewButton)
                 #Se le da un identificador al widget boton de eliminar
@@ -687,7 +845,7 @@ class ChargeAddPage(MDScreen):
 
             
             #Actualiza numero de columnas
-            self.ids.BoxLayoutChargeAdd.children[0].cols = 6
+            self.ids.BoxLayoutChargeAdd.children[0].cols = 5
 
             #Añade el nuevo Button para eliminar producto
             self.ids.BoxLayoutChargeAdd.children[0].add_widget(NewButton)
@@ -756,7 +914,7 @@ class ChargeAddPage(MDScreen):
             #Si la cantidad de items es mayor a 2, entonces me eliminas del antepenultimo item el boton de eliminar o agregar
             if len(self.ids.BoxLayoutChargeAdd.children) >= 2:
                 print('if')
-                self.ids.BoxLayoutChargeAdd.children[1].cols = 5
+                self.ids.BoxLayoutChargeAdd.children[1].cols = 4
                 self.ids.BoxLayoutChargeAdd.children[1].remove_widget(self.ids.BoxLayoutChargeAdd.children[1].ids.NewButtonAddItem)
 
 
@@ -784,11 +942,11 @@ class ChargeAddPage(MDScreen):
 
 
         #Crea lista de los nombre de los MDLabel que se crearan
-        itemListLabel = ['Proveedor', 'Producto', 'Cantidad', 'Precio']
+        itemListLabel = ['Producto', 'Cantidad', 'Precio']
 
         #Crea el MDGridLayout donde se guardará todo
         NewGridLayout = MDGridLayout(
-                cols= 6,
+                cols= 5,
                 spacing= dp(20),
                 padding= [dp(1), dp(5), dp(1), dp(1)],
                 
@@ -970,7 +1128,7 @@ class App(MDApp):
 
     modals = ModalsDialog()
     datePicker = DatePicker()
-
+    database = DatabaseClass()
     #LO PRIMERO QUE SE CARGA
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
