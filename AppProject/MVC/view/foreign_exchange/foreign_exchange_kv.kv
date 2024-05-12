@@ -1,0 +1,149 @@
+
+#Pagina de divisas
+<ForeignExchangePage>:
+    name: "ForeignExchangePage"
+                
+    MDBoxLayout:
+
+        padding: dp(1), dp(root.manager.parent.parent.ids.toolbar.height), dp(1), dp(root.manager.parent.parent.ids.toolbarbottom.height)
+        
+        MDGridLayout:
+            cols: 1
+            padding: dp(16), dp(8)
+                    
+            MDGridLayout:
+                cols: 1
+                padding: dp(1), dp(32)
+
+                size_hint_y: None
+                height: self.minimum_height  # required to size GridLayout
+
+                MDLabel:
+                    text: "Última actualización: 28-04-2024"
+                    halign: "center"
+                    font_style: "H4"
+
+            MDGridLayout:
+                cols: 3
+                spacing: dp(20)
+                padding: dp(16), dp(0), dp(16), dp(8) 
+                size_hint_y: None
+                height: self.minimum_height  # required to size GridLayout
+                MDLabel:
+                    size_hint_x: 0.38
+                    #width: "250dp"
+                    padding: dp(32), dp(1)
+
+                    text: "Dolar:"
+                    halign: "right"
+                    font_style: "H5"
+                
+                MDTextField:
+
+                    id: name_field
+                    size_hint_x: 0.7
+                    #width: "375dp"
+
+                    hint_text: "Tasa de dólares"
+                    text: root.inputDollar
+
+                    mode: "rectangle"
+                    readonly: True
+                
+                MDFloatingActionButton:
+                    size_hint_x: 0.1
+                    
+                    icon: "account-multiple-plus"
+                    type: "standard"
+
+                    on_release: root.ChangeForeignExchange("dolar")
+
+
+
+            MDGridLayout:
+                cols: 3
+                spacing: dp(20)
+                padding: dp(16), dp(8)
+                #padding: ["16dp", "16dp", "16dp", "16dp"]  if len(inputSupplierMenu.text) == 0 else ["16dp", "8dp", "16dp", "8dp"] 
+                size_hint_y: None
+                height: self.minimum_height  # required to size GridLayout
+                MDLabel:
+                    size_hint_x: 0.38
+                    #width: "250dp"
+                    padding: dp(32), dp(1)
+
+                    text: "Pesos:"
+                    halign: "right"
+                    font_style: "H5"
+                
+                MDTextField:
+
+                    id: inputSupplierMenu
+                    size_hint_x: 0.7
+
+                    hint_text: "Tasa de pesos"
+                    text: root.inputPeso
+
+                    
+                    mode: "rectangle"
+                    readonly: True
+
+                MDFloatingActionButton:
+                    size_hint_x: 0.1
+                    
+                    icon: "account-multiple-plus"
+                    type: "standard"
+
+                    on_release: root.ChangeForeignExchange("peso")
+
+
+            MDGridLayout:
+                cols: 3
+                spacing: dp(20)
+                padding: dp(16), dp(8)
+                size_hint_y: None
+                height: self.minimum_height  # required to size GridLayout
+                MDLabel:
+                    size_hint_x: 0.38
+                    #width: "250dp"
+                    padding: dp(32), dp(1)
+
+                    text: "Bolívar:"
+                    halign: "right"
+                    font_style: "H5"
+                
+                MDTextField:
+
+                    id: name_field
+                    size_hint_x: 0.7
+                    #width: "375dp"
+
+                    hint_text: "Tasa de bolívares"
+                    text: root.inputBolivar
+
+                    mode: "rectangle"
+                    readonly: True
+                
+                MDFloatingActionButton:
+                    size_hint_x: 0.1
+                    
+                    icon: "account-multiple-plus"
+                    type: "standard"
+
+                    on_release: root.ChangeForeignExchange("bolivar")
+
+            AnchorLayout:
+                anchor_x:'center'
+                anchor_y:'center'
+                
+                spacing: dp(20)
+                adaptive_height: True
+                padding: dp(16), dp(32), dp(16), dp(8)
+
+
+                MDRectangleFlatButton:
+                    text: 'Modificar'
+                    font_style: 'H5'
+                    size_hint_x: 0.3
+
+                    on_release: root.ChangePageUpdateExchangeForeign()

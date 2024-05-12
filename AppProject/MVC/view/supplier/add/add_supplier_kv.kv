@@ -1,0 +1,174 @@
+
+<SupplierAddPage>:
+    name: "SupplierAddPage"
+                
+    MDBoxLayout:
+
+        padding: dp(1), dp(root.manager.parent.parent.ids.toolbar.height), dp(1), dp(root.manager.parent.parent.ids.toolbarbottom.height)
+        
+        MDScrollView:
+            MDBoxLayout:
+
+                orientation: 'horizontal'
+                size_hint: 1, 1
+                adaptive_height: True
+
+                MDGridLayout:
+                    cols: 1
+                    padding: dp(16), dp(8)
+                    size_hint_y: None
+                    height: self.minimum_height  # required to size GridLayout
+
+                            
+                    MDGridLayout:
+                        cols: 1
+                        padding: dp(1), dp(32)
+
+                        size_hint_y: None
+                        height: self.minimum_height  # required to size GridLayout
+
+                        MDLabel:
+                            text: "Añadir proveedor"
+                            halign: "center"
+                            font_style: "H4"
+
+                    MDGridLayout:
+                        cols: 3
+                        spacing: dp(20)
+                        padding: dp(16), dp(0), dp(16), dp(8) 
+                        size_hint_y: None
+                        height: self.minimum_height  # required to size GridLayout
+                        MDLabel:
+                            size_hint_x: 0.38
+                            #width: "250dp"
+                            padding: dp(32), dp(1)
+
+                            text: "Nombre:"
+                            halign: "right"
+                            font_style: "H5"
+                        
+                        MDTextField:
+
+                            id: name_field
+                            size_hint_x: 0.7
+                            #width: "375dp"
+
+                            hint_text: "Nombre del proveedor:"
+
+                            mode: "rectangle"
+                            required: True
+                            line_color_normal: "red" if len(self.text) == 0 else "blue"
+                        
+                        MDLabel:
+                            size_hint_x: 0.1
+
+                    MDGridLayout:
+                        cols: 3
+                        spacing: dp(20)
+                        padding: dp(16), dp(8)
+                        #padding: ["16dp", "16dp", "16dp", "16dp"]  if len(inputSupplierMenu.text) == 0 else ["16dp", "8dp", "16dp", "8dp"] 
+                        size_hint_y: None
+                        height: self.minimum_height  # required to size GridLayout
+                        MDLabel:
+                            size_hint_x: 0.38
+                            #width: "250dp"
+                            padding: dp(32), dp(1)
+
+                            text: "Ubicación:"
+                            halign: "right"
+                            font_style: "H5"
+
+                        
+                        MDTextField:
+
+                            id: inputSupplierMenu
+                            size_hint_x: 0.7
+                            #width: "375dp"
+                            text: ""
+                            hint_text: "Ubicación del proveedor:"
+                            
+                            mode: "rectangle"
+                            required: True
+                            line_color_normal: "red" if len(self.text) == 0 else "blue"
+                        
+                        MDLabel:
+                            size_hint_x: 0.1
+                    MDGridLayout:
+                        cols: 3
+                        spacing: dp(20)
+                        padding: dp(16), dp(8)
+                        size_hint_y: None
+                        height: self.minimum_height  # required to size GridLayout
+                        MDLabel:
+                            size_hint_x: 0.38
+                            #width: "250dp"
+                            padding: dp(32), dp(1)
+
+                            text: "RIF:"
+                            halign: "right"
+                            font_style: "H5"
+                        
+                        MDTextField:
+
+                            id: name_field
+                            size_hint_x: 0.7
+
+                            hint_text: "RIF del proveedor"
+
+                            mode: "rectangle"
+                            required: True
+                            line_color_normal: "red" if len(self.text) == 0 else "blue"
+                        
+                        MDLabel:
+                            size_hint_x: 0.1
+
+                    MDGridLayout:
+                        cols: 3
+                        spacing: dp(20)
+                        padding: dp(16), dp(8)
+                        size_hint_y: None
+                        height: self.minimum_height  # required to size GridLayout
+                        MDLabel:
+                            size_hint_x: 0.38
+                            #width: "250dp"
+                            padding: dp(32), dp(1)
+
+                            text: "Teléfono:"
+                            halign: "right"
+                            font_style: "H5"
+                        
+                        MDTextField:
+
+                            id: name_field
+                            size_hint_x: 0.7
+
+                            hint_text: "Teléfono del proveedor"
+                            required: True
+                            line_color_normal: "red" if len(self.text) == 0 else "blue"
+
+                            mode: "rectangle"
+                        
+                        MDLabel:
+                            size_hint_x: 0.1
+
+                    MDGridLayout:
+                        cols: 2
+                        spacing: dp(20)
+                        padding: dp(16), dp(8)
+                        size_hint_y: None
+                        
+                        height: self.minimum_height  # required to size GridLayout
+
+                        MDRectangleFlatButton:
+                            size_hint_x: 0.5
+                            text: "Cancelar"
+                            line_color: "red"
+                            text_color: "red"
+
+                        MDRaisedButton:
+                            size_hint_x: 0.5
+                            text: "Agregar"
+                            text_color: "white"
+                            line_color: "blue"
+                            md_bg_color: "blue"
+

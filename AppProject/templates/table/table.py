@@ -28,7 +28,8 @@ from kivymd.uix.label import MDLabel
 #from kivy.factory import Factory
 from kivy.uix.image import Image
 
-import intermediary
+#import intermediary
+import MVC.controller.functions as functions
 import weakref
 #from retry import retry
 
@@ -450,7 +451,7 @@ class ModalsDialog():
     def ChangePage(self, page, text):
 
         #obtiene el self principal del kivy
-        self_main = intermediary.global_variable_self
+        self_main = functions.global_variable_self
         #cambia segun la pagina querida
         self_main.root.ids.screen_manager.current = page
         #cambia el titulo del menu de arriba segun el nombre que queramos

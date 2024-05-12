@@ -3,6 +3,7 @@
 # import the MongoClient class
 from pymongo import MongoClient, errors
 from pymongo.server_api import ServerApi
+from passlib.hash import sha256_crypt
 
 
 db = None
@@ -43,79 +44,38 @@ class DatabaseClass():
 
 
         collection.insert_many([post, post2, post3])
+    
+    def CreateAccountDB(username, email, password):
+                
+        collection = db['users']
 
-    def ChangePreferenceExchangeForeign(preference = None):
+        #data
 
-        collection = db['foreign_exchange']
-        dataList = []
+        if collection.count_documents({'username': username}, limit = 1):
 
-        if preference == None:
-            pass
-        else:
-            #FALSO LA PREFERENCIA
-            documentToChange = { 'preference': True}
-            newValue = { "$set": { "preference": False } }
+            return 'USERNAME: ' + str(collection.find({'username': username}))
 
-            collection.update_one(documentToChange, newValue)
-
-
-            #TRUE LA PREFERENCIA
-            documentToChange = { "name": preference }
-            newValue = { "$set": { "preference": True } }
-
-            collection.update_one(documentToChange, newValue)
-
-        results = collection.find_one({'preference': True})
-
-        #Valores
-        dolar = results['changeToDolar']
-        peso = results['changeToPeso']
-        bolivar = results['changeToBolivar']
-        nombre = results['name']
-
-
-        dataList.extend([dolar, peso, bolivar, nombre])
-
-        return dataList
-
-    def UpdateForeignExchangeData(dolar, peso, bolivar):
-
-
-        #DOLAR
-        if len(dolar) < 1:
-
-            #DOLAR
-            documentToChange = { "name": 'dolar' }
-            newValue = { "$set": { "changeToPeso": peso, "changeToBolivar": bolivar } }
-
-        #PESO
-        elif len(peso) < 1:
-            #PESO
-            documentToChange = { "name": 'peso' }
-            newValue = { "$set": { "changeToDolar": dolar, "changeToBolivar": bolivar } }
-
-        #BOLIVAR
-        elif len(bolivar) < 1:
-            #BOLIVAR
-            documentToChange = { "name": 'bolivar' }
-            newValue = { "$set": { "changeToDolar": dolar, "changeToPeso": peso } }
-
-
-        collection = db['foreign_exchange']
-        collection.update_one(documentToChange, newValue)
-      
-
-    def ShowDataExchangeForeign(name):
-        collection = db['foreign_exchange']
-        dataList = []
+        elif collection.count_documents({'email': email}, limit = 1):
+            return 'EMAIL: ' + str(collection.find({'email': email}))
         
+        else:
 
-        results = collection.find_one({'preference': True})
+            post = {'username': username, 'email': email, 'password': password}
+            collection.insert_one(post)
 
-        dataList.append(results['changeToDolar'])
+            return True
 
-        return dataList
+    def SignInBD(username, password):
+        
+        collection = db['users']
 
-        #print(results['changeToDolar'])
+        user = collection.find_one({"username": username})
+
+        if user and sha256_crypt.verify(password, user['password']):
+            return True
+
+        return False
+
+
 
 

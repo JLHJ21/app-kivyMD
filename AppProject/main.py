@@ -1,25 +1,20 @@
-
-
-#from kivymd.uix.screen import Screen
-
-#Carga la variable KV, que contiene informacion .kv
+#####KIVY LIBRERIAS
 from kivy.lang import Builder
 from kivy.metrics import dp
 from kivy.clock import Clock
 from kivy.properties import ObjectProperty, StringProperty
-import os
-from functools import partial
+#Acomoda la resolución de la ventada, OJO solo para uso de desarrollo
+from kivy.core.window import Window
+
+#####KIVYMD LIBRERIAS
 
 #Permite abrir la aplicación
 from kivymd.app import MDApp
 from kivymd.uix.screen import MDScreen
-
 from kivymd.uix.menu import MDDropdownMenu
 from kivymd.uix.list import OneLineAvatarIconListItem
-
 from kivymd.uix.datatables import MDDataTable
 from kivymd.uix.anchorlayout import MDAnchorLayout
-
 from kivymd.uix.button import MDFlatButton, MDRaisedButton, MDFloatingActionButton
 from kivymd.uix.dialog import MDDialog
 from kivymd.uix.boxlayout import MDBoxLayout
@@ -31,23 +26,90 @@ from kivymd.uix.gridlayout import MDGridLayout
 from kivymd.uix.label import MDLabel
 from kivymd.uix.textfield import MDTextField
 from kivymd.uix.selectioncontrol import MDSwitch
-
 from kivymd.uix.pickers import MDDatePicker
-
-
-#Permite pasar a otras paginas o ventas
 from kivymd.uix.scrollview import MDScrollView
 
-#Acomoda la resolución de la ventada, OJO solo para uso de desarrollo
-from kivy.core.window import Window
+#####FUNCIONES PYTHON
+import os
+from functools import partial
+import weakref
+from passlib.hash import sha256_crypt
 
+
+#####ENLAZAR ARCHIVOS PYTHON/KIVY
 
 #Enlazar archivo templates/table/table.py
-import intermediary
-from templates.table.table import RecycleViewTable, ModalsDialog
+from templates.table.table import ModalsDialog #, RecycleViewTable
+
+#Enlazar página de inicio "InitialPage" MVC/controller/home/home_controller.py 
+from MVC.controller.home.home_controller import InitialPage
+
+#Enlazar página de inicio "CashierPage" MVC/controller/cashier/cashier_controller.py 
+from MVC.controller.cashier.cashier_controller import CashierPage
+
+#Enlazar página de inicio "StorePage" MVC/controller/store/store_controller.py 
+from MVC.controller.store.store_controller import StorePage
+
+#Enlazar página de inicio "StoreUpdatePage" MVC/controller/store/update/store_update_controller.py 
+from MVC.controller.store.update.store_update_controller import StoreUpdatePage
+
+
+#Enlazar página de inicio "chooseimagePage" MVC/controller/store/choose_image/choose_image_controller.py 
+from MVC.controller.store.choose_image.choose_image_controller import ChooseImagePage
+
+#Enlazar página de inicio "ClientsPage" MVC/controller/clients/clientscontroller.py 
+from MVC.controller.clients.clients_controller import ClientsPage
+
+#Enlazar página de inicio "ConfigurationPage" MVC/controller/configuration/configuration_controller.py 
+from MVC.controller.configuration.configuration_controller import ConfigurationPage
+
+#Enlazar página de inicio "ForeignExchange" MVC/controller/foreign_exchange/foreign_exchange_controller.py 
+from MVC.controller.foreign_exchange.foreign_exchange_controller import ForeignExchangePage
+
+#Enlazar página de inicio "UpdateForeignExchange" MVC/controller/foreign_exchange/update/update_foreign_exchange.py 
+from MVC.controller.foreign_exchange.update.update_foreign_exchange_controller import UpdateForeignExchangePage
+
+#Enlazar página de inicio "UpdateForeignExchange" MVC/controller/foreign_exchange/update/update_foreign_exchange.py 
+from MVC.controller.sales_history.sales_history_controller import SalesHistoryPage
+
+
+#Enlazar página de inicio "SupplierPage" MVC/controller/supplier/supplier_controller.py 
+from MVC.controller.supplier.supplier_controller import SupplierPage
+
+#Enlazar página de inicio "SupplierPage" MVC/controller/supplier/update/update_supplier_controller.py 
+from MVC.controller.supplier.update.update_supplier_controller import SupplierUpdatePage
+
+#Enlazar página de inicio "SupplierPage" MVC/controller/supplier/add/add_supplier_controller.py 
+from MVC.controller.supplier.add.add_supplier_controller import SupplierAddPage
+
+#Enlazar página de inicio "ChargePage" MVC/controller/charges/charges_controller.py 
+from MVC.controller.charges.charges_controller import ChargePage
+
+#Enlazar página de inicio "ChargeAddPage" MVC/controller/charges/add/add_charges_controller.py 
+from MVC.controller.charges.add.add_charges_controller import ChargeAddPage
+
+#Enlazar página de inicio "ChargeAddPage" MVC/controller/charges/add/add_charges_controller.py 
+from MVC.controller.money_history.money_history_controller import MoneyHistoryPage
+
+#Enlazar página de inicio "LoanPage" MVC/controller/loans/loans_controller.py 
+from MVC.controller.loans.loans_controller import LoanPage
+
+#Enlazar página de inicio "LoanAddPage" MVC/controller/loans/add/add_loans_controller.py 
+from MVC.controller.loans.add.add_loans_controller import LoanAddPage
+
+#Enlazar página de inicio "LoanUpdatePage" MVC/controller/loans/update/update_loans_controller.py 
+from MVC.controller.loans.update.update_loans_controller import LoanUpdatePage
+
+
+#Enlazar archivo de base de datos
+#Enlazar archivo de base de datos database/database.py
 from database.database import DatabaseClass
 
-import weakref
+
+#import intermediary
+import MVC.controller.functions as functions
+
+
 #Window.size = (600, 800)
 
 #OJO
@@ -56,7 +118,8 @@ import weakref
 #DrawerClickableItem           
 
 #VARIABLE QUE ALMACENA EL SELF, PERMITE CAMBIAR DE SCREN (PANTALLA) AUN SI SON DIFERENTES CLASES
-intermediary.global_variable_self = global_self_client = ''
+#functions.global_variable_self =
+global_self_client = ''
 self_store_page = self_ClientsPage = self_sales_history = self_SupplierCharge = self_charge_page = self_money_history = global_foreign_exchange_update = None
 
 # LLAMADA A LA BASE DE DATOS
@@ -80,238 +143,31 @@ class SignOn(MDScreen):
     def ChangePageToSignIn(self):
         
         #obtiene el self principal del kivy
-        self_main = intermediary.global_variable_self
+        self_main = functions.global_variable_self
         #cambia segun la pagina querida
         self_main.root.ids.screen_manager.current = 'SignIn'
         #cambia el titulo del menu de arriba segun el nombre que queramos
         self_main.root.ids.toolbar.title = 'Iniciar Sesión'
-    pass
-
-#PAGINA DE INICIO
-class InitialPage(MDScreen):
-
     
-    pass
-
-#Pagina de cajero
-class CashierPage(MDScreen):
-
-    dialogShowUpdate = None
+    def CreateAccount(self, username, email, password, password2):
 
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        global self_cashier_page
-        self_cashier_page = self
-
-    def CallbackMenuCashierPaymentType(self, button):
-
-        intermediary.global_variable_self.MenuCashierPaymentType.caller = button
-        intermediary.global_variable_self.MenuCashierPaymentType.open()
-
-    ## CALLBACK DEL SELECT BUSCADOR DEL MENU ALMACEN
-    def CashierPaymentType(self = None, instance = ""):
-        
-        self_cashier_page.ids.ButtonMenuCashierPaymentType.text = instance
-        intermediary.global_variable_self.MenuCashierPaymentType.dismiss()
-
-#PAGINA DE DIVISAS
-
-class UpdateForeignExchangePage(MDScreen):
-
-
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-
-        global global_foreign_exchange_update
-        global_foreign_exchange_update = self
-
-    def ChangeDataForeignExchange(self, inputDollar, inputPeso, inputBolivar):
-        
-        DatabaseClass.UpdateForeignExchangeData(inputDollar, inputPeso, inputBolivar)
-
-        
-        #obtiene el self principal del kivy
-        self_main = intermediary.global_variable_self
-        #cambia segun la pagina querida
-        self_main.root.ids.screen_manager.current = 'ForeignExchangePage'
-        #cambia el titulo del menu de arriba segun el nombre que queramos
-        self_main.root.ids.toolbar.title = 'Divisas'
-        
-        pass
-
-    def ChangeTextUpdatePage(self, listItems):
-
-        #DOLAR
-        global_foreign_exchange_update.ids.updateForeignExchangeLabelDollar.text = listItems[0] #LABEL
-        global_foreign_exchange_update.ids.updateForeignExchangeTextFieldDollar.readonly = listItems[1] #TextField
-
-        #PESO
-        global_foreign_exchange_update.ids.updateForeignExchangeLabelPeso.text = listItems[2] #LABEL
-        global_foreign_exchange_update.ids.updateForeignExchangeTextFieldPeso.readonly = listItems[3] #TextField
-
-        #BOLIVAR
-        global_foreign_exchange_update.ids.updateForeignExchangeLabelBolivar.text = listItems[4] #LABEL
-        global_foreign_exchange_update.ids.updateForeignExchangeTextFieldBolivar.readonly = listItems[5] #TextField
-
-        global_foreign_exchange_update.ids.TitleUpdateForeignExchange.text = listItems[6] #TextField
-
-        #print(global_foreign_exchange_update.ids.updateForeignExchangeLabelBolivar.text)
-
-
-    pass
-
-class ForeignExchangePage(MDScreen):
-
-    inputDollar = StringProperty(None)
-    inputPeso = StringProperty(None)
-    inputBolivar = StringProperty(None)
-
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.UpdateForeignExchange()
-
-
-    def on_pre_enter(self):
-        self.UpdateForeignExchange()
-        
-
-    def UpdateForeignExchange(self):
-        listData = DatabaseClass.ChangePreferenceExchangeForeign()
-
-        match (listData[3]):
-            case 'dolar':
-                    
-                self.inputDollar = 'PREFERIDO'
-                self.inputPeso = f'Dólar a Peso: {listData[0]}$ == {listData[1]}$$'
-                self.inputBolivar = f'Dólar a Bolívar: {listData[0]}$ == {listData[2]}bs'
-
-            case 'peso':
-                    
-                self.inputDollar = f'Peso a Dólar: {listData[0]}$$ == 1$'
-                self.inputPeso = 'PREFERIDO'
-                self.inputBolivar = f'Peso a Bolívar: {listData[1]}$$ == {listData[2]}bs'
-
-            case 'bolivar':
-                    
-                self.inputDollar = f'Bolívar a Dolar: {listData[0]}bs == 1$'
-                self.inputPeso = f'Bolívar a Peso: {listData[1]}bs == 1000$$'
-                self.inputBolivar = 'PREFERIDO'
-
-    def ChangePageUpdateExchangeForeign(self):
-
-
-        if self.inputDollar == 'PREFERIDO':
-
-            title = 'Modificar tasa de cambio del DÓLAR'
-
-            #Dolar
-            inputLabel1 = 'Cambio de dólar a dólar:'
-            stateInputLabel1 = True
+        if password == password2:
             
-            #Peso
-            inputLabel2 = 'Cambio de dólar a peso:'
-            stateInputLabel2 = False
+            password = sha256_crypt.hash(password)
+            result = DatabaseClass.CreateAccountDB(username, email, password)
 
-            #Bolivar
-            inputLabel3 = 'Cambio de dólar a bolívar:'
-            stateInputLabel3 = False
+            if result == True:
+                self.ChangePageToSignIn()
 
-        elif self.inputPeso == 'PREFERIDO':
+            print(result)
+        else:
+            pass
 
-            title = 'Modificar tasa de cambio del PESO'
-
-            #Dolar
-            inputLabel1 = 'Cambio de peso a dólar:'
-            stateInputLabel1 = False
-
-            #Peso
-            inputLabel2 = 'Cambio de peso a peso:'
-            stateInputLabel2 = True
-
-            #Bolivar
-            inputLabel3 = 'Cambio de peso a bolívar:'
-            stateInputLabel3 = False
-
-        elif self.inputBolivar == 'PREFERIDO':
-
-            title = 'Modificar tasa de cambio del BOLÍVAR'
-
-            #Dolar
-            inputLabel1 = 'Cambio de bolívar a dólar:'
-            stateInputLabel1 = False
-            
-            #Peso
-            inputLabel2 = 'Cambio de bolívar a peso:'
-            stateInputLabel2 = False
-
-            #Bolivar
-            inputLabel3 = 'Cambio de bolívar a bolívar:'
-            stateInputLabel3 = True
-
-        
-        listTextChange = []
-
-        listTextChange.extend([inputLabel1, stateInputLabel1, inputLabel2, stateInputLabel2, inputLabel3, stateInputLabel3, title])
+    def Error(typeError):
+        print(str('error') + typeError)
 
 
-        
-        
-
-        UpdateForeignExchangePage.ChangeTextUpdatePage('self', listTextChange)
-
-        #obtiene el self principal del kivy
-        self_main = intermediary.global_variable_self
-        #cambia segun la pagina querida
-        self_main.root.ids.screen_manager.current = 'UpdateForeignExchangePage'
-        #cambia el titulo del menu de arriba segun el nombre que queramos
-        self_main.root.ids.toolbar.title = 'Modificar - Divisa'
-
-
-
-    def ChangeForeignExchange(self, text):
-
-        match (text):
-            case 'dolar':
-                if self.inputDollar == 'PREFERIDO':
-                    pass
-                else:
-                    listData = DatabaseClass.ChangePreferenceExchangeForeign(text)
-
-                    self.inputDollar = 'PREFERIDO'
-                    self.inputPeso = f'Dólar a Peso: {listData[0]}$ == {listData[1]}$$'
-                    self.inputBolivar = f'Dólar a Bolívar: {listData[0]}$ == {listData[2]}bs'
-
-            case 'peso':
-                if self.inputPeso == 'PREFERIDO':
-                    pass
-                else:
-                    listData = DatabaseClass.ChangePreferenceExchangeForeign(text)
-
-                    self.inputDollar = f'Peso a Dólar: {listData[0]}$$ == 1$'
-                    self.inputPeso = 'PREFERIDO'
-                    self.inputBolivar = f'Peso a Bolívar: {listData[1]}$$ == {listData[2]}bs'
-            
-            case 'bolivar':
-
-                if self.inputBolivar == 'PREFERIDO':
-                    pass
-                else:
-                    listData = DatabaseClass.ChangePreferenceExchangeForeign(text)
-                    
-                    self.inputDollar = f'Bolívar a Dolar: {listData[0]}bs == 1$'
-                    self.inputPeso = f'Bolívar a Peso: {listData[1]}bs == 1000$$'
-                    self.inputBolivar = 'PREFERIDO'
-
-            case _:
-                print('Error')
-
-
-        #self.inputDollar = Dollar
-        #self.inputPeso = Peso
-        #self.inputBolivar = Bolivar
 
 
 #PAGINA DE INICIAR SESION
@@ -321,377 +177,31 @@ class SignIn(MDScreen):
     def ChangePageToSignOn(self):
         
         #obtiene el self principal del kivy
-        self_main = intermediary.global_variable_self
+        self_main = functions.global_variable_self
         #cambia segun la pagina querida
         self_main.root.ids.screen_manager.current = 'SignOn'
         #cambia el titulo del menu de arriba segun el nombre que queramos
         self_main.root.ids.toolbar.title = 'Registrarse'
 
+    def SignIn(self, username, password):
+        result = DatabaseClass.SignInBD(username, password)
+
+        if result == True:
+            self.OpenSystem('a')
+        else:
+            print('no coinciden')
+
+
     def OpenSystem(self, page):
         
         
         #obtiene el self principal del kivy
-        self_main = intermediary.global_variable_self
-        #cambia segun la pagina querida
-        #print(self.parent)
-        #print( self_main.root.ids.screen_manager.children )
+        self_main = functions.global_variable_self
         self_main.root.ids.screen_manager.current = 'InitialPage'
 
-        #self_main.root.ids.screen_manager.current = 'headerandfooter'
-        #cambia el titulo del menu de arriba segun el nombre que queramos
-        #self_main.root.ids.toolbar.title = text
-
-
     pass
 
         
-
-#PAGINA DE PRESTAMOS
-class LoanPage(MDScreen):
-
-
-    
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-
-
-        Clock.schedule_once(lambda dt: self.ChangeItemsGrid('mes'))
-
-    def ChangePageLoanPage(self):
-
-        #obtiene el self principal del kivy
-        self_main = intermediary.global_variable_self
-        #cambia segun la pagina querida
-        self_main.root.ids.screen_manager.current = 'LoanAddPage'
-        #cambia el titulo del menu de arriba segun el nombre que queramos
-        self_main.root.ids.toolbar.title = 'Prestamo - Agregar'
-
-    def ChangeItemsGrid(self, typeLoan):
-
-
-        self.ids.gridLayoutLoanItems.clear_widgets()
-
-
-        match typeLoan:
-            case 'total':
-                self.ids.buttonChangeTypeMoneyHistory.text = "Cambiar a: MES"
-                self.ids.MoneyHistoryTitle.text = 'TOTAL'
-                textAmountMoney = 'total XXX'
-                pass
-            case 'mes':
-                self.ids.buttonChangeTypeMoneyHistory.text = "Cambiar a: TOTAL"
-                self.ids.MoneyHistoryTitle.text = 'MES'
-
-                textAmountMoney = 'mes XXX'
-                pass
-            case _:
-                self.ids.buttonChangeTypeMoneyHistory.text = "Cambiar a: TOTAL"
-                self.ids.MoneyHistoryTitle.text = 'TOTAL'
-
-                textAmountMoney = 'total XXX'
-            
-                pass
-
-        for i in range(0, 5):
-        
-            NewGridLayout = MDGridLayout(
-                cols= 2,
-                spacing= dp(20),
-                padding= [dp(16), dp(18)],
-
-                size_hint_y= None,
-                height= dp(40)
-            )
-
-            NewLabels1 = MDLabel(
-                        size_hint_x= 0.4,
-                        text= "Ventas",
-                        halign= "left",
-                        font_style= "H6",
-                    )
-            
-
-            NewLabels2 = MDLabel(
-
-                    size_hint_x= 0.4,
-                    halign= "right",
-
-                    text= textAmountMoney,
-                    mode= "rectangle",
-                )
-
-
-
-            NewGridLayout.add_widget(NewLabels1)
-            NewGridLayout.add_widget(NewLabels2)
-
-            self.ids.gridLayoutLoanItems.add_widget(NewGridLayout)
-
-
-        NewLabels3 = MDLabel(
-                        size_hint_x= 0.4,
-                    )
-            
-
-        NewLabels4 = MDLabel(
-                padding= [ dp(1), dp(40), dp(1), dp(1)],
-
-                size_hint_x= 0.4,
-                halign= "right",
-
-                text= textAmountMoney,
-                mode= "rectangle",
-                underline= True,
-
-            )
-        
-
-        NewGridLayout.add_widget(NewLabels3)
-        NewGridLayout.add_widget(NewLabels4)
-
-        #self.ids.gridLayoutLoanItems.add_widget(NewGridLayout)
-
-       # self.ids.gridLayoutLoanItems
-        
-        
-        pass
-
-
-class LoanUpdatePage(MDScreen):
-    pass
-
-class LoanAddPage(MDScreen):
-
-    pass
-
-    
-
-#PAGINA DE HISTORIAL DE DINERO/DIVISAS
-class MoneyHistory(MDScreen):
-
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        global self_money_history
-        self_money_history = self
-
-    
-    def ChangeTypeHistoryMoney(self):
-
-        textTitle = self_money_history.ids.MoneyHistoryTitle.text
-
-        match textTitle:
-            case 'MES':
-                variableTitle = 'TOTAL'
-                variableLabelSales = '100'
-                variableLabelCharge = '-60'
-                variableTotalMoney = '40'
-                variableChangeTypeMoneyHistory = 'Cambiar a: MES'
-
-            case 'TOTAL':
-
-                variableTitle = 'MES'
-                variableLabelSales = '1000'
-                variableLabelCharge = '-600'
-                variableTotalMoney = '400'
-                variableChangeTypeMoneyHistory = 'Cambiar a: TOTAL'
-            case _:
-                pass
-
-
-
-        self_money_history.ids.MoneyHistoryTitle.text = variableTitle
-
-        self_money_history.ids.LabelSalesProducts.text = variableLabelSales
-
-        self_money_history.ids.LabelChargeProducts.text = variableLabelCharge
-
-        self_money_history.ids.LabelTotalMoney.text = variableTotalMoney
-
-        self_money_history.ids.buttonChangeTypeMoneyHistory.text = variableChangeTypeMoneyHistory
-
-
-
-
-class ScrollViewWidget(MDScrollView):
-    pass
-
-    
-#PAGINA DE HISTORIAL DE VENTAS
-class SalesHistoryPage(MDScreen):
-
-    
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        global self_sales_history
-        self_sales_history = self
-
-
-    def CallbackMenuSalesHistory(self, button):
-
-        MenuAndTitleSelect.DropMenu("self", button, intermediary.global_variable_self.MenuTypeSalesHistory)
-
-
-    ## CALLBACK DEL SELECT BUSCADOR DEL MENU ALMACEN
-    def ChangeSearchingTypeSalesHistory(self, Text):
-
-
-        MenuAndTitleSelect.ChangeNameDropMenu(self_sales_history, intermediary.global_variable_self.MenuTypeSalesHistory, "ButtonMenuSearchingSalesHistory", Text)
-
-        
-        
-#PAGINA DE CONFIGURACION
-class ContentConfigurationPage(MDBoxLayout):
-
-
-
-    inputOne= StringProperty(None)
-    inputTwo= StringProperty(None)
-
-    
-    def Variables(nameInputOne, nameInputTwo):
-        ContentConfigurationPage.inputOne = nameInputOne
-        ContentConfigurationPage.inputTwo = nameInputTwo
-
-
-        #print(ContentConfigurationPage.inputOne )
-
-
-class ConfigurationPage(MDScreen):
-
-    dialogUsername = dialogPassword = dialogEmail = None
-
-    def OpenModal(self, inputOneName, inputTwoName, dialogName, title):
-        ContentConfigurationPage.Variables(inputOneName, inputTwoName)
-
-        match dialogName:
-            case 'dialogUsername':
-                self_name = self.dialogUsername
-            
-            case 'dialogEmail':
-                self_name = self.dialogEmail
-            
-            case 'dialogPassword':
-                self_name = self.dialogPassword
-
-            case _:
-                self_name = self.dialogUsername
-
-
-        if not self_name:
-            self_name = MDDialog(
-                title=title,
-                type="custom",
-                content_cls=ContentConfigurationPage(),
-                buttons=[
-                    MDFlatButton(
-                        text="Cancelar",
-                        md_bg_color="red",
-                        text_color="white",
-                    ),
-                    MDRaisedButton(
-                        text="Aceptar",
-                        md_bg_color="blue",
-                        #text_color=self.theme_cls.primary_color,
-                    ),
-                ],
-            )
-        self_name.open()
-
-
-#PAGINA DE ALMACEN
-class StorePage(MDScreen):
-    
-    
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        global self_store_page
-        self_store_page = self
-
-    def CallbackMenuProduct(self, button):
-
-        MenuAndTitleSelect.DropMenu("self", button, intermediary.global_variable_self.MenuProductoTypeStore)
-
-        #intermediary.global_variable_self.MenuProductoTypeStore.caller = button
-        #intermediary.global_variable_self.MenuProductoTypeStore.open()
-
-
-    ## CALLBACK DEL SELECT BUSCADOR DEL MENU ALMACEN
-    def ChangeSearchingTypeStore(self, Text):
-
-        #print(self_store_page.ids)
-        #print(instance)
-
-
-        MenuAndTitleSelect.ChangeNameDropMenu(self_store_page, intermediary.global_variable_self.MenuProductoTypeStore, "ButtonMenuSearchingStore", Text)
-        
-        #self_store_page.ids.ButtonMenuSearchingStore.text = instance
-        #intermediary.global_variable_self.MenuProductoTypeStore.dismiss()
-
-    
-class StoreUpdatePage(MDScreen):
-    
-    pass
-
-
-#Clase para la seleccion de fotos, pagina
-class ChooseImagePage(MDScreen):
-
-    global_root = ""
-
-    def __init__(self, **kwargs):
-
-        super().__init__(**kwargs)
-        
-        Window.bind(on_keyboard=self.events)
-        #self.manager_open = False
-        self.file_manager = MDFileManager(
-            exit_manager=self.exit_manager, 
-            select_path=self.select_path,
-            preview=True,
-            icon_selection_button="pencil",
-        )
-    
-    #Abre el seleccionador
-    def file_manager_open(self):
-        self.file_manager.show(os.path.expanduser("~"))  # output manager to the screen
-        #self.manager_open = True
-
-    #Archivo seleccionado
-    def select_path(self, path: str):
-        '''
-        It will be called when you click on the file name
-        or the catalog selection button.
-
-        :param path: path to the selected directory or file;
-        '''
-
-        #Cambia el source de la imagen
-        self.manager.get_screen("StorePageUpdate").ids.imageProduct.source = path
-
-        #Cambia la pagina
-        self.manager.current = 'StorePageUpdate'
-
-        #global_root.manager.screen_manager.current = "StorePageUpdate"
-        self.exit_manager()
-        #toast(path)
-
-    #Permite cerrar el seleccionador
-    def exit_manager(self, *args):
-        '''Called when the user reaches the root of the directory tree.'''
-
-        #self.manager_open = False
-        self.file_manager.close()
-
-    def events(self, instance, keyboard, keycode, text, modifiers):
-        '''Called when buttons are pressed on the mobile device.'''
-
-        if keyboard in (1001, 27):
-            if self.manager_open:
-                self.file_manager.back()
-        return True
-
-
 class MenuAndTitleSelect():
 
     def DropMenu(self, button, DropMenu):
@@ -705,394 +215,6 @@ class MenuAndTitleSelect():
         
         self.ids[IdButton].text = Text
         DropMenu.dismiss()
-
-#PAGINA DEL CLIENTE
-class ClientsPage(MDScreen):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        global self_ClientsPage
-        self_ClientsPage = self
-
-
-    def CallbackMenuClients(self, button):
-
-        MenuAndTitleSelect.DropMenu("self", button, intermediary.global_variable_self.MenuTypeClientsPage)
-
-
-    ## CALLBACK DEL SELECT BUSCADOR DEL MENU ALMACEN
-    def ChangeSearchingTypeClients(self = None, Text = ""):
-        MenuAndTitleSelect.ChangeNameDropMenu(self_ClientsPage, intermediary.global_variable_self.MenuTypeClientsPage, "ButtonMenuSearchingClient", Text)
-
-
-#pagina de encargo
-class ChargePage(MDScreen):
-    
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        global self_charge_page
-        self_charge_page = self
-
-    def ChangePageChargeAddPage(self):
-
-        #obtiene el self principal del kivy
-        self_main = intermediary.global_variable_self
-        #cambia segun la pagina querida
-        self_main.root.ids.screen_manager.current = 'ChargeAddPage'
-        #cambia el titulo del menu de arriba segun el nombre que queramos
-        self_main.root.ids.toolbar.title = 'Encargo - Agregar'
-    
-    
-    def CallbackMenuCharge(self, button):
-
-
-        MenuAndTitleSelect.DropMenu("self", button, intermediary.global_variable_self.MenuTypeChargePage)
-
-
-    ## CALLBACK DEL SELECT BUSCADOR DEL MENU ALMACEN
-    def ChangeSearchingTypeCharge(self = None, Text = ""):
-
-        MenuAndTitleSelect.ChangeNameDropMenu(self_charge_page, intermediary.global_variable_self.MenuTypeChargePage, "ButtonMenuSearchingCharge", Text)
-
-
-class ChargeAddPage(MDScreen):
-
-    def on_checkbox_active(self, checkbox, value):
-        if value:
-            print('The checkbox', checkbox, 'is active', 'and', value, ' value')
-        else:
-            print('The checkbox', checkbox, 'is inactive')
-
-    def DeleteItemCharge(self):
-
-        #Elimina el último item nuevo producto
-        self.ids.BoxLayoutChargeAdd.remove_widget(self.ids.BoxLayoutChargeAdd.children[0])
-
-        try:
-            #Creacion de widget de eliminar producto
-            NewButton = MDFloatingActionButton(
-
-                    icon= "account-plus",
-                    type= "small",
-                    #on_release= self.AddItemCharge(),
-                    on_release= lambda x='Item configuracion': self.AddItemCharge('NewGridName', 'NewButtonAddItem'),
-                    elevation= 0,
-                    pos_hint= {'center_x': .5, 'center_y': .5}
-                )
-
-            # Remueve el Button de añadir producto
-            self.ids.BoxLayoutChargeAdd.children[0].remove_widget(self.ids.BoxLayoutChargeAdd.children[0].ids.NewButtonAddItem)
-
-            #Añade el nuevo Button para eliminar producto
-            self.ids.BoxLayoutChargeAdd.children[0].add_widget(NewButton)
-            
-            #Le agrega un id al nuevo Button
-            self.ids.BoxLayoutChargeAdd.children[0].ids.NewButtonAddItem = weakref.ref(NewButton)
-
-            if len(self.ids.BoxLayoutChargeAdd.children) >= 2:
-                NewButton = MDFloatingActionButton(
-
-                        icon= "delete",
-                        type= "small",
-                        #on_release= self.AddItemCharge(),
-                        on_release= lambda x='': self.DeleteItemCharge(),
-                        elevation= 0,
-                        pos_hint= {'center_x': .5, 'center_y': .5}
-                    )
-
-                #Actualiza numero de columnas
-                self.ids.BoxLayoutChargeAdd.children[1].cols = 5
-                #Lo añade al Padre
-                self.ids.BoxLayoutChargeAdd.children[1].add_widget(NewButton)
-                #Se le da un identificador al widget boton de eliminar
-                self.ids.BoxLayoutChargeAdd.children[1].ids.NewButtonAddItem = weakref.ref(NewButton)
-                print('hay mas')
-            else:
-
-                '''
-                if len(self.ids.BoxLayoutChargeAdd.children) == 1:
-
-
-                    #Creacion del widget boton para eliminar producto
-                    NewButtonDelete = MDFloatingActionButton(
-
-                            icon= "delete",
-                            type= "small",
-                            #on_release= self.AddItemCharge(),
-                            on_release= lambda x='': self.DeleteItemCharge(),
-                            elevation= 0,
-                            pos_hint= {'center_x': .5, 'center_y': .5}
-                        )
-
-
-                    #Lo añade al Padre
-                    self.ids.BoxLayoutChargeAdd.children[0].add_widget(NewButtonDelete)
-                    #Se le da un identificador al widget boton de eliminar
-                    self.ids.BoxLayoutChargeAdd.children[0].ids.NewButtonAddItem = weakref.ref(NewButtonDelete)
-                '''
-                print('NOOO hay mas')
-        except AttributeError:
-
-            #Creacion de widget de eliminar producto
-            NewButton = MDFloatingActionButton(
-
-                    icon= "account-plus",
-                    type= "small",
-                    #on_release= self.AddItemCharge(),
-                    on_release= lambda x='Item configuracion': self.AddItemCharge('NewGridName', 'NewButtonAddItem'),
-                    elevation= 0,
-                    pos_hint= {'center_x': .5, 'center_y': .5}
-                )
-
-            
-            #Actualiza numero de columnas
-            self.ids.BoxLayoutChargeAdd.children[0].cols = 5
-
-            #Añade el nuevo Button para eliminar producto
-            self.ids.BoxLayoutChargeAdd.children[0].add_widget(NewButton)
-            
-            #Le agrega un id al nuevo Button
-            self.ids.BoxLayoutChargeAdd.children[0].ids.NewButtonAddItem = weakref.ref(NewButton)
-            pass
-
-            
-
-    def AddItemCharge(self, ParentWidget, ChildrenWidget):
-
-
-        #remueve el boton de añadir
-        try:
-            self.ids[ParentWidget].remove_widget(self.ids[ChildrenWidget])
-            #self.ids[ParentWidget].cols = 5
-
-            NewButtonDelete = MDFloatingActionButton(
-
-                        icon= "delete",
-                        type= "small",
-                        #on_release= self.AddItemCharge(),
-                        on_release= lambda x='': self.DeleteItemCharge(),
-                        elevation= 0,
-                        pos_hint= {'center_x': .5, 'center_y': .5}
-                    )
-            
-        
-            #Lo añade al Padre
-            self.ids.BoxLayoutChargeAdd.children[0].add_widget(NewButtonDelete)
-            #Se le da un identificador al widget boton de eliminar
-            self.ids.BoxLayoutChargeAdd.children[0].ids.NewButtonAddItem = weakref.ref(NewButtonDelete)
-            print('try')
-    
-        #Permite que se elimine usando los "weakref"
-        except KeyError:
-
-            print('keyerror')
-
-            
-            if len(self.ids.BoxLayoutChargeAdd.children) == 1:
-
-                self.ids.BoxLayoutChargeAdd.children[0].remove_widget(self.ids.BoxLayoutChargeAdd.children[0].ids.NewButtonAddItem)
-            
-
-                #Creacion del widget boton para eliminar producto
-                NewButton2 = MDFloatingActionButton(
-
-                        icon= "delete",
-                        type= "small",
-                        #on_release= self.AddItemCharge(),
-                        on_release= lambda x='': self.DeleteItemCharge(),
-                        elevation= 0,
-                        pos_hint= {'center_x': .5, 'center_y': .5}
-                    )
-
-
-                #Lo añade al Padre
-                self.ids.BoxLayoutChargeAdd.children[0].add_widget(NewButton2)
-                #Se le da un identificador al widget boton de eliminar
-                self.ids.BoxLayoutChargeAdd.children[0].ids.NewButtonAddItem = weakref.ref(NewButton2)
-
-            #self.ids.BoxLayoutChargeAdd.children[0].cols = 5
-            
-            #Si la cantidad de items es mayor a 2, entonces me eliminas del antepenultimo item el boton de eliminar o agregar
-            if len(self.ids.BoxLayoutChargeAdd.children) >= 2:
-                print('if')
-                self.ids.BoxLayoutChargeAdd.children[1].cols = 4
-                self.ids.BoxLayoutChargeAdd.children[1].remove_widget(self.ids.BoxLayoutChargeAdd.children[1].ids.NewButtonAddItem)
-
-
-                #Remueve el boton de añadir del último item
-                self.ids.BoxLayoutChargeAdd.children[0].remove_widget(self.ids.BoxLayoutChargeAdd.children[0].ids.NewButtonAddItem)
-
-                #Creacion del widget boton para eliminar producto
-                NewButton2 = MDFloatingActionButton(
-
-                        icon= "delete",
-                        type= "small",
-                        #on_release= self.AddItemCharge(),
-                        on_release= lambda x='': self.DeleteItemCharge(),
-                        elevation= 0,
-                        pos_hint= {'center_x': .5, 'center_y': .5}
-                    )
-
-
-                #Lo añade al Padre
-                self.ids.BoxLayoutChargeAdd.children[0].add_widget(NewButton2)
-                #Se le da un identificador al widget boton de eliminar
-                self.ids.BoxLayoutChargeAdd.children[0].ids.NewButtonAddItem = weakref.ref(NewButton2)
-
-                
-
-
-        #Crea lista de los nombre de los MDLabel que se crearan
-        itemListLabel = ['Producto', 'Cantidad', 'Precio']
-
-        #Crea el MDGridLayout donde se guardará todo
-        NewGridLayout = MDGridLayout(
-                cols= 5,
-                spacing= dp(20),
-                padding= [dp(1), dp(5), dp(1), dp(1)],
-                
-                size_hint_y= None,
-                height= dp(60)
-            )
-
-        #For loop que creará los MDlabel segun el array itemListLabel
-        for item in itemListLabel:
-            
-            #crea el widget
-            NewLabels = MDTextField(
-                        mode= 'rectangle',
-                        text= '',
-                        hint_text= item,
-                    )
-            
-            #Lo añade al grid creado desde el comienzo
-            NewGridLayout.add_widget(NewLabels)
-
-
-        #Crea un MDGridLayout hijo del creado al comienzo
-        ChildreNewGridLayout = MDGridLayout(
-            cols=1,
-            adaptive_height= True,
-            size_hint_x= None,
-            width= self.ids.SwitchChargeAdd.width * 2
-
-        )
-
-        #Se crea el MDSwitch 
-        NewLabelSwitch = MDSwitch(
-                    
-                pos_hint= {'center_x': 0.05, 'center_y': -0.5},
-                icon_active= "check",
-
-                #on_active= self.on_checkbox_active(*args)
-            )
-
-        #Se añade al MDgridLayout hijo
-        ChildreNewGridLayout.add_widget(NewLabelSwitch)
-
-        #Se añade el MDGridLayout hijo al padre
-        NewGridLayout.add_widget(ChildreNewGridLayout)
-
-        ############################
-
-        #NOMBRE DEL NUEVO GRID Y BUTTON
-        NewGridName = 'NewGrid' + str(len(self.ids.BoxLayoutChargeAdd.children))
-        #NewButtonName = 'NewButtonAddItem' #+ str(len(self.ids.BoxLayoutChargeAdd.children))
-
-        #Se crea boton para poder añadir otro item
-        NewButton = MDFloatingActionButton(
-
-                    icon= "account-plus",
-                    type= "small",
-                    #on_release= self.AddItemCharge(),
-                    on_release= lambda x='Item configuracion': self.AddItemCharge('NewGridName', 'NewButtonAddItem'),
-                    elevation= 0,
-                    pos_hint= {'center_x': .5, 'center_y': .5}
-                )
-
-        #Se añade el nuevo boton al MDGridLayout Padre
-        NewGridLayout.add_widget(NewButton)
-        
-
-        #Se añade el widget MDGridLayout al MDBoxLayout existente en kivy
-        self.ids.BoxLayoutChargeAdd.add_widget(NewGridLayout)
-
-        #Se le añade un ID al nuevo MDGridLayout
-        self.ids.BoxLayoutChargeAdd.ids[NewGridName] = weakref.ref(NewGridLayout)
-        #Se le añade el ID al nuevo boton 'añadir producto'
-        self.ids.BoxLayoutChargeAdd.children[0].ids.NewButtonAddItem = weakref.ref(NewButton)
-
-        '''
-        if len(self.ids.BoxLayoutChargeAdd.children) <= 2:
-
-            self.ids.BoxLayoutChargeAdd.children[0].cols = 7
-
-            #Creacion del widget boton para eliminar producto
-            NewButtonDelete = MDFloatingActionButton(
-
-                    icon= "delete",
-                    type= "small",
-                    #on_release= self.AddItemCharge(),
-                    on_release= lambda x='': self.DeleteItemCharge(),
-                    elevation= 0,
-                    pos_hint= {'center_x': .5, 'center_y': .5}
-                )
-
-
-            #Lo añade al Padre
-            self.ids.BoxLayoutChargeAdd.children[0].add_widget(NewButtonDelete)
-            #Se le da un identificador al widget boton de eliminar
-            self.ids.BoxLayoutChargeAdd.children[0].ids.NewButtonAddItem = weakref.ref(NewButtonDelete)
-
-            pass
-        '''
-
-        '''
-        print()
-        print(str(self) + ' <--- SELF')
-        print(str(self.ids.BoxLayoutChargeAdd.ids[NewGridName]) + ' <--- IDS BOXLAYOUTCHARGEADD-NewGridName')
-        print(str(self.ids.BoxLayoutChargeAdd.children[0].ids.NewButtonAddItem) + ' <--- CHILDREN[0].ids')
-        print(str(self.ids[ParentWidget]) + ' <--- PARENT WIDGET')
-        print()
-        '''
-    
-
-
-
-#PAGINA DE PROVEEDOR
-class SupplierPage(MDScreen):
-
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        global self_SupplierCharge
-        self_SupplierCharge = self
-
-    
-    def ChangePageSupplierPage(self):
-
-        #obtiene el self principal del kivy
-        self_main = intermediary.global_variable_self
-        #cambia segun la pagina querida
-        self_main.root.ids.screen_manager.current = 'SupplierAddPage'
-        #cambia el titulo del menu de arriba segun el nombre que queramos
-        self_main.root.ids.toolbar.title = 'Proveedor - Agregar'
-    
-
-    def CallbackMenuSupplier(self, button):
-
-        MenuAndTitleSelect.DropMenu("self", button, intermediary.global_variable_self.MenuTypeSupplierPage)
-
-
-    ## CALLBACK DEL SELECT BUSCADOR DEL MENU ALMACEN
-    def ChangeSearchingTypeSupplier(self = None, Text = ""):
-
-        MenuAndTitleSelect.ChangeNameDropMenu(self_SupplierCharge, intermediary.global_variable_self.MenuTypeSupplierPage, 'ButtonMenuSearchingSupplier', Text)
-
-class SupplierUpdatePage(MDScreen):
-    pass
-
-class SupplierAddPage(MDScreen):
-    pass
 
 #CLASE DE DATEPICKER
 class DatePicker():
@@ -1134,7 +256,7 @@ class App(MDApp):
         super().__init__(**kwargs)
 
         #Crea la variable global, self de la aplicación para poder ser utilizada en otras clases y archivos .py
-        intermediary.GlobalVariables.GetGlobalSelf(self)
+        functions.GlobalVariables.GetGlobalSelf(self)
 
 
         #CARGA LOS DATOS DE .KV
@@ -1496,8 +618,8 @@ class App(MDApp):
             self.root.ids.screen_manager.current = page
             self.root.ids.toolbar.title = text
 
-            global intermediary.global_variable_self
-            intermediary.global_variable_self = intermediary.GlobalVariables.GetGlobalSelf(self)
+            global functions.global_variable_self
+            functions.global_variable_self = functions.GlobalVariables.GetGlobalSelf(self)
             
 
         elif dontSelf == True:
@@ -1508,12 +630,12 @@ class App(MDApp):
                 case _:
                     pass
 
-            intermediary.global_variable_self.root.ids.screen_manager.current = page
-            intermediary.global_variable_self.root.ids.toolbar.title = text
+            functions.global_variable_self.root.ids.screen_manager.current = page
+            functions.global_variable_self.root.ids.toolbar.title = text
     '''
 
     def ShowImage(self, path):
-        intermediary.global_variable_self.root.ids.imageProduct.source = path
+        functions.global_variable_self.root.ids.imageProduct.source = path
 
 
 ## CLASE PARA MOSTRAR LA TABLA, MDDATATABLE

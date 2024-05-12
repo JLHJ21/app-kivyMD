@@ -1,0 +1,90 @@
+
+
+#Pagina de proveedores
+<SupplierPage>:
+    name: "SupplierPage"
+
+    MDBoxLayout:
+
+        padding: dp(1), dp(root.manager.parent.parent.ids.toolbar.height), dp(1), dp(root.manager.parent.parent.ids.toolbarbottom.height)
+
+        MDGridLayout:
+            cols: 1
+             
+            #MDGridLayout:
+            #    cols: 1
+            #    padding: dp(8), dp(32), dp(8), dp(8)
+            #    size_hint_y: None
+            #    height: self.minimum_height
+
+
+            #    MDLabel:
+            #        text: "Proveedores"
+            #        halign: "center"
+            #        font_style: "H4"
+
+            MDGridLayout:
+                cols: 5
+                spacing: dp(10)
+                padding: dp(16), dp(16), dp(16), dp(16)
+                size_hint_y: None
+                height: dp(root.manager.parent.parent.ids.toolbar.height)
+                MDTextField:
+                    id: ButtonMenuSearchingSupplier
+
+                    size_hint_x: None
+                    width: "100dp"
+
+                    text: "TODO"
+                    hint_text: "Tipo:"
+                    icon_right: "arrow-down"
+
+                    mode: "rectangle"
+                    readonly: True 
+                    focus: True
+
+                    on_focus: if self.focus: root.CallbackMenuSupplier(self)
+
+                MDTextField:
+                    id: SearchSupplier
+                    hint_text: 'Buscar proveedor'
+                    icon_right: "android"
+                    mode: "rectangle"
+
+                    size_hint_x: None
+                    width: "400dp"
+
+                MDFloatingActionButton:
+                    id: ButtonSearchingSupplier
+
+                    icon: "book-search"
+                    type: "standard"
+
+                MDLabel:
+
+                MDFloatingActionButton:
+                    icon: "account-multiple-plus"
+                    type: "standard"
+
+                    on_release: root.ChangePageSupplierPage()
+
+                    
+            RecycleViewTable:
+
+                id_table: "tableSuppliers"
+
+                padding: dp(16), dp(root.manager.parent.parent.ids.toolbar.height / 2), dp(16), dp(root.manager.parent.parent.ids.toolbarbottom.height /2)
+
+                objecto: self
+                need_image: True
+                columnas: 5
+
+                list_table_labels: ["id_imagen", "id_nombre", "id_ubicacion", "id_rif", "id_telefono"]
+                list_table_data: ["imagen","nombre", "ubicacion", "rif", "telefono"]
+
+                modalData: 
+                    'ModalsDialog.ShowAlertDialog("self","¿Que desea realizar?","Por favor, elija algunas de las opciones presentadas.","Cancelar","Eliminar","Modificar",lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog.dismiss()),lambda x: ModalsDialog.ShowAlertDialogDelete("self","¿De verdad quiere eliminar este producto?","Si es así, adelante","Cancelar","Eliminar",lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog2.dismiss()),lambda x: print("cerrar")),lambda x: ModalsDialog.ChangePage("self","SupplierUpdatePage", "Proveedor - Modificar"))'
+                
+                test: 
+                    'for i in range(1,5): d = {f"dato{i}": [f"images/logo.jpg", f"dato{i}_nombre", f"dato{i}_ubicacion", f"dato{i}_rif", f"dato{i}_telefono"]};self.objecto.DictionaryDataset.update(d)'
+

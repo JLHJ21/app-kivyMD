@@ -1,0 +1,250 @@
+
+<StoreUpdatePage>:
+    name: "StorePageUpdate"
+                
+    MDBoxLayout:
+
+        padding: dp(1), dp(root.manager.parent.parent.ids.toolbar.height), dp(1), dp(root.manager.parent.parent.ids.toolbarbottom.height)
+        
+        MDScrollView:
+            MDBoxLayout:
+
+                orientation: 'horizontal'
+                size_hint: 1, 1
+                adaptive_height: True
+                        
+                MDGridLayout:
+                    cols: 1
+                    padding: dp(16), dp(8)
+                    size_hint_y: None
+                    height: self.minimum_height  # required to size GridLayout
+
+                            
+                    MDGridLayout:
+                        cols: 1
+                        padding: dp(1), dp(32)
+
+                        size_hint_y: None
+                        height: self.minimum_height  # required to size GridLayout
+
+                        MDLabel:
+                            text: "Cambiar Producto"
+                            halign: "center"
+                            font_style: "H4"
+
+                    MDGridLayout:
+                        cols: 3
+                        spacing: dp(20)
+                        padding: dp(16), dp(0), dp(16), dp(8) 
+                        size_hint_y: None
+                        height: self.minimum_height  # required to size GridLayout
+                        MDLabel:
+                            size_hint_x: 0.38
+                            #width: "250dp"
+                            padding: dp(32), dp(1)
+
+                            text: "Nombre:"
+                            halign: "right"
+                            font_style: "H5"
+                        
+                        MDTextField:
+
+                            id: name_field
+                            size_hint_x: 0.7
+                            #width: "375dp"
+
+                            hint_text: "Nombre del producto"
+
+                            required: True
+
+                            helper_text_mode: "on_error"
+                            helper_text: "Por favor, ingrese un nombre del producto." if len(self.text) == 0 else ""
+
+                            max_text_length: 25
+                            mode: "rectangle"
+                            line_color_normal: "red" if len(self.text) == 0 else "blue"
+                        
+                        MDLabel:
+                            size_hint_x: 0.1
+
+                    MDGridLayout:
+                        cols: 3
+                        spacing: dp(20)
+                        padding: dp(16), dp(8)
+                        #padding: ["16dp", "16dp", "16dp", "16dp"]  if len(inputSupplierMenu.text) == 0 else ["16dp", "8dp", "16dp", "8dp"] 
+                        size_hint_y: None
+                        height: self.minimum_height  # required to size GridLayout
+                        MDLabel:
+                            size_hint_x: 0.38
+                            #width: "250dp"
+                            padding: dp(32), dp(1)
+
+                            text: "Proveedor:"
+                            halign: "right"
+                            font_style: "H5"
+                        
+                        MDTextField:
+
+                            id: inputSupplierMenu
+                            size_hint_x: 0.7
+                            #width: "375dp"
+                            text: ""
+                            hint_text: "Proveedor del producto"
+
+                            required: True
+                            readonly: True
+                            
+                            helper_text_mode: "on_error"
+                            helper_text: "Por favor, ingrese un proveedor del producto." if len(self.text) == 0 else ""
+                            mode: "rectangle"
+                            
+                            on_focus: if self.focus: app.MenuSupplierStore.open()
+                            line_color_normal: "red" if len(self.text) == 0 else "blue"
+                        
+                        MDLabel:
+                            size_hint_x: 0.1
+                    MDGridLayout:
+                        cols: 3
+                        spacing: dp(20)
+                        padding: dp(16), dp(8)
+                        size_hint_y: None
+                        height: self.minimum_height  # required to size GridLayout
+                        MDLabel:
+                            size_hint_x: 0.38
+                            #width: "250dp"
+                            padding: dp(32), dp(1)
+
+                            text: "Cantidad:"
+                            halign: "right"
+                            font_style: "H5"
+                        
+                        MDTextField:
+
+                            id: name_field
+                            size_hint_x: 0.7
+                            #width: "375dp"
+
+                            hint_text: "Cantidad del producto"
+
+                            required: True
+
+                            helper_text_mode: "on_error"
+                            helper_text: "Por favor, ingrese la cantidad del producto." if len(self.text) == 0 else ""
+
+                            max_text_length: 5
+                            mode: "rectangle"
+                            line_color_normal: "red" if len(self.text) == 0 else "blue"
+                        
+                        MDLabel:
+                            size_hint_x: 0.1
+
+                    MDGridLayout:
+                        cols: 3
+                        spacing: dp(20)
+                        padding: dp(16), dp(8)
+                        size_hint_y: None
+                        height: self.minimum_height  # required to size GridLayout
+                        MDLabel:
+                            size_hint_x: 0.38
+                            #width: "250dp"
+                            padding: dp(32), dp(1)
+
+                            text: "Precio:"
+                            halign: "right"
+                            font_style: "H5"
+                        
+                        MDTextField:
+
+                            id: name_field
+                            size_hint_x: 0.7
+                            width: "375dp"
+
+                            hint_text: "Precio del producto"
+
+                            required: True
+
+                            helper_text_mode: "on_error"
+                            helper_text: "Por favor, ingrese el precio del producto." if len(self.text) == 0 else ""
+
+                            max_text_length: 10
+                            mode: "rectangle"
+                            line_color_normal: "red" if len(self.text) == 0 else "blue"
+                        
+                        MDLabel:
+                            size_hint_x: 0.1
+
+                    MDGridLayout:
+                        cols: 3
+                        spacing: dp(20)
+                        padding: dp(16), dp(16)
+                        size_hint_y: None
+                        height: self.minimum_height  # required to size GridLayout
+                        MDLabel:
+                            size_hint_x: 0.38
+                            #width: "250dp"
+                            padding: dp(32), dp(1)
+                            #padding: ["16dp", "16dp", "16dp", "16dp"]  if len(inputSupplierMenu.text) == 0 else ["16dp", "8dp", "16dp", "8dp"] 
+
+                            text: "Imagen:"
+                            font_style: "H5"
+                            halign: "right"
+
+                        
+                        MDRaisedButton:
+
+                            #id: name_field
+                            size_hint_x: 0.7
+                            padding: dp(1), dp(1)
+
+                            required: True
+
+                            text: "Elegir imagen" if len(imageProduct.source) == 0 else "Imagen elegida"
+                            text_color: "white"
+                            line_color: "blue"
+                            md_bg_color: "blue"
+
+                            #OJO
+                            on_press: root.manager.current = "chooseimagePage"
+                            
+                        
+                        MDLabel:
+                            size_hint_x: 0.1
+
+
+                    MDGridLayout:
+
+                        cols: 2
+
+                        size_hint_y: None
+                        padding: dp(80), dp(16), dp(98), dp(16)
+
+                        height: root.height / 2  # required to size GridLayout
+
+                        Label:
+
+                        FitImage:
+                            id: imageProduct
+                            source: "images/question.jpg"
+                            size_hint_x: 1
+
+
+                    MDGridLayout:
+                        cols: 2
+                        spacing: dp(20)
+                        padding: dp(16), dp(8)
+                        size_hint_y: None
+                        
+                        height: self.minimum_height  # required to size GridLayout
+
+                        MDRectangleFlatButton:
+                            size_hint_x: 0.5
+                            text: "Cancelar"
+                            line_color: "red"
+                            text_color: "red"
+
+                        MDRaisedButton:
+                            size_hint_x: 0.5
+                            text: "Aceptar"
+                            text_color: "white"
+                            line_color: "blue"
+                            md_bg_color: "blue"

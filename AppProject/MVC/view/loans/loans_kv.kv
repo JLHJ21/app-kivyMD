@@ -1,0 +1,167 @@
+
+<LoanPage>:
+
+    name: "LoanPage"
+    
+    MDBoxLayout:
+        orientation: 'vertical'
+        size_hint: 1, 1
+        
+        
+        MDGridLayout:
+            cols:1
+            padding: dp(16), dp(root.manager.parent.parent.ids.toolbar.height), dp(16), dp(root.manager.parent.parent.ids.toolbarbottom.height)
+            
+            MDGridLayout:
+                cols: 2
+                                          
+                MDScrollView:
+
+                    MDBoxLayout:
+
+                        orientation: 'horizontal'
+                        size_hint: 1, 1
+                        adaptive_height: True
+                        MDGridLayout:
+                            cols: 1
+                            padding: dp(16), dp(8)
+                            size_hint_y: None
+                            height: self.minimum_height  # required to size GridLayout
+
+                            MDGridLayout:
+                                cols: 1
+                                padding: dp(1), dp(32), dp(1), dp(48)
+
+                                size_hint_y: None
+                                height: self.minimum_height  # required to size GridLayout
+
+                                MDLabel:
+                                    id: MoneyHistoryTitle
+                                    text: "MES"
+                                    halign: "center"
+                                    font_style: "H4"
+
+                            
+                            MDGridLayout:
+                                id: gridLayoutLoanItems
+                                cols: 1
+
+                                size_hint_y: None
+                                height: self.minimum_height  # required to size GridLayout
+                                
+                                #AQUI APARECERAN OJO
+                MDBoxLayout:
+                    orientation: 'vertical'
+                    size_hint: 1, 1
+                    padding: dp(1), dp(16), dp(1), dp(1)
+                    #spacing: dp(-60)
+
+                    MDGridLayout:
+                        cols:1
+
+                        
+                        AnchorLayout:
+                            anchor_x:'center'
+                            anchor_y:'top'
+
+                            MDRaisedButton:
+                                text: "Elegir fecha"
+                                font_style: "H5"
+
+                                on_release: app.datePicker.show_date_picker()  
+
+                           
+
+                        AnchorLayout:
+                            anchor_x:'center'
+                            anchor_y:'center'
+
+                            MDRaisedButton:
+                                id: buttonChangeTypeMoneyHistory
+                                text: "Cambiar a: TOTAL"
+                                font_style: "H5"
+                                on_release: root.ChangeItemsGrid('total') if self.text == 'Cambiar a: TOTAL' else root.ChangeItemsGrid('mes')
+
+
+
+            MDScrollView:
+                MDGridLayout:
+                    cols: 1
+                    
+                    #MDGridLayout:
+                    #    cols: 1
+                    #    padding: dp(8), dp(32), dp(8), dp(8)
+                    size_hint_y: None
+                    height: self.minimum_height
+
+
+                    #    MDLabel:
+                    #        text: "Proveedores"
+                    #        halign: "center"
+                    #        font_style: "H4"
+                    MDGridLayout:
+                        cols: 5
+                        spacing: dp(10)
+                        padding: dp(16), dp(1)
+                        size_hint_y: None
+                        height: dp(root.manager.parent.parent.ids.toolbar.height)
+                        MDTextField:
+                            id: ButtonMenuSearchingMoneyHistory
+
+                            size_hint_x: None
+                            width: "100dp"
+
+                            text: "TODO"
+                            hint_text: "Tipo:"
+                            icon_right: "arrow-down"
+
+                            mode: "rectangle"
+                            readonly: True 
+                            focus: True
+
+                            #on_focus: if self.focus: root.CallbackMenuSupplier(self)
+
+                        MDTextField:
+                            id: SearchMoneyHistory
+                            hint_text: 'Buscar historial de dinero'
+                            icon_right: "android"
+                            mode: "rectangle"
+
+                            size_hint_x: None
+                            width: "400dp"
+
+                        MDFloatingActionButton:
+                            id: ButtonSearchingMoneyHistory
+
+                            icon: "book-search"
+                            type: "standard"
+
+                        MDLabel:
+
+                        MDFloatingActionButton:
+                            icon: "account-multiple-plus"
+                            type: "standard"
+
+                            on_release: root.ChangePageLoanPage()
+
+                    
+                    RecycleViewTable:
+                    
+                        id_table: "tableLoan"
+
+                        size_hint_y: None
+                        height: dp(400)
+                        padding: dp(16), dp(16), dp(16), dp(root.manager.parent.parent.ids.toolbarbottom.height /2)
+
+                        objecto: self
+                        need_image: True
+                        columnas: 5
+
+                        list_table_labels: ["id_imagen", "id_dado", "id_fecha", "id_monto"]
+                        list_table_data: ["imagen","dado por", "fecha", "monto"]
+
+                        modalData: 
+                            'ModalsDialog.ShowAlertDialog("self","¿Que desea realizar?","Por favor, elija algunas de las opciones presentadas.","Cancelar","Eliminar","Modificar",lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog.dismiss()),lambda x: ModalsDialog.ShowAlertDialogDelete("self","¿De verdad quiere eliminar este prestamo?","Si es así, adelante","Cancelar","Eliminar",lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog2.dismiss()),lambda x: print("cerrar")),lambda x: ModalsDialog.ChangePage("self","LoanUpdatePage", "Prestamo - Modificar"))'
+                        
+                        test: 
+                            'for i in range(1,5): d = {f"dato{i}": [f"images/logo.jpg", f"dato{i}_dado", f"dato{i}_fecha", f"dato{i}_monto"]};self.objecto.DictionaryDataset.update(d)'

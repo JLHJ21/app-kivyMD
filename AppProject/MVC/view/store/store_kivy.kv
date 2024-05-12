@@ -1,0 +1,62 @@
+
+<StorePage>:
+    name: "StorePage"
+
+    MDBoxLayout:
+        orientation: 'vertical'
+        size_hint: 1, 1
+        MDGridLayout:
+            cols: 1
+            padding: dp(16), dp(root.manager.parent.parent.ids.toolbar.height), dp(16), dp(root.manager.parent.parent.ids.toolbarbottom.height)
+                    
+            MDGridLayout:
+                cols: 3
+                spacing: dp(20)
+                padding: dp(16), dp(16), dp(16), dp(16)
+                size_hint_y: None
+                height: dp(root.manager.parent.parent.ids.toolbar.height)
+                MDTextField:
+                    id: ButtonMenuSearchingStore
+
+                    size_hint_x: None
+                    width: "100dp"
+
+                    text: "TODO"
+                    hint_text: "Tipo:"
+                    icon_right: "arrow-down"
+
+                    mode: "rectangle"
+                    readonly: True 
+                    focus: True
+
+                    on_focus: if self.focus: root.CallbackMenuProduct(self)
+
+                MDTextField:
+                    id: SearchProduct
+                    hint_text: 'Buscar producto'
+                    icon_right: "android"
+                    mode: "rectangle"
+
+                MDFloatingActionButton:
+                    id: ButtonSearchingStore
+                    icon: "book-search"
+                    style: "standard"
+                    width: "100dp"
+                    
+            RecycleViewTable:
+
+                id_table: "tableAlmacen"
+
+                padding: dp(16), dp(root.manager.parent.parent.ids.toolbar.height / 2), dp(16), dp(root.manager.parent.parent.ids.toolbarbottom.height /2)
+
+                objecto: self
+                columnas: 5
+
+                list_table_labels: ["id_imagen", "id_cedula", "id_proveedor", "id_cantidad", "id_precio"]
+                list_table_data: ["imagen", "cedula", "proveedor", "cantidad", "precio"]
+
+                modalData:
+                    'ModalsDialog.ShowAlertDialog("self","¿Que desea realizar?", "Por favor, elija algunas de las opciones presentadas.", "Cancelar", "Eliminar", "Modificar",  lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog.dismiss()),lambda x: ModalsDialog.ShowAlertDialogDelete ("self","¿De verdad quiere eliminar este producto?", "Si es así, adelante","Cancelar","Eliminar",lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog2.dismiss()),lambda x: print("cerrar")    ),lambda x: ModalsDialog.ChangePage("self", "StorePageUpdate", "Almacen - Modificar"))'
+
+                test: 
+                    'for i in range(1,20): d = {f"dato{i}": [f"images/logo.jpg", f"dato20_{i}_cedula", f"dato20_{i}_proveedor", f"dato20_{i}_cantidad", f"dato20_{i}_precio"]};self.objecto.DictionaryDataset.update(d)'
