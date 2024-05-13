@@ -100,6 +100,14 @@ from MVC.controller.loans.add.add_loans_controller import LoanAddPage
 #Enlazar página de inicio "LoanUpdatePage" MVC/controller/loans/update/update_loans_controller.py 
 from MVC.controller.loans.update.update_loans_controller import LoanUpdatePage
 
+#Enlazar página de inicio "SignIn" MVC/controller/sign_in/sign_in_controller.py 
+from MVC.controller.sign_in.sign_in_controller import SignInPage
+
+#Enlazar página de inicio "SignOn" MVC/controller/sign_on/sign_on_controller.py 
+from MVC.controller.sign_on.sign_on_controller import SignOnPage
+
+#Enlazar página de inicio "SignOn" MVC/controller/sign_on/sign_on_controller.py 
+from MVC.controller.header_footer.header_footer_controller import HeaderAndFooter
 
 #Enlazar archivo de base de datos
 #Enlazar archivo de base de datos database/database.py
@@ -127,94 +135,6 @@ DatabaseClass.Conexion()
 #DatabaseClass.InsertData()
 
 
-#MENU LATERAL
-class ContentNavigationDrawer(MDScrollView):
-    screen_manager = ObjectProperty()
-    nav_drawer = ObjectProperty()
-
-
-#CABECERA Y PIE DE PAGINA DE LA PAGINA
-class HeaderAndFooter(MDScreen):
-    pass
-
-
-#PAGINA DE REGISTRAR CUENTA
-class SignOn(MDScreen):
-    def ChangePageToSignIn(self):
-        
-        #obtiene el self principal del kivy
-        self_main = functions.global_variable_self
-        #cambia segun la pagina querida
-        self_main.root.ids.screen_manager.current = 'SignIn'
-        #cambia el titulo del menu de arriba segun el nombre que queramos
-        self_main.root.ids.toolbar.title = 'Iniciar Sesión'
-    
-    def CreateAccount(self, username, email, password, password2):
-
-
-        if password == password2:
-            
-            password = sha256_crypt.hash(password)
-            result = DatabaseClass.CreateAccountDB(username, email, password)
-
-            if result == True:
-                self.ChangePageToSignIn()
-
-            print(result)
-        else:
-            pass
-
-    def Error(typeError):
-        print(str('error') + typeError)
-
-
-
-
-#PAGINA DE INICIAR SESION
-class SignIn(MDScreen):
-
-
-    def ChangePageToSignOn(self):
-        
-        #obtiene el self principal del kivy
-        self_main = functions.global_variable_self
-        #cambia segun la pagina querida
-        self_main.root.ids.screen_manager.current = 'SignOn'
-        #cambia el titulo del menu de arriba segun el nombre que queramos
-        self_main.root.ids.toolbar.title = 'Registrarse'
-
-    def SignIn(self, username, password):
-        result = DatabaseClass.SignInBD(username, password)
-
-        if result == True:
-            self.OpenSystem('a')
-        else:
-            print('no coinciden')
-
-
-    def OpenSystem(self, page):
-        
-        
-        #obtiene el self principal del kivy
-        self_main = functions.global_variable_self
-        self_main.root.ids.screen_manager.current = 'InitialPage'
-
-    pass
-
-        
-class MenuAndTitleSelect():
-
-    def DropMenu(self, button, DropMenu):
-
-        DropMenu.caller = button
-        DropMenu.open()
-
-
-    ## CALLBACK DEL SELECT BUSCADOR DEL MENU ALMACEN
-    def ChangeNameDropMenu(self, DropMenu, IdButton, Text = ""):
-        
-        self.ids[IdButton].text = Text
-        DropMenu.dismiss()
 
 #CLASE DE DATEPICKER
 class DatePicker():
@@ -251,6 +171,9 @@ class App(MDApp):
     modals = ModalsDialog()
     datePicker = DatePicker()
     database = DatabaseClass()
+    functions_callback = functions.FunctionsKivys()
+
+
     #LO PRIMERO QUE SE CARGA
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -261,60 +184,6 @@ class App(MDApp):
 
         #CARGA LOS DATOS DE .KV
         self.screen = Builder.load_file("styles.kv")
-
-        #PROCESO QUE ALMACENA DE FORMA GLOBAL LOS DATOS DE SELF EN GLOBAL_SELF
-
-        ##  MENU 1RA MANERA, PARA SOLO MDTopAppBar
-        #TASA DE MONEDA
-        menu_foreign_exchange_header = [
-            
-            {
-                "text": "Dolar",
-                "leading_icon": "cash-100",
-                "on_press": lambda x='Item Dolar': self.CallbackTypeMoney('dolar'),
-            },
-            {
-                "text": "Peso",
-                "leading_icon": "cash-fast",
-                "on_press": lambda x='Item Peso': self.CallbackTypeMoney('peso'),
-            },
-            {
-                "text": "Bolívar",
-                "leading_icon": "cash-off",
-                "on_press": lambda x='Item Bolivar': self.CallbackTypeMoney('bolivar'),
-            }
-        ]
-        self.menu = MDDropdownMenu(
-            border_margin=dp(4),
-            items=menu_foreign_exchange_header,
-            width=dp(240),
-            hor_growth="left",
-            #radius=[24, 0, 24, 24],
-            elevation= 4
-        )
-
-    
-        #PERFIL DE USUARIO
-        menu_configuration_header = [
-            {
-                "text": "Configuración",
-                "leading_icon": "account-settings",
-                "on_press": lambda x='Item configuracion': self.callback(x),
-            },
-            {
-                "text": "Cerrar Sesión",
-                "leading_icon": "account-arrow-left",
-                "on_press": lambda x='Item perfil': self.callback(x),
-            },
-        ]
-        self.menu2 = MDDropdownMenu(
-            border_margin=dp(4),
-            items=menu_configuration_header,
-            width=dp(240),
-            hor_growth="left",
-            #radius=[24, 0, 24, 24],
-            elevation= 4
-        )
 
         ##  MENU 2RA MANERA, PARA SOLO MDBUTTON
         #Menu almacen 
@@ -555,59 +424,7 @@ class App(MDApp):
     def callback(self, instance_action_top_appbar_button):
         print(instance_action_top_appbar_button)
 
-    ## CALLBACK DE MDTopAppBar
-    def CallbackModeScreen(self, instance_action_top_appbar_button, action = None):
-
-        match action:
-            case 'claro':
-                items = [
-                        ["weather-sunny", lambda x: self.CallbackModeScreen(x, 'oscuro'), "Modo Claro", "Modo Claro"],
-                    ]
-            case 'oscuro':
-                items = [
-                        ["moon-waning-crescent", lambda x: self.CallbackModeScreen(x, 'claro'), "Modo Oscuro", "Modo Oscuro"],
-                    ]
-            case _:
-                items = [
-                        ["weather-sunny", lambda x: self.CallbackModeScreen(x, 'oscuro'), "Modo Claro", "Modo Claro"],
-                    ]
-
-        itemsIcons = items
-        
-        self.root.ids.toolbar.right_action_items[1] = itemsIcons[0]
-
-    def CallbackTypeMoney(self, action = None):
-
-        match action:
-            case 'dolar':
-                items = [
-                        ["cash-100", lambda x: self.CallbackMenuChangeMoney(x), "Tipo de tasa - Dolar", "Tipo de tasa - Dolar"],
-                    ]
-            case 'peso':
-                items = [
-                        ["cash-fast", lambda x: self.CallbackMenuChangeMoney(x), "Tipo de tasa - Pesos", "Tipo de tasa - Pesos"],
-                    ]
-            case 'bolivar':
-                items = [
-                        ["cash-off", lambda x: self.CallbackMenuChangeMoney(x), "Tipo de tasa - Bolívar", "Tipo de tasa - Bolívar"],
-                    ]
-            case _:
-                items = [
-                        ["cash-100", lambda x: self.CallbackMenuChangeMoney(x), "Tipo de tasa - Dolar", "Tipo de tasa - Dolar"],
-                    ]
-        
-        self.root.ids.toolbar.right_action_items[0] = items[0]
-        self.menu.dismiss()
-
-    def CallbackMenuChangeMoney(self, button):
-        
-        self.menu.caller = button
-        self.menu.open()
-
-    def CallbackMenuUser(self, button):
-        
-        self.menu2.caller = button
-        self.menu2.open()
+    
 
     ## CALLBACK PARA CAMBIAR DE PAGINA CON MDTopAppBar BUTTON
     '''
@@ -738,6 +555,7 @@ class ClientsTable(MDBoxLayout):
 ## TABLA
 
 ## CLASE PARA MOSTRAR LA TABLA, MDDATATABLE
+'''
 class CashierTableProductsToOffer(MDBoxLayout):
 
     def __init__(self, **kwargs):
@@ -809,5 +627,6 @@ class CashierTableProductsToSell(MDBoxLayout):
 
     def on_row_press(self, instance_table, instance_row):
         print(instance_table, instance_row)
+'''
 
 App().run()

@@ -1,0 +1,61 @@
+
+
+<SignInPage>:
+    name: "SignInPage"
+
+
+    MDBoxLayout:
+        orientation: 'horizontal'
+        padding: dp(100)
+
+        MDGridLayout:
+            cols: 1
+
+            MDLabel:
+                text: 'INICIAR SESION'
+                font_style: "H3"
+                halign: 'center'
+                adaptive_height: True
+            
+            MDGridLayout:
+                cols: 1
+                padding: dp(50)
+                spacing: dp(20)
+                adaptive_height: True
+
+                MDTextField:
+                    id: usernameSignIn
+                    icon_left: "account"
+                    hint_text: 'Escribir nombre de usuario'
+                    mode: 'rectangle'
+
+                MDTextField:
+                    id: passwordSignIn
+                    icon_left: "account-key"
+                    hint_text: 'Escribir contraseña'
+                    mode: 'rectangle'
+                    password: True
+            
+            MDGridLayout:
+                cols: 3
+                spacing: dp(20)
+                adaptive_height: True
+                padding: dp(16), dp(32), dp(16), dp(8)
+
+                MDRectangleFlatButton:
+                    text: 'Crear cuenta'
+                    font_style: 'H5'
+                    size_hint_x: 0.4
+
+                    on_release: root.ChangePageToSignOn()
+
+                MDLabel:
+                    size_hint_x: 0.1
+
+                MDRaisedButton:
+                    text: 'Enviar'
+                    font_style: 'H5'
+                    size_hint_x: 0.4
+
+                    on_release: root.SignIn(root.ids.usernameSignIn.text, root.ids.passwordSignIn.text)
+

@@ -45,36 +45,9 @@ class DatabaseClass():
 
         collection.insert_many([post, post2, post3])
     
-    def CreateAccountDB(username, email, password):
-                
-        collection = db['users']
+    
 
-        #data
-
-        if collection.count_documents({'username': username}, limit = 1):
-
-            return 'USERNAME: ' + str(collection.find({'username': username}))
-
-        elif collection.count_documents({'email': email}, limit = 1):
-            return 'EMAIL: ' + str(collection.find({'email': email}))
-        
-        else:
-
-            post = {'username': username, 'email': email, 'password': password}
-            collection.insert_one(post)
-
-            return True
-
-    def SignInBD(username, password):
-        
-        collection = db['users']
-
-        user = collection.find_one({"username": username})
-
-        if user and sha256_crypt.verify(password, user['password']):
-            return True
-
-        return False
+    
 
 
 
