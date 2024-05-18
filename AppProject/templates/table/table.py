@@ -33,6 +33,10 @@ import MVC.controller.functions as functions
 import weakref
 #from retry import retry
 
+#import threading
+import concurrent.futures
+#pool = ThreadPool(processes=1)
+
 ############
 ###TABLA
 
@@ -78,19 +82,22 @@ class SelectableLabel(RecycleDataViewBehavior, MDFlatButton):
         global_selectable = self
     
     #Columnas de las tablas y el nombre que tendrán
-    def CreateLabelsWidgets(self, dictionary, need_image):        
-        
+    def CreateLabelsWidgets(self, dataLabel, dictionary, need_image, index_refresh):        
+
+            
         if (self == None):
             
             pass
         else:
 
 
+            dic = 'dato' + str(index_refresh)
+
+
             self.children[0].cols = global_columnas    
-            
-            for index, p in enumerate(dictionary): 
 
-
+            for index, i in enumerate(dataLabel):
+                
                 if index == 0 :
 
                     if need_image:
@@ -104,13 +111,13 @@ class SelectableLabel(RecycleDataViewBehavior, MDFlatButton):
                     else:
 
                         l=MDLabel(
-                            text=str(p) + str(index),
+                            text= dictionary[dic][0][i]  ,
                             halign="center",
                             font_style = "H6",
                             markup= True,
                         )
 
-                    id_label = "id_" + str(p)
+                    id_label = "id_" + str(dic) #+ str(index)
 
                     self.ids.GridSelectableLabel.add_widget(l)
                     self.ids.GridSelectableLabel.ids[id_label] = weakref.ref(l)
@@ -118,22 +125,24 @@ class SelectableLabel(RecycleDataViewBehavior, MDFlatButton):
                 else:
                     
                     l=MDLabel(
-                        text=str(p) + str(index),
+                        text= dictionary[dic][0][i] ,
                         halign="center",
                         font_style = "H6",
                         markup= True,
                     )
 
-                    id_label = "id_" + str(p)
+                    id_label = "id_" + str(dic) #+ str(index)
                     
                     self.ids.GridSelectableLabel.add_widget(l)
                     self.ids.GridSelectableLabel.ids[id_label] = weakref.ref(l)
 
-            
     def refresh_view_attrs(self, rv, index, data):
 
         global have_labels_cols
         global global_gridSelectableLabelChildren
+
+
+        self.ids.GridSelectableLabel.clear_widgets()
 
         for i in global_rv:
 
@@ -149,8 +158,10 @@ class SelectableLabel(RecycleDataViewBehavior, MDFlatButton):
 
         except IndexError:
 
+            #print(index)
+
             #MUY IMPORTANTE OJO, PERMITE QUE SE PUEDA PASAR EL VALOR DEL SELF DE CADA OBJECTO INDIVIDUAL AL SELECTABLE LABEL
-            self.CreateLabelsWidgets(self_objecto_tabla.list_table_labels, self_objecto_tabla.need_image)
+            self.CreateLabelsWidgets(self_objecto_tabla.list_table_data, self_objecto_tabla.DictionaryDataset, self_objecto_tabla.need_image, index)
 
         ''' Catch and handle the view changes '''
 
@@ -192,6 +203,8 @@ class SelectableLabel(RecycleDataViewBehavior, MDFlatButton):
         #la variable self de la funcion, se relaciona con la clase RecycleViewTable, no con esta clase SelectableTable
         exec(x)
         
+
+
 class RecycleViewTable(MDBoxLayout):
     
     ''' Variables de los modales Dialogs'''
@@ -207,6 +220,8 @@ class RecycleViewTable(MDBoxLayout):
     id_table = StringProperty(None)
     objecto = ObjectProperty(None)
     need_image = BooleanProperty(True)
+    root = ObjectProperty(None)
+    DirectionPagination = StringProperty(None)
     boleana = True
 
     #Cantidad de items que se mostrará en el RecycleView
@@ -232,7 +247,7 @@ class RecycleViewTable(MDBoxLayout):
 
         Clock.schedule_once(lambda dt: self.CreateLabels(self))
         #Clock.schedule_once(lambda dt: self.on_window_resize)
-        Clock.schedule_once(lambda dt: self.TableData(self.objecto.DictionaryDataset))
+        Clock.schedule_once(lambda dt: self.TableData(self.objecto.DictionaryDataset, ''))
         #Clock.schedule_once(lambda dt: self.Test())
 
         #self.TableData(self.DictionaryDataset)
@@ -280,22 +295,6 @@ class RecycleViewTable(MDBoxLayout):
         global_dictionary_table_data[self.objecto.id_table].append(lista)
 
 
-        #print(global_dictionary_table_data)
-        
-
-
-        #print(self.list_table_data)
-
-
-        #NOMBRE DEL ID = OBJETO QUE SE LE AGREGARA ESO
-        #self.ids[self.id_table] = weakref.ref(self)
-
-        #print(self.ids.hello)
-
-        #global global_dictionary
-
-        #global_dictionary = []
-
         #Permite eliegir el numero de columnas dinamicamente
         self.objecto.children[2].children[0].cols = self.objecto.columnas
 
@@ -324,60 +323,35 @@ class RecycleViewTable(MDBoxLayout):
             #se agrega al mdgridlayout para que se muestre
             self.objecto.scroll_box_layout.add_widget(label)
 
-            '''
-            if index == 0:
-                #print(i)
 
-                if self.objecto.need_image == False:
-                    #print(' imagen no es necesitada')
-                    pass
-                pass
-            else:
+    def TableData(self, dictionary, direction = None):
 
-                print(i)
+        self.objecto.DirectionPagination = direction
 
-                #Capitaliza el inicio de la palabra
-                i = (i).title()
-
-                #Caracteristicas que tendrá el widget, en este caso un MDLabel
-                label = MDLabel(
-                        #text = "[size="+ str(font_size) +"]"+str(i)+"[/size]",
-                        text = i,
-                        halign="center",
-                        font_style = "H6",
-                        #font_size= ,
-                        markup= True,
-                    )
-
-                #se agrega al mdgridlayout para que se muestre
-                self.objecto.scroll_box_layout.add_widget(label)           
-            '''
-        #for i in self.objecto.list_table_data:
-        #    global_dictionary.append(i)
-
-
-    def TableData(self, dictionary):
-
-        if self.objecto.boleana:
-
-            self.objecto.DictionaryDataset = {}
-
-            #ejecuta lo escrito en el kv, normalmente es donde se ejecutará el codigo mongodb que nos dará los datos de la base de datos
-            exec(self.objecto.test)
-
-            dictionary = self.objecto.DictionaryDataset
-
-            #self.objecto.dictionary = self.objecto.DictionaryDataset
+        #if self.objecto.boleana == False:
             
-            #permite que se active solamente una vez
-            self.objecto.boleana = False
+        #    self.ids.GridSelectableLabel.clear_widgets()
 
-            ModalsDialog.StatusButtonPagination('self', self.objecto.rv, "both")
+        self.objecto.DictionaryDataset = {}
+
+        #ejecuta lo escrito en el kv, normalmente es donde se ejecutará el codigo mongodb que nos dará los datos de la base de datos
+        exec(self.objecto.test)
+
+        dictionary = self.objecto.DictionaryDataset
+        #self.objecto.dictionary = self.objecto.DictionaryDataset
+        
+        #permite que se active solamente una vez
+        self.objecto.boleana = False
+
+        ModalsDialog.StatusButtonPagination('self', self.objecto.rv, "both")
             
         ##################################################################
 
         #Cuenta la cantidad de items que tiene el diccionario
-        CountDictionary = len(dictionary)
+        CountDictionary = dictionary['characteristics'][0]
+
+
+
         #print(CountDictionary)
 
         #Cambia el texto del Label ShowItems, a los que haya en el diccionario
@@ -393,54 +367,45 @@ class RecycleViewTable(MDBoxLayout):
         self.objecto.rv.data = []
 
         #Donde comienza la variable
-        IterationStartPagination = self.objecto.StartPagination
+        IterationStartPagination = dictionary['characteristics']#self.objecto.StartPagination
 
         #Asignando una variable donde calcula desde donde se comenzará la paginación de los items que se iteraran en el ciclo FOR
         IterationItems = list(dictionary)[self.objecto.StartPagination:]
 
+        #print()
+        #print(list(dictionary)[1:])
 
-        #FOR al diccionario que contiene los datos de la base de datos
-        for dic in IterationItems: 
+        for dic in list(dictionary)[1:]:
 
-            #d = {}
-
-            #IF Statement que permite mostrar la cantidad de items que se visualizaran 
-            #Segun la cantidad de items que estimó (el predeterminado es 5)
-
-            if(IterationStartPagination) < self.objecto.ItemsAccountPagination:
-                
-                #crea el diccionario donde se almacenará la información que será enviada al SelectableLabel
-                d = {}
-                #Crear un nuevo diccionario donde se agregará
-                d['dato'] = {}
-                for index, i in enumerate(self.objecto.list_table_data):
-                    
-                    #crea diccionario con los datos dentro del diccionario, segun los datos escritos en el kivy haciendo lo siguiente en el diccionario,
-                    # {nombre_del_dato, diccionario[datos_que_se_mostraran], indice[posicion_del_dato]}
-
-
-                    da = { i: dictionary[dic][index]}
-
-                    #agrega los datos al diccionario principal
-                    d['dato'].update(da)
-                    
 
             
-                #crea diccionario el on_release al diccionario principal
-                i = {'on_release': partial(SelectableLabel.ButtonDialog, self.objecto, self.objecto.modalData)}
-                #agrega el on_release
-                d.update(i)
+            #crea el diccionario donde se almacenará la información que será enviada al SelectableLabel
+            d = {}
+            #Crear un nuevo diccionario donde se agregará
+            d['dato'] = {}
+            for index, i in enumerate(self.objecto.list_table_data):
+                
+                #crea diccionario con los datos dentro del diccionario, segun los datos escritos en el kivy haciendo lo siguiente en el diccionario,
+                # {nombre_del_dato, diccionario[datos_que_se_mostraran], indice[posicion_del_dato], [dato_del_2do_diccionario_a_elegir]}
 
-                #dictionary donde estará todos los datos de la tabla
-                #Agregar a la tabla los items, activando el selectableLabel y crean un label para cada uno
-                self.objecto.rv.data.append(d)
+                #print(dictionary[dic][0][i])
+                da = { i: dictionary[dic][0][i]}
 
-                #Suma el valor a la paginacion
-                IterationStartPagination += 1  
+                #agrega los datos al diccionario principal
+                d['dato'].update(da)
+                
+            
+        
+            #crea diccionario el on_release al diccionario principal
+            i = {'on_release': partial(SelectableLabel.ButtonDialog, self.objecto, self.objecto.modalData)}
+            #agrega el on_release
+            d.update(i)
 
-            else:
-                #Si el comienzo y el final de la paginacion son iguales o mayores, se rompe el ciclo FOR
-                break
+            #dictionary donde estará todos los datos de la tabla
+            #Agregar a la tabla los items, activando el selectableLabel y crean un label para cada uno
+            self.objecto.rv.data.append(d)
+            pass
+
 
 class ModalsDialog():
 
@@ -591,13 +556,15 @@ class ModalsDialog():
         #print(RecycleViewTable.dialog)
         typeDialog
 
+    #AL DAR CLICK AL BOTON "ITEMS POR PAGINA"
     def ChangeItemsAmount(self, rv):
 
         #Reinicia la variable a 0
         global_rv[rv].objecto.StartPagination = 0
 
+
         #Switch que cambia la cantidad de items a mostrar segun la cantidad que tenia previamente
-        match global_rv[rv].objecto.ItemsAccountPagination:
+        match global_rv[rv].objecto.StaticItemsAccountPagination:
             case 5:
                 global_rv[rv].objecto.ItemsAccountPagination = global_rv[rv].objecto.StaticItemsAccountPagination = 10
             case 10:
@@ -617,12 +584,11 @@ class ModalsDialog():
         self.StatusButtonPagination(rv, "both")
         #Llama la función TableData para rellenar los datos de la tabla
 
-        #print()
-        #print(global_rv[rv].objecto.DictionaryDataset)
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            executor.submit(global_rv[rv].objecto.TableData, global_rv[rv].objecto.DictionaryDataset, '')
 
-        global_rv[rv].objecto.TableData(global_rv[rv].objecto.DictionaryDataset)
-        #print(rv)
 
+    #AL DAR CLICK A LOS BOTONES; TANTO DE ATRAS COMO ADELANTE
     def ChangeItemsAmountButtons(self, rv, button):
 
         #Asignacion del nuevo valor del inicio de la paginacion, (primera variable, primer número 'Mostrando AQUI - X)
@@ -630,6 +596,8 @@ class ModalsDialog():
         match button:
                 
             case "left":
+
+                global_rv[rv].objecto.DirectionPagination = 'previous'
 
                 #RESTA
                 global_rv[rv].objecto.StartPagination = global_rv[rv].objecto.StartPagination - global_rv[rv].objecto.StaticItemsAccountPagination
@@ -641,9 +609,13 @@ class ModalsDialog():
                 
             case "right":
 
+                global_rv[rv].objecto.DirectionPagination = 'next'
+
                 #SUMA
                 global_rv[rv].objecto.StartPagination = global_rv[rv].objecto.StartPagination  + global_rv[rv].objecto.StaticItemsAccountPagination
                 global_rv[rv].objecto.ItemsAccountPagination = global_rv[rv].objecto.ItemsAccountPagination + global_rv[rv].objecto.StaticItemsAccountPagination
+
+
 
                 #Llama la funcion para ver si se desactiva la flecha derecha
                 self.StatusButtonPagination(rv, "right")
@@ -654,8 +626,8 @@ class ModalsDialog():
                 global_rv[rv].objecto.ItemsAccountPagination = 5
 
         #Llama a esta funcion para actualizar los datos
-        global_rv[rv].objecto.TableData(global_rv[rv].objecto.DictionaryDataset)
-
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            executor.submit(global_rv[rv].objecto.TableData, global_rv[rv].objecto.DictionaryDataset, global_rv[rv].objecto.DirectionPagination)
     #Funcion que sirva para activar o desactivar las flechas de la paginacion en caso tal que no haya más objetos a mostrar
     def StatusButtonPagination(self, rv, side):
 
@@ -701,7 +673,7 @@ class ModalsDialog():
 
                 #IF Statement, si el inicio de la paginación es 0 DISABLED es True desactivando el boton izquierdo 
                 #caso contrario DISABLED es False activando el boton 
-                if RecycleViewTable.StartPagination <= 0:
+                if global_rv[rv].objecto.StartPagination <= 0:
                     #Desactiva boton izquierdo
                     global_rv[rv].objecto.ids.ButtonLeftPagination.disabled = True 
 
@@ -713,7 +685,7 @@ class ModalsDialog():
 
                 #IF Statement, si la cantidad de items de la paginación es mayor a los items del diccionario
                 #el DISABLED sera True, en caso contrario será False
-                if global_rv[rv].objecto.ItemsAccountPagination >= len(global_rv[rv].objecto.DictionaryDataset):
+                if global_rv[rv].objecto.ItemsAccountPagination >= global_rv[rv].objecto.DictionaryDataset['characteristics'][0]:
 
                     #Desactiva boton derecho
                     global_rv[rv].objecto.ids.ButtonRightPagination.disabled = True
