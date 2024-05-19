@@ -41,7 +41,7 @@ import concurrent.futures
 ###TABLA
 
 ''' Global rv '''
-global_selectable = global_gridSelectableLabelChildren = global_id_table = global_columnas  = global_need_image = None
+global_selectable = global_gridSelectableLabelChildren = global_id_table = global_need_image = None #global_columnas  
 
 global_labels_order = have_labels_cols = global_need_image = False
 
@@ -82,7 +82,7 @@ class SelectableLabel(RecycleDataViewBehavior, MDFlatButton):
         global_selectable = self
     
     #Columnas de las tablas y el nombre que tendrán
-    def CreateLabelsWidgets(self, dataLabel, dictionary, need_image, index_refresh):        
+    def CreateLabelsWidgets(self, dataLabel, dictionary, need_image, index_refresh, columns):        
 
             
         if (self == None):
@@ -94,7 +94,7 @@ class SelectableLabel(RecycleDataViewBehavior, MDFlatButton):
             dic = 'dato' + str(index_refresh)
 
 
-            self.children[0].cols = global_columnas    
+            self.children[0].cols = columns    
 
             for index, i in enumerate(dataLabel):
                 
@@ -161,7 +161,7 @@ class SelectableLabel(RecycleDataViewBehavior, MDFlatButton):
             #print(index)
 
             #MUY IMPORTANTE OJO, PERMITE QUE SE PUEDA PASAR EL VALOR DEL SELF DE CADA OBJECTO INDIVIDUAL AL SELECTABLE LABEL
-            self.CreateLabelsWidgets(self_objecto_tabla.list_table_data, self_objecto_tabla.DictionaryDataset, self_objecto_tabla.need_image, index)
+            self.CreateLabelsWidgets(self_objecto_tabla.list_table_data, self_objecto_tabla.DictionaryDataset, self_objecto_tabla.need_image, index, self_objecto_tabla.columns)
 
         ''' Catch and handle the view changes '''
 
@@ -216,7 +216,7 @@ class RecycleViewTable(MDBoxLayout):
     list_table_data = ListProperty([])
     modalData = StringProperty(None)
     test = StringProperty(None)
-    columnas = NumericProperty(1)
+    columns = NumericProperty(1)
     id_table = StringProperty(None)
     objecto = ObjectProperty(None)
     need_image = BooleanProperty(True)
@@ -270,7 +270,7 @@ class RecycleViewTable(MDBoxLayout):
 
 
 
-        global global_id_table, global_columnas, global_dictionary_table_data, global_need_image
+        global global_id_table,  global_dictionary_table_data, global_need_image #global_columnas,
 
 
         global_need_image = self.objecto.need_image
@@ -296,9 +296,9 @@ class RecycleViewTable(MDBoxLayout):
 
 
         #Permite eliegir el numero de columnas dinamicamente
-        self.objecto.children[2].children[0].cols = self.objecto.columnas
+        self.objecto.children[2].children[0].cols = self.objecto.columns
 
-        global_columnas = self.objecto.columnas
+        #global_columnas = self.objecto.columnas
 
         font_size = int(self.width/11 if self.width/11 > 10 else self.width/7)
 

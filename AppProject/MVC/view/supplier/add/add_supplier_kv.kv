@@ -49,7 +49,7 @@
                         
                         MDTextField:
 
-                            id: name_field
+                            id: nameSupplier
                             size_hint_x: 0.7
                             #width: "375dp"
 
@@ -81,7 +81,7 @@
                         
                         MDTextField:
 
-                            id: inputSupplierMenu
+                            id: addressSupplier
                             size_hint_x: 0.7
                             #width: "375dp"
                             text: ""
@@ -110,7 +110,7 @@
                         
                         MDTextField:
 
-                            id: name_field
+                            id: rifSupplier
                             size_hint_x: 0.7
 
                             hint_text: "RIF del proveedor"
@@ -139,7 +139,7 @@
                         
                         MDTextField:
 
-                            id: name_field
+                            id: phoneSupplier
                             size_hint_x: 0.7
 
                             hint_text: "Teléfono del proveedor"
@@ -172,3 +172,4 @@
                             line_color: "blue"
                             md_bg_color: "blue"
 
+                            on_release: root.AddNewSupplier(root.ids.nameSupplier.text, root.ids.addressSupplier.text, root.ids.rifSupplier.text, root.ids.phoneSupplier.text)

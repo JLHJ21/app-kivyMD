@@ -1,5 +1,8 @@
 from kivymd.uix.screen import MDScreen
+from MVC.model.supplier.supplier_model import SupplierDB
+
 import MVC.controller.functions as functions
+import concurrent.futures
 
 
 #PAGINA DE PROVEEDOR
@@ -14,13 +17,25 @@ class SupplierPage(MDScreen):
     
     def ChangePageSupplierPage(self):
 
-        #obtiene el self principal del kivy
-        self_main = functions.global_variable_self
-        #cambia segun la pagina querida
-        self_main.root.ids.screen_manager.current = 'SupplierAddPage'
-        #cambia el titulo del menu de arriba segun el nombre que queramos
-        self_main.root.ids.toolbar.title = 'Proveedor - Agregar'
-    
+        functions.FunctionsKivys.ChangePage('SupplierAddPage', 'Proveedor - Agregar')
+        
+
+    def ShowDataSupplier(self, start, end, state):
+
+        '''
+        async_result = pool.apply_async(SupplierDB.ShowData, (start, end)) # tuple of args for foo
+        # do some other stuff in the main process
+        return_val = async_result.get()  # get the return value from your function. 
+        return return_val
+
+        '''
+
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            future = executor.submit(SupplierDB.ShowData, start,end,state)
+            return_value = future.result()
+
+            return return_value
+        
 
     def CallbackMenuSupplier(self, button):
 
