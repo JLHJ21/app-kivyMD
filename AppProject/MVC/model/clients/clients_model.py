@@ -4,17 +4,17 @@ from bson import ObjectId
 
 last_id = previous_id = None
 
-class StoreDB():
+class ClientsDB():
 
 
 
-    def ShowDataStoreModel(start, end, state = ''):
+    def ShowData(start, end, state = ''):
 
         #PERMITE QUE PERSISTA EL PRIMER Y ULTIMO ID, 
         global last_id, previous_id
 
         #CONEXION A LA COLECCION
-        collection = DataBase.db['products']
+        collection = DataBase.db['clients']
 
         #OBTIENE TODOS LOS DATOS DE LA COLECCION
         starting_id = collection.find()
@@ -27,7 +27,7 @@ class StoreDB():
         if last_id == None:
 
             #OBTIENE LOS DATOS DE LA COLECCION
-            results = collection.find({}, {'_id': 1, 'image': 1, 'name': 1, 'amount': 1, 'price': 1, 'name_supplier': 1}).skip(start).limit( end ).sort({'_id': 1}) #.sort({ '_id' : -1})
+            results = collection.find().skip(start).limit( end ).sort({'_id': 1}) #.sort({ '_id' : -1})
             last_id = results[end - 1]['_id']
 
         else:
@@ -70,7 +70,7 @@ class StoreDB():
         #SE AGREGA SIEMPRE COMO PRIMER DATO, LAS CARACTERISTICAS (CANTIDAD DE DOCUMENTOS, ARCHIVO COMIENZA, ARCHIVO TERMINADA)
         list_results.update({'characteristics': [numbers_collection, start, end]})
 
-        
+
         #CICLO FOR QUE AGREGA LOS DATOS OBTENIDO DE LA BASE DE DATOS AL DICCIONARIO LIST_RESULTS, ESTO HACE QUE LA VARIABLE RESULTS(CURSOR) SE VACIE 
         for index, i in enumerate(results):
 
@@ -80,36 +80,16 @@ class StoreDB():
             list_results.update(d)
 
         #RETORNA LA INFORMACIÓN OBTENIDO
-
-
-
         return list_results
 
-    '''
-    def CreateSupplier(name, address, rif, phone):
+
+    def CreateClient(name, id, phone):
             
-        collection = DataBase.db['supplier']
+        collection = DataBase.db['clients']
 
         #data
 
-        if collection.count_documents({'name': name}, limit = 1):
+        post = {'name': name, 'id': id, 'phone': phone}
+        collection.insert_one(post)
 
-            return 'name: ' + str(collection.find({'name': name}))
-
-        #elif collection.count_documents({'address': address}, limit = 1):
-        #    return 'address: ' + str(collection.find({'address': address}))
-        
-        elif collection.count_documents({'rif': rif}, limit = 1):
-            return 'rif: ' + str(collection.find({'rif': rif}))
-        
-        elif collection.count_documents({'phone': phone}, limit = 1):
-            return 'phone: ' + str(collection.find({'phone': phone}))
-        
-        else:
-
-
-            post = {'name': name, 'address': address, 'rif': rif, 'phone': phone}
-            collection.insert_one(post)
-
-            return True
-    '''
+        return True

@@ -145,23 +145,23 @@
                             on_release: root.ChangePageLoanPage()
 
                     
-                    RecycleViewTable:
+                    #RecycleViewTable:
                     
-                        id_table: "tableLoan"
+                    #    id_table: "tableLoan"
 
-                        size_hint_y: None
-                        height: dp(400)
-                        padding: dp(16), dp(16), dp(16), dp(root.manager.parent.parent.ids.toolbarbottom.height /2)
+                    #    size_hint_y: None
+                    #    height: dp(400)
+                    #    padding: dp(16), dp(16), dp(16), dp(root.manager.parent.parent.ids.toolbarbottom.height /2)
 
-                        objecto: self
-                        need_image: True
-                        columnas: 5
+                    #    objecto: self
+                    #    need_image: True
+                    #    columnas: 5
 
-                        list_table_labels: ["id_imagen", "id_dado", "id_fecha", "id_monto"]
-                        list_table_data: ["imagen","dado por", "fecha", "monto"]
+                    #    list_table_labels: ["id_imagen", "id_dado", "id_fecha", "id_monto"]
+                    #    list_table_data: ["imagen","dado por", "fecha", "monto"]
 
-                        modalData: 
-                            'ModalsDialog.ShowAlertDialog("self","¿Que desea realizar?","Por favor, elija algunas de las opciones presentadas.","Cancelar","Eliminar","Modificar",lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog.dismiss()),lambda x: ModalsDialog.ShowAlertDialogDelete("self","¿De verdad quiere eliminar este prestamo?","Si es así, adelante","Cancelar","Eliminar",lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog2.dismiss()),lambda x: print("cerrar")),lambda x: ModalsDialog.ChangePage("self","LoanUpdatePage", "Prestamo - Modificar"))'
+                    #    modalData: 
+                    #        'ModalsDialog.ShowAlertDialog("self","¿Que desea realizar?","Por favor, elija algunas de las opciones presentadas.","Cancelar","Eliminar","Modificar",lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog.dismiss()),lambda x: ModalsDialog.ShowAlertDialogDelete("self","¿De verdad quiere eliminar este prestamo?","Si es así, adelante","Cancelar","Eliminar",lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog2.dismiss()),lambda x: print("cerrar")),lambda x: ModalsDialog.ChangePage("self","LoanUpdatePage", "Prestamo - Modificar"))'
                         
-                        test: 
-                            'for i in range(1,5): d = {f"dato{i}": [f"images/logo.jpg", f"dato{i}_dado", f"dato{i}_fecha", f"dato{i}_monto"]};self.objecto.DictionaryDataset.update(d)'
+                    #    test: 
+                    #        'for i in range(1,5): d = {f"dato{i}": [f"images/logo.jpg", f"dato{i}_dado", f"dato{i}_fecha", f"dato{i}_monto"]};self.objecto.DictionaryDataset.update(d)'

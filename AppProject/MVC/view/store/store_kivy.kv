@@ -56,8 +56,8 @@
                 columns: 5
                 root: root
 
-                list_table_labels: ["id_image", "id_name", "id_amount", "id_price", 'id_supplier']
-                list_table_data: ["image", "name", "amount", "price", "supplier"]
+                titles_labels: ["Imagen", "Nombre", "Cantidad", "Precio", 'Proveedor']
+                list_table_data: ["image", "name", "amount", "price", "name_supplier"]
 
                 modalData: 
                     'ModalsDialog.ShowAlertDialog("self","¿Que desea realizar?", "Por favor, elija algunas de las opciones presentadas.", "Cancelar", "Eliminar", "Modificar",  lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog.dismiss()),lambda x: ModalsDialog.ShowAlertDialogDelete ("self","¿De verdad quiere eliminar este producto?", "Si es así, adelante","Cancelar","Eliminar",lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog2.dismiss()),lambda x: print("cerrar")    ),lambda x: ModalsDialog.ChangePage("self", "StorePageUpdate", "Almacen - Modificar"))'

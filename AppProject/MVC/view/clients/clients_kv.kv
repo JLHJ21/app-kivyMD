@@ -52,23 +52,46 @@
                     icon: "account-multiple-plus"
                     type: "standard"
 
-                    
+                    on_release: root.ChangePageClientPage()
+
+
+            
             RecycleViewTable:
+
                 id_table: "tableCliente"
 
                 padding: dp(16), dp(root.manager.parent.parent.ids.toolbar.height / 2), dp(16), dp(root.manager.parent.parent.ids.toolbarbottom.height /2)
 
                 objecto: self
                 need_image: False
-                columnas: 3
+                columns: 3
+                root: root
 
-                list_table_labels: ["id_dado", "id_fecha", "id_monto"]
-                list_table_data: ["dado por cliente", "fecha", "monto"]
-                
+                titles_labels: ["Nombre", "Cédula", "Teléfono"]
+                list_table_data: ["name", "id", "phone"]
+
                 modalData: 
                     'ModalsDialog.ShowAlertDialog("self","¿Que desea realizar?","Por favor, elija algunas de las opciones presentadas.","Cancelar","Eliminar","Modificar",lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog.dismiss()),lambda x: ModalsDialog.ShowAlertDialogDelete("self","¿De verdad quiere eliminar a este cliente?","Si es así, adelante","Cancelar","Eliminar",lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog2.dismiss()),lambda x: print("cerrar")),lambda x: ModalsDialog.ChangePage("self","StorePageUpdate", "Almacen - Modificar"))'
                 
-                test: 
-                    'for i in range(1,5): d = {f"dato{i}": [f"dato_cliente{i}_dado", f"dato_cliente{i}_fecha", f"dato_cliente{i}_monto"]};self.objecto.DictionaryDataset.update(d)'
+                test: 'self.objecto.DictionaryDataset.update(self.objecto.root.ShowDataClientsController(self.objecto.StartPagination, self.objecto.StaticItemsAccountPagination, self.objecto.DirectionPagination))'
+
+                    
+            #RecycleViewTable:
+            #    id_table: "tableCliente"
+
+            #    padding: dp(16), dp(root.manager.parent.parent.ids.toolbar.height / 2), dp(16), dp(root.manager.parent.parent.ids.toolbarbottom.height /2)
+
+            #    objecto: self
+            #    need_image: False
+            #    columnas: 3
+
+            #    list_table_labels: ["id_dado", "id_fecha", "id_monto"]
+            #    list_table_data: ["dado por cliente", "fecha", "monto"]
+                
+            #    modalData: 
+            #        'ModalsDialog.ShowAlertDialog("self","¿Que desea realizar?","Por favor, elija algunas de las opciones presentadas.","Cancelar","Eliminar","Modificar",lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog.dismiss()),lambda x: ModalsDialog.ShowAlertDialogDelete("self","¿De verdad quiere eliminar a este cliente?","Si es así, adelante","Cancelar","Eliminar",lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog2.dismiss()),lambda x: print("cerrar")),lambda x: ModalsDialog.ChangePage("self","StorePageUpdate", "Almacen - Modificar"))'
+                
+            #    test: 
+            #        'for i in range(1,5): d = {f"dato{i}": [f"dato_cliente{i}_dado", f"dato_cliente{i}_fecha", f"dato_cliente{i}_monto"]};self.objecto.DictionaryDataset.update(d)'
 
                 

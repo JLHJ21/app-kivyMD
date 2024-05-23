@@ -6,11 +6,128 @@ from kivymd.uix.button import MDFloatingActionButton
 from kivymd.uix.gridlayout import MDGridLayout
 from kivymd.uix.textfield import MDTextField
 from kivymd.uix.selectioncontrol import MDSwitch
+from kivy.app import App
+
+from MVC.model.charges.charges_model import ChargesDB
+import MVC.controller.functions as functions
+
+from kivymd.uix.list import OneLineIconListItem
+from kivy.properties import StringProperty, ObjectProperty
+import concurrent.futures
+from kivy.uix.recycleview import RecycleView
+
 
 import weakref
 
+class CustomOneLineIconListItem(OneLineIconListItem):
+    icon = StringProperty()
+
+
+class RV(RecycleView):
+    def __init__(self, **kwargs):
+        super(RV, self).__init__(**kwargs)
+        self.data = [{'text': str(x), 'text_color': 'orange'} for x in range(100)]
 class ChargeAddPage(MDScreen):
 
+    #rvvv = ObjectProperty(None)
+
+    #MENU DE PROVEEDORES
+    
+    def SelectItem(self, name):
+        
+        self.ids.searchingSupplier.text = name
+        #self.ids.searchingSupplier.icon_left = 'account-star'
+
+        self.ids.rvV.data = []
+
+    def set_list_md_icons(self, text="", search=False):
+
+        
+
+       
+        '''Builds a list of icons for the screen MDIcons.'''
+
+        def add_icon_item(text, name, zero_items):
+
+            
+            #print(App.get_running_app().root.ids.screen_manager.children[0].ids.rvV.data)
+            
+            
+            if zero_items == True:
+                icon = "account-eye"
+                callback = lambda x='a': self.SelectItem(text)
+
+
+            elif zero_items == False:
+                icon = "account-cancel"
+                callback = lambda x='a': x
+
+            #print(App.get_running_app().get_screen('ChargeAddPage'))#.root.get_screen('ChargeAddPage').ids.rv.data )
+            
+            self.ids.rvV.data.append(
+                    {
+                        "viewclass": "CustomOneLineIconListItem",
+                        "icon": icon,
+                        "text": text,
+                        "name": name,
+                        "on_release": callback
+                    }
+                )
+
+
+            print()
+            print()
+            print()
+
+            #print(self.rvvv.data)
+            #print()
+            #print(App.get_running_app().root.ids.screen_manager.children[0].ids.rvV.data)
+
+            
+        
+        self.ids.rvV.data = []
+
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            future = executor.submit(ChargesDB.GetDataSupplier, text)
+            return_value = future.result()
+
+
+        if (len(return_value)) <= 0:
+            
+            text = 'No hay algún proveedor registrado con el nombre que escribiste.'
+            name = 'None'
+            add_icon_item(text, name, False)
+        else:
+
+            #print(a['dato0'][0]['name'])
+            for item in return_value:
+
+                
+                text = return_value[item]['name']
+                name = return_value[item]['_id']
+
+                add_icon_item(text, name, True)
+
+        '''
+        iteration = 0
+
+        for name_icon in md_icons.keys():
+
+
+
+            if iteration < 5:
+                if search:
+                    if text in name_icon:
+                        iteration += 1
+                        add_icon_item(name_icon)
+            else:
+                
+                break
+        '''
+
+
+
+    #CREACION DE NUEVOS PRODUCTOS INPUTS
     def on_checkbox_active(self, checkbox, value):
         if value:
             print('The checkbox', checkbox, 'is active', 'and', value, ' value')

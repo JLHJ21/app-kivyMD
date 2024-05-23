@@ -49,7 +49,7 @@ global_dictionary = []
 
 global_rv = {}
 
-global_dictionary_table_data = {}
+#global_dictionary_table_data = {}
 
         
 
@@ -174,6 +174,7 @@ class SelectableLabel(RecycleDataViewBehavior, MDFlatButton):
         #ciclo FOR que agrega los datos en la tabla segun lo escrito en el .kv
         #Une las listas de list_table_labels y list_table_data con el zip, para que la iteracion sea 0:0 1:1
         
+        #Si se elimina list_table_labels aparece un error
         for index, (label, itemData) in enumerate(zip(self_objecto_tabla.list_table_labels[::-1], self_objecto_tabla.list_table_data[::-1])):
 
         
@@ -213,6 +214,9 @@ class RecycleViewTable(MDBoxLayout):
 
 
     list_table_labels = ListProperty([])
+
+    titles_labels = ListProperty([])
+
     list_table_data = ListProperty([])
     modalData = StringProperty(None)
     test = StringProperty(None)
@@ -270,7 +274,7 @@ class RecycleViewTable(MDBoxLayout):
 
 
 
-        global global_id_table,  global_dictionary_table_data, global_need_image #global_columnas,
+        global global_id_table,  global_need_image #global_columnas, global_dictionary_table_data, 
 
 
         global_need_image = self.objecto.need_image
@@ -285,14 +289,14 @@ class RecycleViewTable(MDBoxLayout):
         
         global_id_table = self.objecto.id_table
 
-        global_dictionary_table_data[self.objecto.id_table] = []
+        #global_dictionary_table_data[self.objecto.id_table] = []
 
 
 
 
-        lista = self.objecto.list_table_labels
+        #lista = self.objecto.list_table_labels
 
-        global_dictionary_table_data[self.objecto.id_table].append(lista)
+        #global_dictionary_table_data[self.objecto.id_table].append(lista)
 
 
         #Permite eliegir el numero de columnas dinamicamente
@@ -303,7 +307,7 @@ class RecycleViewTable(MDBoxLayout):
         font_size = int(self.width/11 if self.width/11 > 10 else self.width/7)
 
         #Crea las cabeceras de la tabla
-        for index, i in enumerate(self.objecto.list_table_data):
+        for i in self.objecto.titles_labels:
 
 
 

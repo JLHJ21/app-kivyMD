@@ -45,22 +45,22 @@
                     style: "standard"
                     width: "100dp"
                     
-            RecycleViewTable:
+            #RecycleViewTable:
 
-                id_table: "tableSalesHistory"
+            #    id_table: "tableSalesHistory"
 
-                padding: dp(16), dp(root.manager.parent.parent.ids.toolbar.height / 2), dp(16), dp(root.manager.parent.parent.ids.toolbarbottom.height /2)
+            #    padding: dp(16), dp(root.manager.parent.parent.ids.toolbar.height / 2), dp(16), dp(root.manager.parent.parent.ids.toolbarbottom.height /2)
 
-                need_image: True
-                objecto: self
-                columnas: 5
+            #    need_image: True
+            #    objecto: self
+            #    columnas: 5
 
-                list_table_labels: ["id_imagen", "id_cliente", "id_empleado", "id_monto", "id_fecha"]
-                list_table_data: ["imagen","cliente", "empleado", "monto", "fecha"]
+            #    list_table_labels: ["id_imagen", "id_cliente", "id_empleado", "id_monto", "id_fecha"]
+            #    list_table_data: ["imagen","cliente", "empleado", "monto", "fecha"]
 
-                modalData: 
-                    'ModalsDialog.ShowAlertDialog("self","¿Que desea realizar?","Por favor, elija algunas de las opciones presentadas.","Cancelar","Eliminar","Modificar",lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog.dismiss()),lambda x: ModalsDialog.ShowAlertDialogDelete("self","¿De verdad quiere eliminar este producto?","Si es así, adelante","Cancelar","Eliminar",lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog2.dismiss()),lambda x: print("cerrar")),lambda x: ModalsDialog.ChangePage("self","StorePageUpdate", "Almacen - Modificar"))'
+            #    modalData: 
+            #        'ModalsDialog.ShowAlertDialog("self","¿Que desea realizar?","Por favor, elija algunas de las opciones presentadas.","Cancelar","Eliminar","Modificar",lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog.dismiss()),lambda x: ModalsDialog.ShowAlertDialogDelete("self","¿De verdad quiere eliminar este producto?","Si es así, adelante","Cancelar","Eliminar",lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog2.dismiss()),lambda x: print("cerrar")),lambda x: ModalsDialog.ChangePage("self","StorePageUpdate", "Almacen - Modificar"))'
                 
-                test: 
-                    'for i in range(1,5): d = {f"dato{i}": [f"images/logo.jpg", f"dato{i}_cliente", f"dato{i}_empleado", f"dato{i}_monto", f"dato{i}_fecha"]};self.objecto.DictionaryDataset.update(d)'
+            #    test: 
+            #        'for i in range(1,5): d = {f"dato{i}": [f"images/logo.jpg", f"dato{i}_cliente", f"dato{i}_empleado", f"dato{i}_monto", f"dato{i}_fecha"]};self.objecto.DictionaryDataset.update(d)'
                 

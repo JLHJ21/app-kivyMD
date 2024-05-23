@@ -57,8 +57,12 @@ from MVC.controller.store.update.store_update_controller import StoreUpdatePage
 #Enlazar página de inicio "chooseimagePage" MVC/controller/store/choose_image/choose_image_controller.py 
 from MVC.controller.store.choose_image.choose_image_controller import ChooseImagePage
 
-#Enlazar página de inicio "ClientsPage" MVC/controller/clients/clientscontroller.py 
+#Enlazar página de inicio "ClientsPage" MVC/controller/clients/clients_controller.py 
 from MVC.controller.clients.clients_controller import ClientsPage
+
+
+#Enlazar página de inicio "ClientsPage" MVC/controller/clients/add/add_clients_controller.py 
+from MVC.controller.clients.add.add_clients_controller import ClientAddPage
 
 #Enlazar página de inicio "ConfigurationPage" MVC/controller/configuration/configuration_controller.py 
 from MVC.controller.configuration.configuration_controller import ConfigurationPage
@@ -132,6 +136,7 @@ self_store_page = self_ClientsPage = self_sales_history = self_SupplierCharge = 
 
 # LLAMADA A LA BASE DE DATOS
 DatabaseClass.Conexion()
+#productos
 #DatabaseClass.InsertData()
 
 

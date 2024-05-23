@@ -4,7 +4,7 @@ from bson import ObjectId
 
 last_id = previous_id = None
 
-class StoreDB():
+class ChargesDB():
 
 
 
@@ -85,31 +85,30 @@ class StoreDB():
 
         return list_results
 
-    '''
-    def CreateSupplier(name, address, rif, phone):
-            
+    def GetDataSupplier(text):
+
+        import re
+
+        rgx = re.compile('.*'+ text +'.*', re.IGNORECASE)  # compile the regex
+
+
         collection = DataBase.db['supplier']
 
-        #data
+        results = collection.find({'name': rgx}, {'name': 1}).limit( 5 )#.sort({ '_id' : ObjectId(last_id)})
 
-        if collection.count_documents({'name': name}, limit = 1):
+        #SE CREA DICCIONARIO QUE ALMACENARÁ LOS DATOS OBTENIDOS DE LA BASE DE DATOS
+        list_results = {}
 
-            return 'name: ' + str(collection.find({'name': name}))
+        #CICLO FOR QUE AGREGA LOS DATOS OBTENIDO DE LA BASE DE DATOS AL DICCIONARIO LIST_RESULTS, ESTO HACE QUE LA VARIABLE RESULTS(CURSOR) SE VACIE 
+        for index, i in enumerate(results):
 
-        #elif collection.count_documents({'address': address}, limit = 1):
-        #    return 'address: ' + str(collection.find({'address': address}))
+            #LO ALMACENA DE FORMA, DATO(POSICION): 'TODA LA INFORMACIÓN DE LA BASE DE DATOS
+            d = {f"dato{index}": i}
+
+            list_results.update(d)
+
         
-        elif collection.count_documents({'rif': rif}, limit = 1):
-            return 'rif: ' + str(collection.find({'rif': rif}))
-        
-        elif collection.count_documents({'phone': phone}, limit = 1):
-            return 'phone: ' + str(collection.find({'phone': phone}))
-        
-        else:
 
+        #RETORNA LA INFORMACIÓN OBTENIDO
+        return list_results
 
-            post = {'name': name, 'address': address, 'rif': rif, 'phone': phone}
-            collection.insert_one(post)
-
-            return True
-    '''
