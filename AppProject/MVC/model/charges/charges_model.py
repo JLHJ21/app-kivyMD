@@ -1,6 +1,8 @@
 import database.database as DataBase
 from pymongo import ASCENDING
 from bson import ObjectId
+from datetime import datetime
+import re
 
 last_id = previous_id = None
 
@@ -8,13 +10,13 @@ class ChargesDB():
 
 
 
-    def ShowDataStoreModel(start, end, state = ''):
+    def ShowDataChargesModel(start, end, state = ''):
 
         #PERMITE QUE PERSISTA EL PRIMER Y ULTIMO ID, 
         global last_id, previous_id
 
         #CONEXION A LA COLECCION
-        collection = DataBase.db['products']
+        collection = DataBase.db['charges']
 
         #OBTIENE TODOS LOS DATOS DE LA COLECCION
         starting_id = collection.find()
@@ -26,41 +28,50 @@ class ChargesDB():
         #SE ACTIVA AL SER LA PRIMERA LLAMADA A LA BASE DE DATOS
         if last_id == None:
 
+
             #OBTIENE LOS DATOS DE LA COLECCION
-            results = collection.find({}, {'_id': 1, 'image': 1, 'name': 1, 'amount': 1, 'price': 1, 'name_supplier': 1}).skip(start).limit( end ).sort({'_id': 1}) #.sort({ '_id' : -1})
-            last_id = results[end - 1]['_id']
+            results = collection.find({}, {'_id': 1, 'name_supplier': 1, 'buy_products': 1, 'date': 1}).skip(start).limit( end ).sort({'_id': 1}) #.sort({ '_id' : -1})
+            
+            #cantidad de productos que se encontraron
+            amount_items = collection.count_documents({}, skip=start, limit=end)
+
+            #Obtiene el ultimo id del producto
+            last_id = results[amount_items - 1]['_id']
+
 
         else:
 
             #SI SE DA CLICK AL BOTON DE SIGUIENTE
             if state == 'next':
-                results = collection.find({'_id': {'$gt': last_id}}).limit( end )#.sort({ '_id' : ObjectId(last_id)})
 
-                results1 = collection.find({'_id': {'$gt': last_id}}).limit( end )#.sort({ '_id' : ObjectId(last_id)})
+                results = collection.find({'_id': {'$gt': last_id}}, {'_id': 1, 'name_supplier': 1, 'buy_products': 1, 'date': 1}).limit( end )#.sort({ '_id' : ObjectId(last_id)})
 
-                last_item = len(list(results1)) - 1
-                last_id = results[last_item]['_id']
+                amount_items = collection.count_documents({'_id': {'$gt': last_id}}, limit=end)
+                last_id = results[amount_items - 1]['_id']
 
                 
                 if (start - end) - 1 < 0:
                     previous_id = starting_id[0]['_id']
                     
                 else:
-                    previous_id = starting_id[(start - end) - 1]['_id']
+                    previous_id = starting_id[(start - amount_items) - 1]['_id']
 
             #SI SE DA CLICK AL BOTON DE ATRÁS
             elif state == 'previous':
-                results = collection.find({'_id': {'$gte': previous_id}}).limit( end )#.sort({ '_id' : ObjectId(last_id)})
+
+                results = collection.find({'_id': {'$gte': previous_id}}, {'_id': 1, 'name_supplier': 1, 'buy_products': 1, 'date': 1}).limit( end )#.sort({ '_id' : ObjectId(last_id)})
+
+                amount_items = collection.count_documents({'_id': {'$gte': previous_id}}, limit=end)
                 
                 #OBTIENE EL ULTIMO ID DEL ITEM DE LA COLECCION
-                last_id = results[end - 1]['_id']
+                last_id = results[amount_items - 1]['_id']
 
                 if (start - end) - 1 < 0:
             
                     previous_id = starting_id[0]['_id']
                     
                 else:
-                    previous_id = starting_id[(start - end) - 1]['_id']
+                    previous_id = starting_id[(start - amount_items) - 1]['_id']
 
         #SE CREA DICCIONARIO QUE ALMACENARÁ LOS DATOS OBTENIDOS DE LA BASE DE DATOS
         list_results = {}
@@ -72,6 +83,7 @@ class ChargesDB():
 
         
         #CICLO FOR QUE AGREGA LOS DATOS OBTENIDO DE LA BASE DE DATOS AL DICCIONARIO LIST_RESULTS, ESTO HACE QUE LA VARIABLE RESULTS(CURSOR) SE VACIE 
+
         for index, i in enumerate(results):
 
             #LO ALMACENA DE FORMA, DATO(POSICION): 'TODA LA INFORMACIÓN DE LA BASE DE DATOS
@@ -79,22 +91,50 @@ class ChargesDB():
 
             list_results.update(d)
 
-        #RETORNA LA INFORMACIÓN OBTENIDO
 
-
-
+        for index, result in enumerate(list_results):
+            try:
+                amount_item =  ChargesDB.GetAmountItemsCharge(collection, list_results[result][0]['_id'])
+                
+                dictionary_item = {'products': str(amount_item)}
+                list_results[result][0].update(dictionary_item)
+                
+            except:
+                pass
+            
         return list_results
+    
+    def GetAmountItemsCharge(collection, id_charges):
+        pipeline = [
+            {
+            '$match': {
+                    '_id': id_charges #results_amount_item[0]['name_supplier']
+                }
+            },
+            {
+                "$unwind": "$products" # descompone el array en un documento por separado
+            },
+            {
+                '$group': {
+                    '_id': "$products.name_product", # agrupamos por el tags
+                    'count': {
+                    '$sum': 1 # Realizamos sumatoria
+                    }
+                }
+            }
+        ]
+
+        result = len(list(collection.aggregate( pipeline )))
+        return result
 
     def GetDataSupplier(text):
-
-        import re
 
         rgx = re.compile('.*'+ text +'.*', re.IGNORECASE)  # compile the regex
 
 
         collection = DataBase.db['supplier']
 
-        results = collection.find({'name': rgx}, {'name': 1}).limit( 5 )#.sort({ '_id' : ObjectId(last_id)})
+        results = collection.find({'name_supplier': rgx , 'state_supplier': 1}, {'name_supplier': 1}).limit( 5 )#.sort({ '_id' : ObjectId(last_id)})
 
         #SE CREA DICCIONARIO QUE ALMACENARÁ LOS DATOS OBTENIDOS DE LA BASE DE DATOS
         list_results = {}
@@ -112,3 +152,79 @@ class ChargesDB():
         #RETORNA LA INFORMACIÓN OBTENIDO
         return list_results
 
+    def InsertNewCharge(new_product, name_product, amount_product, buy_product, profit_product, name_supplier, id_supplier, money_buys, money_profits, money_total):
+        
+        #CONEXION A LA COLECCION
+        collection = DataBase.db['charges']
+        collection_products = DataBase.db['products']
+
+
+        date = datetime.today().strftime('%d-%m-%Y %H:%M:%S.%f')
+        list_ids_products = []
+        
+        #agregar/modificarlo producto
+        for index, item in enumerate(name_product):
+
+            if new_product[index] == True:
+
+                post = {'name_product': item, 'amount_product': str(amount_product[index]), 'buy_product': str(buy_product[index]), 'profit_product': str(profit_product[index]), 'name_supplier': name_supplier, 'state': 1}
+
+                collection_products.insert_one(post)
+                list_ids_products.append(list(collection_products.find({}, {'_id': 1}).sort({'_id':-1}).limit(1) ))
+            else:
+                results = collection_products.find_one({'name_product': item}, {'_id': 1, 'amount_product': 1, 'buy_product': 1, 'profit_product': 1, 'name_supplier': 1})
+
+                new_amount = int(results['amount_product']) + int(amount_product[index])
+                new_buy = float(buy_product[index])
+                new_profit = float(profit_product[index])
+
+
+                if results['name_supplier'] == name_supplier:
+                    query = {'amount_product': str(new_amount), 'buy_product': str(new_buy), 'profit_product': str(new_profit)}
+
+                else:
+                    new_supplier = name_supplier
+
+                    query = {'amount_product': str(new_amount), 'buy_product': str(new_buy), 'profit_product': str(new_profit), 'name_supplier': new_supplier}
+
+                collection_products.update_one({'_id': ObjectId(results['_id'])},{'$set': query })
+
+
+                id = [{'_id': results['_id']}]
+                list_ids_products.append(id)
+
+
+        products = []
+
+        #Insertar en Charges/Encargos
+        for index, item in enumerate(list_ids_products[::-1]):
+
+            noSQL = {'name_product': name_product[index], 'amount_product': str(amount_product[index]), 'buy_product': str(buy_product[index]), 'profit_product': str(profit_product[index]), 'id_product': item[0]['_id']}
+
+            products.append(noSQL)
+
+
+        post = {'name_supplier': name_supplier, 'id_supplier': id_supplier, 'products': products, 'date': date, 'buy_products': str(money_buys), 'profit_products': str(money_profits), 'total_money': str(money_total) , 'state': 1}
+
+        collection.insert_one(post)
+
+        return True
+    
+    def ExistProduct(textProduct):
+        
+
+        #rgx = re.compile('.*'+ textProduct +'.*', re.IGNORECASE)  # compile the regex
+
+
+        collection = DataBase.db['products']
+
+        results = collection.count_documents({'name_product': textProduct})
+
+        if results > 0:
+            return True
+        else:
+            return False
+        
+
+        #RETORNA LA INFORMACIÓN OBTENIDO
+        #return list_results

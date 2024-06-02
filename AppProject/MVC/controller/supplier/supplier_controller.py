@@ -20,7 +20,7 @@ class SupplierPage(MDScreen):
         functions.FunctionsKivys.ChangePage('SupplierAddPage', 'Proveedor - Agregar')
         
 
-    def ShowDataSupplier(self, start, end, state):
+    def ShowDataSupplierController(self, start, end, state):
 
         '''
         async_result = pool.apply_async(SupplierDB.ShowData, (start, end)) # tuple of args for foo

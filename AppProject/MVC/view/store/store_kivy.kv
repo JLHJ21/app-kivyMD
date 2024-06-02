@@ -42,9 +42,10 @@
                     icon: "book-search"
                     style: "standard"
                     width: "100dp"
+
+                    on_release: root.test()
                     
 
-            
             RecycleViewTable:
 
                 id_table: "tableAlmacen"
@@ -52,14 +53,18 @@
                 padding: dp(16), dp(root.manager.parent.parent.ids.toolbar.height / 2), dp(16), dp(root.manager.parent.parent.ids.toolbarbottom.height /2)
 
                 objecto: self
-                need_image: True
+                need_image: False
                 columns: 5
                 root: root
 
-                titles_labels: ["Imagen", "Nombre", "Cantidad", "Precio", 'Proveedor']
-                list_table_data: ["image", "name", "amount", "price", "name_supplier"]
+                titles_labels: ["Nombre", "Cantidad", "Precio", 'Proveedor']
+                list_table_data: ["name_product", "amount_product", "profit_product", "name_supplier"]
 
-                modalData: 
-                    'ModalsDialog.ShowAlertDialog("self","¿Que desea realizar?", "Por favor, elija algunas de las opciones presentadas.", "Cancelar", "Eliminar", "Modificar",  lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog.dismiss()),lambda x: ModalsDialog.ShowAlertDialogDelete ("self","¿De verdad quiere eliminar este producto?", "Si es así, adelante","Cancelar","Eliminar",lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog2.dismiss()),lambda x: print("cerrar")    ),lambda x: ModalsDialog.ChangePage("self", "StorePageUpdate", "Almacen - Modificar"))'
-                
+                #Datos del Modal de eliminar "¿Esta seguro?"
+                modalChooseDeleteConfirmationTitle: '¿De verdad quiere eliminar a este producto?'
+                modalChooseDeletConfirmationeText: 'Recuerda que esta opción no se puede revertir.'
+                modalChooseDeleteConfirmation: 'from MVC.model.store.store_model import StoreDB; StoreDB.DeleteProduct(global_id_modal); self = global_self_modal; exec(self.test)'
+
+                modalChooseUpdate: 'ModalsDialog.ChangePage("self","StorePageUpdate", "Almacen - Modificar")'
+
                 test: 'self.objecto.DictionaryDataset.update(self.objecto.root.ShowDataStoreController(self.objecto.StartPagination, self.objecto.StaticItemsAccountPagination, self.objecto.DirectionPagination))'

@@ -49,11 +49,11 @@ global_dictionary = []
 
 global_rv = {}
 
+global_self_modal = global_id_modal = global_modal_rv = None
+
 #global_dictionary_table_data = {}
 
-        
-
-
+    
 class ContentCashierPage(MDBoxLayout):
     pass
 
@@ -199,34 +199,56 @@ class SelectableLabel(RecycleDataViewBehavior, MDFlatButton):
         if self.collide_point(*touch.pos) and self.selectable:
             return self.parent.select_with_touch(self.index, touch)
         
-    def ButtonDialog(self, x):
+    #Controller de los datos de los modales
+    def ButtonDialog(self, idObject, rvObject):
+
+        #
+        global global_self_modal, global_id_modal, global_modal_rv
+
+        global_self_modal = self
+        global_id_modal = idObject
+        global_modal_rv = rvObject
+
 
         #la variable self de la funcion, se relaciona con la clase RecycleViewTable, no con esta clase SelectableTable
-        exec(x)
+        ModalsDialog.ShowAlertDialog()
+        #exec(execModal)
+
         
-
-
 class RecycleViewTable(MDBoxLayout):
     
     ''' Variables de los modales Dialogs'''
     
     dialog = dialog2 = dialog3  =  dialogShowUpdate = None
 
-
-    list_table_labels = ListProperty([])
-
+    #Variables sobre datos de la tabla 'Personalizacion'
     titles_labels = ListProperty([])
-
-    list_table_data = ListProperty([])
-    modalData = StringProperty(None)
-    test = StringProperty(None)
     columns = NumericProperty(1)
     id_table = StringProperty(None)
     objecto = ObjectProperty(None)
     need_image = BooleanProperty(True)
     root = ObjectProperty(None)
     DirectionPagination = StringProperty(None)
-    boleana = True
+
+    
+    #Variables sobre datos a mostrar en la tabla 'Funcionamiento'
+    list_table_labels = ListProperty([])
+    list_table_data = ListProperty([])
+    test = StringProperty(None)
+
+    #Variables de los modales de la tabla
+    modalData = StringProperty(None)
+
+    #Modal DATOS DELETE CONFIRMATION
+    modalChooseDeleteConfirmationTitle = StringProperty(None)
+    modalChooseDeletConfirmationeText = StringProperty(None)
+    modalChooseDeleteConfirmation = StringProperty(None)
+
+    #Modal DATOS UPDATE
+    modalChooseUpdate = StringProperty(None)
+
+    
+    #boleana = True
 
     #Cantidad de items que se mostrará en el RecycleView
     StartPagination = 0
@@ -328,7 +350,11 @@ class RecycleViewTable(MDBoxLayout):
             self.objecto.scroll_box_layout.add_widget(label)
 
 
-    def TableData(self, dictionary, direction = None):
+    def TableData(self, dictionary, direction = ''):
+
+        print()
+        print('OKKKKKKKKKKK')
+        print()
 
         self.objecto.DirectionPagination = direction
 
@@ -338,23 +364,25 @@ class RecycleViewTable(MDBoxLayout):
 
         self.objecto.DictionaryDataset = {}
 
-        #ejecuta lo escrito en el kv, normalmente es donde se ejecutará el codigo mongodb que nos dará los datos de la base de datos
+        #ejecuta lo escrito en el kv, normalmente es donde se ejecutará el codigo mongodb que nos dará los datos de la base de datos<
+        
         exec(self.objecto.test)
 
+        #print(self.objecto.DictionaryDataset)
+
         dictionary = self.objecto.DictionaryDataset
+
         #self.objecto.dictionary = self.objecto.DictionaryDataset
         
         #permite que se active solamente una vez
-        self.objecto.boleana = False
+        #self.objecto.boleana = False
 
-        ModalsDialog.StatusButtonPagination('self', self.objecto.rv, "both")
+        ModalsDialog.StatusButtonPagination(self.objecto.rv, "both")
             
         ##################################################################
 
         #Cuenta la cantidad de items que tiene el diccionario
         CountDictionary = dictionary['characteristics'][0]
-
-
 
         #print(CountDictionary)
 
@@ -397,13 +425,18 @@ class RecycleViewTable(MDBoxLayout):
 
                 #agrega los datos al diccionario principal
                 d['dato'].update(da)
+
+
+                #Obtener el id del objecto a buscar
+                idObject = dictionary[dic][0]['_id']
                 
-            
-        
-            #crea diccionario el on_release al diccionario principal
-            i = {'on_release': partial(SelectableLabel.ButtonDialog, self.objecto, self.objecto.modalData)}
-            #agrega el on_release
-            d.update(i)
+
+
+
+                #crea diccionario el on_release al diccionario principal
+                i = {'on_release': partial(SelectableLabel.ButtonDialog, self.objecto, idObject, self.objecto.rv)}
+                #agrega el on_release
+                d.update(i)
 
             #dictionary donde estará todos los datos de la tabla
             #Agregar a la tabla los items, activando el selectableLabel y crean un label para cada uno
@@ -415,48 +448,34 @@ class ModalsDialog():
 
     ############
     ###MODALES
-
-    ## CALLBACK PARA CAMBIAR DE PAGINA
-    def ChangePage(self, page, text):
-
-        #obtiene el self principal del kivy
-        self_main = functions.global_variable_self
-        #cambia segun la pagina querida
-        self_main.root.ids.screen_manager.current = page
-        #cambia el titulo del menu de arriba segun el nombre que queramos
-        self_main.root.ids.toolbar.title = text
-
-        #Cierra los modales activados
-        ModalsDialog.CloseDialog('self', RecycleViewTable.dialog.dismiss())
-        
     #Modal 1
-    def ShowAlertDialog(self, title, text, optionOne, optionTwo, optionThree, releaseOne, releaseTwo, releaseThree):
- 
+    def ShowAlertDialog(self = None, title = '', text = '', optionOne = '', optionTwo = '', optionThree = '', releaseOne = None, releaseTwo = None, releaseThree = None):
+        
         #Si no existe, normalmente no, lo crea
         #if not RecycleViewTable.dialog:
         #Caracteristicas
         RecycleViewTable.dialog = MDDialog(
-            title=title,
-            text= text,
+            title= "¿Que desea realizar?",
+            text= "Por favor, elija algunas de las opciones presentadas.",
             buttons=[
                 #Boton de Cancelar
                 MDFlatButton(
-                    text=optionOne,
+                    text= 'Cancelar',
                     #text_color=self.theme_cls.primary_color,
-                    on_press = releaseOne
+                    on_press = lambda x: ModalsDialog.CloseDialog(RecycleViewTable.dialog.dismiss())
                 ),
-                #Boton de modificar o algun otro uso
+                #Boton de eliminar
                 MDRaisedButton(
-                    text=optionTwo,
+                    text= 'Eliminar',
                     md_bg_color="red",
                     text_color="white",
-                    on_press = releaseTwo
+                    on_press = lambda x: ModalsDialog.ShowAlertDialogDelete()
                 ),
                 #Boton de Aceptar
                 MDRaisedButton(
-                    text=optionThree,
+                    text= 'Modificar',
                     md_bg_color="orange",
-                    on_release= releaseThree
+                    on_release = lambda x: ModalsDialog.ChooseUpdateObject()
                                                     
                 ),
             ],
@@ -464,176 +483,53 @@ class ModalsDialog():
         #Abre el modal
         RecycleViewTable.dialog.open()
 
-    def ChangeAmountProductModal(self, title):
+    #Modal 2
+    def ShowAlertDialogDelete(self = None, title = None, text = None, textButtonOne = None, textButtonTwo = None, releaseButtonOne = None, releaseButtonTwo = None):
 
-        ModalsDialog.CloseDialog("self", RecycleViewTable.dialog.dismiss())
-
-        dialogShowUpdate = MDDialog(
-            title=title,
-            type="custom",
-            content_cls=ContentCashierPage(),
-            buttons=[
-                MDFlatButton(
-                    text="Cancelar",
-                    md_bg_color="red",
-                    text_color="white",
-                ),
-                MDRaisedButton(
-                    text="Aceptar",
-                    md_bg_color="blue",
-                    #text_color=self.theme_cls.primary_color,
-                ),
-            ],
-        )
-        dialogShowUpdate.open()
-
-    def ShowUpdateDataModal(self, title, text, optionOne, optionTwo, optionThree, releaseOne, releaseTwo, releaseThree):
- 
-        #Si no existe, normalmente no, lo crea
-        #if not RecycleViewTable.dialog:
-        #Caracteristicas
-        RecycleViewTable.dialogShowUpdate = MDDialog(
-            title=title,
-            text= text,
-            buttons=[
-                #Boton de Cancelar
-                MDFlatButton(
-                    text=optionOne,
-                    #text_color=self.theme_cls.primary_color,
-                    on_press = releaseOne
-                ),
-                #Boton de modificar o algun otro uso
-                MDRaisedButton(
-                    text=optionTwo,
-                    md_bg_color="red",
-                    text_color="white",
-                    on_press = releaseTwo
-                ),
-                #Boton de Aceptar
-                MDRaisedButton(
-                    text=optionThree,
-                    md_bg_color="orange",
-                    on_release= releaseThree
-                                                    
-                ),
-            ],
-        )
-        #Abre el modal
-        RecycleViewTable.dialogShowUpdate.open()
-        
-
-    def ShowAlertDialogDelete(self, title, text, textButtonOne, textButtonTwo, releaseButtonOne, releaseButtonTwo):
+        title_delete_confirmation = global_rv[global_modal_rv].objecto.modalChooseDeleteConfirmationTitle
+        text_delete_confirmation = global_rv[global_modal_rv].objecto.modalChooseDeletConfirmationeText
 
         #Cierra el modal 1
-        ModalsDialog.CloseDialog('self',RecycleViewTable.dialog.dismiss())
+        ModalsDialog.CloseDialog(RecycleViewTable.dialog.dismiss())
         
         #Si no existe, normalmente no, lo crea
         #if not RecycleViewTable.dialog2:
         RecycleViewTable.dialog2 = MDDialog(
-            title=title,
-            text=text,
+            title=title_delete_confirmation,
+            text=text_delete_confirmation,
             buttons=[
                 #Boton de Cancelar
                 MDFlatButton(
-                    text=textButtonOne,
+                    text='Cancelar',
                     text_color= "red",
-                    on_release = releaseButtonOne
+                    on_release = lambda x: ModalsDialog.CloseDialog(RecycleViewTable.dialog2.dismiss())
                 ),
                 #Boton de Aceptar
                 MDRaisedButton(
-                    text=textButtonTwo,
+                    text= 'Eliminar',
                     text_color="white",
                     md_bg_color="red",
-                    on_release = releaseButtonTwo
+                    #Dar click a este boton, Aceptar eliminar, llama la función ChooseDeleteConfirmationObject
+                    on_release = lambda x: ModalsDialog.ChooseDeleteConfirmationObject()
                 ),
             ],
         )
 
         #Abre el modal
         RecycleViewTable.dialog2.open()
-    
-    
-    def CloseDialog(self, typeDialog):
+
+    #Cerrar Modal
+    def CloseDialog(typeDialog):
 
         #Funcion dinamica para cerrar los dialogs
         #RecycleViewTable.CreateLabels(self)
         #print(RecycleViewTable.dialog)
         typeDialog
 
-    #AL DAR CLICK AL BOTON "ITEMS POR PAGINA"
-    def ChangeItemsAmount(self, rv):
-
-        #Reinicia la variable a 0
-        global_rv[rv].objecto.StartPagination = 0
-
-
-        #Switch que cambia la cantidad de items a mostrar segun la cantidad que tenia previamente
-        match global_rv[rv].objecto.StaticItemsAccountPagination:
-            case 5:
-                global_rv[rv].objecto.ItemsAccountPagination = global_rv[rv].objecto.StaticItemsAccountPagination = 10
-            case 10:
-                global_rv[rv].objecto.ItemsAccountPagination = global_rv[rv].objecto.StaticItemsAccountPagination = 15
-            case 15:
-                global_rv[rv].objecto.ItemsAccountPagination = global_rv[rv].objecto.StaticItemsAccountPagination = 5
-            case _:
-                global_rv[rv].objecto.ItemsAccountPagination = global_rv[rv].objecto.StaticItemsAccountPagination = 5
-
-        
-
-        #Cambia el texto del boton ItemsAmount
-
-        global_rv[rv].objecto.ids.ItemsAmount.text = "Items por página: " + str(global_rv[rv].objecto.ItemsAccountPagination)
-
-        #Llama la funcion para ver si ambas flechas se desactivan al actualizar los datos
-        self.StatusButtonPagination(rv, "both")
-        #Llama la función TableData para rellenar los datos de la tabla
-
-        with concurrent.futures.ThreadPoolExecutor() as executor:
-            executor.submit(global_rv[rv].objecto.TableData, global_rv[rv].objecto.DictionaryDataset, '')
-
-
-    #AL DAR CLICK A LOS BOTONES; TANTO DE ATRAS COMO ADELANTE
-    def ChangeItemsAmountButtons(self, rv, button):
-
-        #Asignacion del nuevo valor del inicio de la paginacion, (primera variable, primer número 'Mostrando AQUI - X)
-        #Asignacion del nuevo valor de los items mostrados del diccionario (segunda variable, segundo número 'Mostrando X - AQUI)
-        match button:
-                
-            case "left":
-
-                global_rv[rv].objecto.DirectionPagination = 'previous'
-
-                #RESTA
-                global_rv[rv].objecto.StartPagination = global_rv[rv].objecto.StartPagination - global_rv[rv].objecto.StaticItemsAccountPagination
-                global_rv[rv].objecto.ItemsAccountPagination = global_rv[rv].objecto.ItemsAccountPagination - global_rv[rv].objecto.StaticItemsAccountPagination
-
-                #Llama la funcion para ver si se desactiva la flecha izquierda
-                self.StatusButtonPagination(rv, "left")
-
-                
-            case "right":
-
-                global_rv[rv].objecto.DirectionPagination = 'next'
-
-                #SUMA
-                global_rv[rv].objecto.StartPagination = global_rv[rv].objecto.StartPagination  + global_rv[rv].objecto.StaticItemsAccountPagination
-                global_rv[rv].objecto.ItemsAccountPagination = global_rv[rv].objecto.ItemsAccountPagination + global_rv[rv].objecto.StaticItemsAccountPagination
-
-
-
-                #Llama la funcion para ver si se desactiva la flecha derecha
-                self.StatusButtonPagination(rv, "right")
-                
-                
-            case _:
-                global_rv[rv].objecto.StartPagination = 0
-                global_rv[rv].objecto.ItemsAccountPagination = 5
-
-        #Llama a esta funcion para actualizar los datos
-        with concurrent.futures.ThreadPoolExecutor() as executor:
-            executor.submit(global_rv[rv].objecto.TableData, global_rv[rv].objecto.DictionaryDataset, global_rv[rv].objecto.DirectionPagination)
+    ############
+    ###Paginación
     #Funcion que sirva para activar o desactivar las flechas de la paginacion en caso tal que no haya más objetos a mostrar
-    def StatusButtonPagination(self, rv, side):
+    def StatusButtonPagination(rv, side):
 
         match side:
             #Flecha de la izquierda
@@ -689,6 +585,8 @@ class ModalsDialog():
 
                 #IF Statement, si la cantidad de items de la paginación es mayor a los items del diccionario
                 #el DISABLED sera True, en caso contrario será False
+
+                #OJO
                 if global_rv[rv].objecto.ItemsAccountPagination >= global_rv[rv].objecto.DictionaryDataset['characteristics'][0]:
 
                     #Desactiva boton derecho
@@ -700,5 +598,198 @@ class ModalsDialog():
             case _:
                 pass
 
+    #AL DAR CLICK AL BOTON "ITEMS POR PAGINA", LLAMADO POR EL ARCHIVO TABLE.KV
+    def ChangeItemsAmount(self, rv):
+
+        #Reinicia la variable a 0
+        global_rv[rv].objecto.StartPagination = 0
+
+
+        #Switch que cambia la cantidad de items a mostrar segun la cantidad que tenia previamente
+        match global_rv[rv].objecto.StaticItemsAccountPagination:
+            case 5:
+                global_rv[rv].objecto.ItemsAccountPagination = global_rv[rv].objecto.StaticItemsAccountPagination = 10
+            case 10:
+                global_rv[rv].objecto.ItemsAccountPagination = global_rv[rv].objecto.StaticItemsAccountPagination = 15
+            case 15:
+                global_rv[rv].objecto.ItemsAccountPagination = global_rv[rv].objecto.StaticItemsAccountPagination = 5
+            case _:
+                global_rv[rv].objecto.ItemsAccountPagination = global_rv[rv].objecto.StaticItemsAccountPagination = 5
+
+        
+
+        #Cambia el texto del boton ItemsAmount
+
+        global_rv[rv].objecto.ids.ItemsAmount.text = "Items por página: " + str(global_rv[rv].objecto.ItemsAccountPagination)
+
+        
+
+        #Llama la funcion para ver si ambas flechas se desactivan al actualizar los datos
+        ModalsDialog.StatusButtonPagination(rv, "both")
+
+        #Llama la función TableData para rellenar los datos de la tabla
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            executor.submit(global_rv[rv].objecto.TableData, global_rv[rv].objecto.DictionaryDataset, '')
+
+    #OJO
+    #AL DAR CLICK A LOS BOTONES; TANTO DE ATRAS COMO ADELANTE
+    def ChangeItemsAmountButtons(self = None, rv = None, button = ''):
+
+
+        #Asignacion del nuevo valor del inicio de la paginacion, (primera variable, primer número 'Mostrando AQUI - X)
+        #Asignacion del nuevo valor de los items mostrados del diccionario (segunda variable, segundo número 'Mostrando X - AQUI)
+        match button:
+                
+            case "left":
+
+                global_rv[rv].objecto.DirectionPagination = 'previous'
+
+                #RESTA
+                global_rv[rv].objecto.StartPagination = global_rv[rv].objecto.StartPagination - global_rv[rv].objecto.StaticItemsAccountPagination
+                global_rv[rv].objecto.ItemsAccountPagination = global_rv[rv].objecto.ItemsAccountPagination - global_rv[rv].objecto.StaticItemsAccountPagination
+
+                #Llama la funcion para ver si se desactiva la flecha izquierda
+                ModalsDialog.StatusButtonPagination(rv, "left")
+
+                
+            case "right":
+
+                global_rv[rv].objecto.DirectionPagination = 'next'
+
+                #SUMA
+                global_rv[rv].objecto.StartPagination = global_rv[rv].objecto.StartPagination  + global_rv[rv].objecto.StaticItemsAccountPagination
+                global_rv[rv].objecto.ItemsAccountPagination = global_rv[rv].objecto.ItemsAccountPagination + global_rv[rv].objecto.StaticItemsAccountPagination
+
+
+
+                #Llama la funcion para ver si se desactiva la flecha derecha
+                ModalsDialog.StatusButtonPagination(rv, "right")
+                
+                
+            case _:
+                global_rv[rv].objecto.StartPagination = 0
+                global_rv[rv].objecto.ItemsAccountPagination = 5
+
+        
+        #Llama a esta funcion para actualizar los datos
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            executor.submit(global_rv[rv].objecto.TableData, global_rv[rv].objecto.DictionaryDataset, '')
+            #future = 
+            #return_value = future.result()
+
+            #print()
+            #print()
+
+            #print(return_value)
+
+
+    ## CALLBACK PARA CAMBIAR DE PAGINA
+    def ChangePage(self, page, text):
+
+        #obtiene el self principal del kivy
+        self_main = functions.global_variable_self
+        #cambia segun la pagina querida
+        self_main.root.ids.screen_manager.current = page
+        #cambia el titulo del menu de arriba segun el nombre que queramos
+        self_main.root.ids.toolbar.title = text
+
+        #Cierra los modales activados
+        ModalsDialog.CloseDialog(RecycleViewTable.dialog.dismiss())
+
+    ############
+    ###Controllers
+
+    #Update/Modificar
+    def ChooseUpdateObject(*args):
+        option_update = global_rv[global_modal_rv].objecto.modalChooseUpdate
+        
+        #Ejecuta lo que uno haya escrito en el kivy "modalChooseUpdate"
+        exec(option_update)
+
+        #Cierra el modal 2, 
+        RecycleViewTable.dialog.dismiss()
+    #Delete/Eliminar
+    def ChooseDeleteConfirmationObject(*args):
+
+        option_delete_confirmation = global_rv[global_modal_rv].objecto.modalChooseDeleteConfirmation
+        
+        #Ejecuta lo que uno haya escrito en el kivy "modalChooseDeleteConfirmation"
+        exec(option_delete_confirmation)
+
+        #Cierra el modal 2, 
+        RecycleViewTable.dialog2.dismiss()
+        
+        #Llama la función TableData DE NUEVO para ACTUALIZAR los datos de la tabla
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            executor.submit(global_rv[global_modal_rv].objecto.TableData, global_rv[global_modal_rv].objecto.DictionaryDataset, '')
+
+    #def ChooseDeleteObject(*args):
+    #    option_delete = global_rv[global_modal_rv].objecto.modalChooseDelete
+        
+        #Ejecuta lo que uno haya escrito en el kivy "modalChooseDelete"
+    #     exec(option_delete)
+
+        #Cierra el modal 2, 
+    #    RecycleViewTable.dialog.dismiss()
+
+    ######OJO
+    #NI IDEA
+    def ChangeAmountProductModal(self, title):
+
+        ModalsDialog.CloseDialog(RecycleViewTable.dialog.dismiss())
+
+        dialogShowUpdate = MDDialog(
+            title=title,
+            type="custom",
+            content_cls=ContentCashierPage(),
+            buttons=[
+                MDFlatButton(
+                    text="Cancelar",
+                    md_bg_color="red",
+                    text_color="white",
+                ),
+                MDRaisedButton(
+                    text="Aceptar",
+                    md_bg_color="blue",
+                    #text_color=self.theme_cls.primary_color,
+                ),
+            ],
+        )
+        dialogShowUpdate.open()
+
+
+    def ShowUpdateDataModal(self, title, text, optionOne, optionTwo, optionThree, releaseOne, releaseTwo, releaseThree):
+ 
+        #Si no existe, normalmente no, lo crea
+        #if not RecycleViewTable.dialog:
+        #Caracteristicas
+        RecycleViewTable.dialogShowUpdate = MDDialog(
+            title=title,
+            text= text,
+            buttons=[
+                #Boton de Cancelar
+                MDFlatButton(
+                    text=optionOne,
+                    #text_color=self.theme_cls.primary_color,
+                    on_press = releaseOne
+                ),
+                #Boton de modificar o algun otro uso
+                MDRaisedButton(
+                    text=optionTwo,
+                    md_bg_color="red",
+                    text_color="white",
+                    on_press = releaseTwo
+                ),
+                #Boton de Aceptar
+                MDRaisedButton(
+                    text=optionThree,
+                    md_bg_color="orange",
+                    on_release= releaseThree
+                                                    
+                ),
+            ],
+        )
+        #Abre el modal
+        RecycleViewTable.dialogShowUpdate.open()
 
 ############

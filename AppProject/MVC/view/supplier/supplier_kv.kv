@@ -68,28 +68,6 @@
 
                     on_release: root.ChangePageSupplierPage()
 
-                    
-            #RecycleViewTable:
-
-            #    id_table: "tableSuppliers"
-
-            #    padding: dp(16), dp(root.manager.parent.parent.ids.toolbar.height / 2), dp(16), dp(root.manager.parent.parent.ids.toolbarbottom.height /2)
-
-            #    objecto: self
-            #    need_image: True
-            #    columnas: 5
-            #    root: root
-
-            #    list_table_labels: ["id_imagen", "id_nombre", "id_ubicacion", "id_rif", "id_telefono"]
-            #    list_table_data: ["imagen","nombre", "ubicacion", "rif", "telefono"]
-
-            #    modalData: 
-            #        'ModalsDialog.ShowAlertDialog("self","¿Que desea realizar?","Por favor, elija algunas de las opciones presentadas.","Cancelar","Eliminar","Modificar",lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog.dismiss()),lambda x: ModalsDialog.ShowAlertDialogDelete("self","¿De verdad quiere eliminar este producto?","Si es así, adelante","Cancelar","Eliminar",lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog2.dismiss()),lambda x: print("cerrar")),lambda x: ModalsDialog.ChangePage("self","SupplierUpdatePage", "Proveedor - Modificar"))'
-                
-            #    test: 
-            #        'for i in range(1,5): d = {f"dato{i}": [f"images/logo.jpg", f"dato{i}_nombre", f"dato{i}_ubicacion", f"dato{i}_rif", f"dato{i}_telefono"]};self.objecto.DictionaryDataset.update(d); self.root.ShowDataSupplier();'
-
-                # print(str(self.root.ShowDataSupplier()) + " prueba") ;
 
             RecycleViewTable:
 
@@ -103,10 +81,13 @@
                 root: root
 
                 titles_labels: ["Nombre", "Dirección", "RIF", "Teléfono"]
+                list_table_data: ["name_supplier", "address_supplier", "rif_supplier", "phone_supplier"]
 
-                list_table_data: ["name", "address", "rif", "phone"]
+                #Datos del Modal de eliminar "¿Esta seguro?"
+                modalChooseDeleteConfirmationTitle: '¿De verdad quiere eliminar a este proveedor?'
+                modalChooseDeletConfirmationeText: 'Recuerda que esta opción no se puede revertir.'
+                modalChooseDeleteConfirmation: 'from MVC.model.supplier.supplier_model import SupplierDB; SupplierDB.DeleteSupplier(global_id_modal); self = global_self_modal; exec(self.test)'
 
-                modalData: 
-                    'ModalsDialog.ShowAlertDialog("self","¿Que desea realizar?","Por favor, elija algunas de las opciones presentadas.","Cancelar","Eliminar","Modificar",lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog.dismiss()),lambda x: ModalsDialog.ShowAlertDialogDelete("self","¿De verdad quiere eliminar este producto?","Si es así, adelante","Cancelar","Eliminar",lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog2.dismiss()),lambda x: print("cerrar")),lambda x: ModalsDialog.ChangePage("self","SupplierUpdatePage", "Proveedor - Modificar"))'
-                
-                test: 'self.objecto.DictionaryDataset.update(self.objecto.root.ShowDataSupplier(self.objecto.StartPagination, self.objecto.StaticItemsAccountPagination, self.objecto.DirectionPagination))'
+                modalChooseUpdate: 'ModalsDialog.ChangePage("self","SupplierUpdatePage", "Proveedor - Modificar")'
+
+                test: 'self.objecto.DictionaryDataset.update(self.objecto.root.ShowDataSupplierController(self.objecto.StartPagination, self.objecto.StaticItemsAccountPagination, self.objecto.DirectionPagination))'

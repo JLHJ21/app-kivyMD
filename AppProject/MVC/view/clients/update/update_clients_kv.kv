@@ -1,7 +1,6 @@
 
-
-<SupplierUpdatePage>:
-    name: "SupplierUpdatePage"
+<ClientUpdatePage>:
+    name: "ClientUpdatePage"
                 
     MDBoxLayout:
 
@@ -29,7 +28,7 @@
                         height: self.minimum_height  # required to size GridLayout
 
                         MDLabel:
-                            text: "Cambiar proveedor"
+                            text: "Modificar cliente"
                             halign: "center"
                             font_style: "H4"
 
@@ -50,47 +49,20 @@
                         
                         MDTextField:
 
-                            id: nameSupplier
+                            id: nameClient
                             size_hint_x: 0.7
                             #width: "375dp"
 
-                            text: root.nameSupplier
-                            hint_text: "Nombre del proveedor:"
+                            text: root.nameClient
+                            hint_text: "Nombre del cliente:"
 
                             mode: "rectangle"
+                            required: True
+                            line_color_normal: "red" if len(self.text) == 0 else "blue"
                         
                         MDLabel:
                             size_hint_x: 0.1
 
-                    MDGridLayout:
-                        cols: 3
-                        spacing: dp(20)
-                        padding: dp(16), dp(8)
-                        #padding: ["16dp", "16dp", "16dp", "16dp"]  if len(inputSupplierMenu.text) == 0 else ["16dp", "8dp", "16dp", "8dp"] 
-                        size_hint_y: None
-                        height: self.minimum_height  # required to size GridLayout
-                        MDLabel:
-                            size_hint_x: 0.38
-                            #width: "250dp"
-                            padding: dp(32), dp(1)
-
-                            text: "Ubicación:"
-                            halign: "right"
-                            font_style: "H5"
-                        
-                        MDTextField:
-
-                            id: addressSupplier
-                            size_hint_x: 0.7
-                            #width: "375dp"
-                            
-                            text: root.addressSupplier
-                            hint_text: "Ubicación del proveedor:"
-                            
-                            mode: "rectangle"
-                        
-                        MDLabel:
-                            size_hint_x: 0.1
                     MDGridLayout:
                         cols: 3
                         spacing: dp(20)
@@ -102,19 +74,21 @@
                             #width: "250dp"
                             padding: dp(32), dp(1)
 
-                            text: "RIF:"
+                            text: "Cédula:"
                             halign: "right"
                             font_style: "H5"
                         
                         MDTextField:
 
-                            id: rifSupplier
+                            id: idClient
                             size_hint_x: 0.7
 
-                            text: root.rifSupplier
-                            hint_text: "RIF del proveedor"
+                            text: root.idClient
+                            hint_text: "Cédula del proveedor"
 
                             mode: "rectangle"
+                            required: True
+                            line_color_normal: "red" if len(self.text) == 0 else "blue"
                         
                         MDLabel:
                             size_hint_x: 0.1
@@ -136,11 +110,13 @@
                         
                         MDTextField:
 
-                            id: phoneSupplier
+                            id: phoneClient
                             size_hint_x: 0.7
 
-                            text: root.phoneSupplier
-                            hint_text: "Teléfono del proveedor"
+                            text: root.phoneClient
+                            hint_text: "Teléfono del cliente"
+                            required: True
+                            line_color_normal: "red" if len(self.text) == 0 else "blue"
 
                             mode: "rectangle"
                         
@@ -169,7 +145,7 @@
                             md_bg_color: "blue"
 
                             on_release: 
-                                root.UpdateSupplier(root.ids.nameSupplier.text, root.ids.addressSupplier.text, root.ids.rifSupplier.text, root.ids.phoneSupplier.text)
+                                root.UpdateClient(root.ids.nameClient.text, root.ids.idClient.text, root.ids.phoneClient.text)
                                 #Permite ACTUALIZAR los datos de la tabla
                                 app.modals.ChangeItemsAmountButtons(root.RV)
                                 #app.table.TableData(root.RV, '')

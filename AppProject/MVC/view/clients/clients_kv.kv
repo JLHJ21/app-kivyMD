@@ -68,10 +68,21 @@
                 root: root
 
                 titles_labels: ["Nombre", "Cédula", "Teléfono"]
-                list_table_data: ["name", "id", "phone"]
+                list_table_data: ["name_client", "id_client", "phone_client"]
 
-                modalData: 
-                    'ModalsDialog.ShowAlertDialog("self","¿Que desea realizar?","Por favor, elija algunas de las opciones presentadas.","Cancelar","Eliminar","Modificar",lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog.dismiss()),lambda x: ModalsDialog.ShowAlertDialogDelete("self","¿De verdad quiere eliminar a este cliente?","Si es así, adelante","Cancelar","Eliminar",lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog2.dismiss()),lambda x: print("cerrar")),lambda x: ModalsDialog.ChangePage("self","StorePageUpdate", "Almacen - Modificar"))'
+                #Datos del boton de Eliminar, 'primer boton'
+                #modalChooseDelete: 'from MVC.model.clients.clients_model import ClientsDB; ClientsDB.DeleteClient(global_id_modal); self = global_self_modal; exec(self.test)'
+
+                #Datos del Modal de eliminar "¿Esta seguro?"
+                modalChooseDeleteConfirmationTitle: '¿De verdad quiere eliminar a este cliente?'
+                modalChooseDeletConfirmationeText: 'Recuerda que esta opción no se puede revertir.'
+                modalChooseDeleteConfirmation: 'from MVC.model.clients.clients_model import ClientsDB; ClientsDB.DeleteClient(global_id_modal); self = global_self_modal; exec(self.test)'
+
+                modalChooseUpdate: 'ModalsDialog.ChangePage("self","ClientUpdatePage", "Cliente - Modificar")'
+
+                #OJO con el self
+                #modalData: 
+                #    'ModalsDialog.ShowAlertDialog("Cancelar","Eliminar","Modificar",lambda x: ModalsDialog.ShowAlertDialogDelete("self","¿De verdad quiere eliminar a este cliente?","Si es así, adelante","Cancelar","Eliminar"))'
                 
                 test: 'self.objecto.DictionaryDataset.update(self.objecto.root.ShowDataClientsController(self.objecto.StartPagination, self.objecto.StaticItemsAccountPagination, self.objecto.DirectionPagination))'
 

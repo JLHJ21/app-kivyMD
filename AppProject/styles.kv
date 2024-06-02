@@ -8,16 +8,25 @@
 
 #:include MVC/view/clients/clients_kv.kv
 #:include MVC/view/clients/add/add_clients_kv.kv
+#:include MVC/view/clients/update/update_clients_kv.kv
+
 
 #:include MVC/view/configuration/configuration_kv.kv
+
 #:include MVC/view/foreign_exchange/foreign_exchange_kv.kv
+
 #:include MVC/view/foreign_exchange/update/update_foreign_exchange_kv.kv
 #:include MVC/view/sales_history/sales_history_kv.kv
+
 #:include MVC/view/supplier/supplier_kv.kv
 #:include MVC/view/supplier/update/update_supplier_kv.kv
 #:include MVC/view/supplier/add/add_supplier_kv.kv
+
 #:include MVC/view/charges/charges_kv.kv
 #:include MVC/view/charges/add/add_charges_kv.kv
+#:include MVC/view/charges/choose_image_charges/choose_image_charges_kv.kv
+
+
 #:include MVC/view/money_history/money_history_kv.kv
 #:include MVC/view/loans/loans_kv.kv
 #:include MVC/view/loans/add/add_loans_kv.kv
@@ -57,6 +66,7 @@ HeaderAndFooter:
             #Pagina de cliente
             ClientsPage:
             ClientAddPage:
+            ClientUpdatePage:
 
             #Pagina de configuracion
             ConfigurationPage:
@@ -76,6 +86,7 @@ HeaderAndFooter:
             #Pagina de Encargos
             ChargePage:
             ChargeAddPage:
+            ChargeChooseImagePage:
 
             #Pagina de historial de dinero
             MoneyHistoryPage:

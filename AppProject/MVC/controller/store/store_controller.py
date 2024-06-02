@@ -36,6 +36,14 @@ class StorePage(MDScreen):
         #self_store_page.ids.ButtonMenuSearchingStore.text = instance
         #intermediary.global_variable_self.MenuProductoTypeStore.dismiss()
 
+    def test(self):
+
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            future = executor.submit(StoreDB.ShowDataStoreModel, 0, 15)
+            return_value = future.result()
+
+            return return_value
+        
     def ShowDataStoreController(self, start, end, state):
 
         '''

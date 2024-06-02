@@ -39,7 +39,7 @@ from passlib.hash import sha256_crypt
 #####ENLAZAR ARCHIVOS PYTHON/KIVY
 
 #Enlazar archivo templates/table/table.py
-from templates.table.table import ModalsDialog #, RecycleViewTable
+from templates.table.table import ModalsDialog , RecycleViewTable
 
 #Enlazar página de inicio "InitialPage" MVC/controller/home/home_controller.py 
 from MVC.controller.home.home_controller import InitialPage
@@ -57,12 +57,16 @@ from MVC.controller.store.update.store_update_controller import StoreUpdatePage
 #Enlazar página de inicio "chooseimagePage" MVC/controller/store/choose_image/choose_image_controller.py 
 from MVC.controller.store.choose_image.choose_image_controller import ChooseImagePage
 
+
 #Enlazar página de inicio "ClientsPage" MVC/controller/clients/clients_controller.py 
 from MVC.controller.clients.clients_controller import ClientsPage
 
-
-#Enlazar página de inicio "ClientsPage" MVC/controller/clients/add/add_clients_controller.py 
+#Enlazar página "ClientAddPage" MVC/controller/clients/add/add_clients_controller.py 
 from MVC.controller.clients.add.add_clients_controller import ClientAddPage
+
+#Enlazar página "ClientUpdatePage" MVC/controller/clients/update/update_clients_controller.py 
+from MVC.controller.clients.update.update_clients_controller import ClientUpdatePage
+
 
 #Enlazar página de inicio "ConfigurationPage" MVC/controller/configuration/configuration_controller.py 
 from MVC.controller.configuration.configuration_controller import ConfigurationPage
@@ -92,7 +96,11 @@ from MVC.controller.charges.charges_controller import ChargePage
 #Enlazar página de inicio "ChargeAddPage" MVC/controller/charges/add/add_charges_controller.py 
 from MVC.controller.charges.add.add_charges_controller import ChargeAddPage
 
-#Enlazar página de inicio "ChargeAddPage" MVC/controller/charges/add/add_charges_controller.py 
+
+#Enlazar página de inicio "ChargeChooseImagePage" MVC/controller/charges/choose_image_charges/choose_image_charges_controller.py 
+from MVC.controller.charges.choose_image_charges.choose_image_charges_controller import ChargeChooseImagePage
+
+#Enlazar página de inicio "MoneyHistoryPage" MVC/controller/money_history/money_history_controller.py 
 from MVC.controller.money_history.money_history_controller import MoneyHistoryPage
 
 #Enlazar página de inicio "LoanPage" MVC/controller/loans/loans_controller.py 
@@ -173,10 +181,6 @@ class DatePicker():
 #CLASE DE LA APLICACION
 class App(MDApp):
 
-    modals = ModalsDialog()
-    datePicker = DatePicker()
-    database = DatabaseClass()
-    functions_callback = functions.FunctionsKivys()
 
 
     #LO PRIMERO QUE SE CARGA
@@ -190,6 +194,13 @@ class App(MDApp):
         #CARGA LOS DATOS DE .KV
         self.screen = Builder.load_file("styles.kv")
 
+        #self.table = RecycleViewTable()
+        
+        self.modals = ModalsDialog()
+        self.datePicker = DatePicker()
+        self.database = DatabaseClass()
+        self.functions_callback = functions.FunctionsKivys()
+        #self.table = RecycleViewTable()
         ##  MENU 2RA MANERA, PARA SOLO MDBUTTON
         #Menu almacen 
 

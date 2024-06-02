@@ -1,6 +1,9 @@
 from kivymd.uix.screen import MDScreen
 import MVC.controller.functions as functions
 
+from MVC.model.charges.charges_model import ChargesDB
+import concurrent.futures
+
 #pagina de encargo
 class ChargePage(MDScreen):
     
@@ -20,9 +23,16 @@ class ChargePage(MDScreen):
     
     
     def CallbackMenuCharge(self, button):
-
-
         functions.MenuAndTitleSelect.DropMenu("self", button, functions.global_variable_self.MenuTypeChargePage)
+
+    def ShowDataChargesController(self, start, end, state):
+
+
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            future = executor.submit(ChargesDB.ShowDataChargesModel, start,end,state)
+            return_value = future.result()
+
+            return return_value
 
 
     ## CALLBACK DEL SELECT BUSCADOR DEL MENU ALMACEN
