@@ -6,6 +6,8 @@ from pymongo.server_api import ServerApi
 from passlib.hash import sha256_crypt
 from bson import ObjectId
 
+
+import certifi
 #username: giwileb320
 #password: w1ILQeJTCTtqVfba
 
@@ -20,8 +22,11 @@ class DatabaseClass():
 
         # global variables for MongoDB host (default port is 27017)
         uri = "mongodb+srv://jorge:jorge123@databaseiv.yogxdsl.mongodb.net/?retryWrites=true&w=majority&appName=DataBaseIV"
+
+        #uri = "mongodb://jorge:jorge123@ac-mstim7j-shard-00-00.yogxdsl.mongodb.net:27017,ac-mstim7j-shard-00-01.yogxdsl.mongodb.net:27017,ac-mstim7j-shard-00-02.yogxdsl.mongodb.net:27017/?replicaSet=atlas-p18cpb-shard-0&ssl=true&authSource=admin"
         # Create a new client and connect to the server
-        client = MongoClient(uri, server_api=ServerApi('1'))
+        #client = MongoClient(uri, server_api=ServerApi('1'))
+        client = MongoClient(uri, server_api=ServerApi('1'),  tlsCAFile=certifi.where())
 
         # Send a ping to confirm a successful connection
         try:
@@ -37,6 +42,8 @@ class DatabaseClass():
 
 
         except Exception as e:
+            print()
+            print('ERROR AQUI ESTá!')
             print(e)
 
     def InsertData():

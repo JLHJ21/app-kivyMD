@@ -130,7 +130,7 @@ from database.database import DatabaseClass
 import MVC.controller.functions as functions
 
 
-#Window.size = (600, 800)
+#Window.size = ( 720, 1600 )
 
 #OJO
 #root.nav_drawer.set_state("close")

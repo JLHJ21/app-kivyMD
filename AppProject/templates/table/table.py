@@ -49,8 +49,9 @@ global_dictionary = []
 
 global_rv = {}
 
-global_self_modal = global_id_modal = global_modal_rv = None
+global_self_modal = global_id_modal = global_modal_rv = global_different_column = None
 
+global_self_shoppingCart = None
 #global_dictionary_table_data = {}
 
     
@@ -200,14 +201,17 @@ class SelectableLabel(RecycleDataViewBehavior, MDFlatButton):
             return self.parent.select_with_touch(self.index, touch)
         
     #Controller de los datos de los modales
-    def ButtonDialog(self, idObject, rvObject):
+    def ButtonDialog(self, idObject, rvObject, diferrentColumn):
 
-        #
-        global global_self_modal, global_id_modal, global_modal_rv
+        print(idObject)
+        global global_self_modal, global_id_modal, global_modal_rv, global_different_column
 
         global_self_modal = self
         global_id_modal = idObject
         global_modal_rv = rvObject
+
+        #Si no se escribe nada en la booleana differentColumn, siempre será False
+        global_different_column = diferrentColumn
 
 
         #la variable self de la funcion, se relaciona con la clase RecycleViewTable, no con esta clase SelectableTable
@@ -230,6 +234,9 @@ class RecycleViewTable(MDBoxLayout):
     root = ObjectProperty(None)
     DirectionPagination = StringProperty(None)
 
+    differentColumn = StringProperty(None)
+    customModal = StringProperty('')
+
     
     #Variables sobre datos a mostrar en la tabla 'Funcionamiento'
     list_table_labels = ListProperty([])
@@ -246,6 +253,8 @@ class RecycleViewTable(MDBoxLayout):
 
     #Modal DATOS UPDATE
     modalChooseUpdate = StringProperty(None)
+
+    shoppingCart = ObjectProperty(None)
 
     
     #boleana = True
@@ -270,6 +279,7 @@ class RecycleViewTable(MDBoxLayout):
         #Mediante el uso de Clock, ya que __init__ inicia antes de que el .kv exista
         #Clock.schedule_once(lambda dt: SelectableLabel.CreateLabelsWidgets(global_selectable))
 
+        Clock.schedule_once(lambda dt: self.shoppingCartIdTable(self))
 
         Clock.schedule_once(lambda dt: self.CreateLabels(self))
         #Clock.schedule_once(lambda dt: self.on_window_resize)
@@ -291,18 +301,22 @@ class RecycleViewTable(MDBoxLayout):
                 widget.font_size = dp(font_size)
     '''
 
+    def shoppingCartIdTable(self, *args):
+
+        if self.objecto.shoppingCart != None:
+            global global_self_shoppingCart
+            global_self_shoppingCart = self.objecto.rv
+
+
     #TITULO
     def CreateLabels(self, *args):
 
 
 
-        global global_id_table,  global_need_image #global_columnas, global_dictionary_table_data, 
+        global global_id_table,  global_need_image, global_rv #global_columnas, global_dictionary_table_data, 
 
 
         global_need_image = self.objecto.need_image
-
-
-        global global_rv
 
 
         item = {self.objecto.rv: self}
@@ -351,10 +365,6 @@ class RecycleViewTable(MDBoxLayout):
 
 
     def TableData(self, dictionary, direction = ''):
-
-        print()
-        print('OKKKKKKKKKKK')
-        print()
 
         self.objecto.DirectionPagination = direction
 
@@ -434,7 +444,9 @@ class RecycleViewTable(MDBoxLayout):
 
 
                 #crea diccionario el on_release al diccionario principal
-                i = {'on_release': partial(SelectableLabel.ButtonDialog, self.objecto, idObject, self.objecto.rv)}
+                i = {'on_release': partial(SelectableLabel.ButtonDialog, self.objecto, idObject, self.objecto.rv, self.objecto.differentColumn)}
+
+                
                 #agrega el on_release
                 d.update(i)
 
@@ -451,35 +463,90 @@ class ModalsDialog():
     #Modal 1
     def ShowAlertDialog(self = None, title = '', text = '', optionOne = '', optionTwo = '', optionThree = '', releaseOne = None, releaseTwo = None, releaseThree = None):
         
-        #Si no existe, normalmente no, lo crea
-        #if not RecycleViewTable.dialog:
-        #Caracteristicas
-        RecycleViewTable.dialog = MDDialog(
-            title= "¿Que desea realizar?",
-            text= "Por favor, elija algunas de las opciones presentadas.",
-            buttons=[
-                #Boton de Cancelar
-                MDFlatButton(
-                    text= 'Cancelar',
-                    #text_color=self.theme_cls.primary_color,
-                    on_press = lambda x: ModalsDialog.CloseDialog(RecycleViewTable.dialog.dismiss())
-                ),
-                #Boton de eliminar
-                MDRaisedButton(
-                    text= 'Eliminar',
-                    md_bg_color="red",
-                    text_color="white",
-                    on_press = lambda x: ModalsDialog.ShowAlertDialogDelete()
-                ),
-                #Boton de Aceptar
-                MDRaisedButton(
-                    text= 'Modificar',
-                    md_bg_color="orange",
-                    on_release = lambda x: ModalsDialog.ChooseUpdateObject()
-                                                    
-                ),
-            ],
-        )
+        if global_different_column == 'tableProductsCart':
+            
+            custom_modal =  global_rv[global_modal_rv].objecto.customModal
+
+            #Caracteristicas
+            RecycleViewTable.dialog = MDDialog(
+                title= "¿Que desea realizar?",
+                text= "Por favor, elija algunas de las opciones presentadas.",
+                buttons=[
+                    #Boton de Cancelar
+                    MDFlatButton(
+                        text= 'Cancelar',
+                        #text_color=self.theme_cls.primary_color,
+                        on_press = lambda x: ModalsDialog.CloseDialog(RecycleViewTable.dialog.dismiss())
+                    ),
+                    #Boton de Agregar al Carrito
+                    MDRaisedButton(
+                        text= 'Agregar al carrito',
+                        md_bg_color="red",
+                        text_color="white",
+                        on_press = lambda x: exec(custom_modal)
+                    )
+                ],
+            )
+        elif global_different_column == 'tableProductsShoppingCart':
+            #Caracteristicas
+            RecycleViewTable.dialog = MDDialog(
+                title= "¿Que desea realizar?",
+                text= "Por favor, elija algunas de las opciones presentadas.",
+                buttons=[
+                    #Boton de Cancelar
+                    MDFlatButton(
+                        text= 'Cancelar',
+                        #text_color=self.theme_cls.primary_color,
+                        on_press = lambda x: ModalsDialog.CloseDialog(RecycleViewTable.dialog.dismiss())
+                    ),
+                    #Boton de eliminar
+                    MDRaisedButton(
+                        text= 'Eliminar',
+                        md_bg_color="red",
+                        text_color="white",
+                        on_press = lambda x: ModalsDialog.ShowAlertDialogDelete()
+                    ),
+                    #Boton de Aceptar
+                    MDRaisedButton(
+                        text= 'Modificar',
+                        md_bg_color="orange",
+                        on_release = lambda x: ModalsDialog.ChooseUpdateObject()
+                                                        
+                    ),
+                ],
+            )
+        else:
+        
+
+            #Si no existe, normalmente no, lo crea
+            #if not RecycleViewTable.dialog:
+            #Caracteristicas
+            RecycleViewTable.dialog = MDDialog(
+                title= "¿Que desea realizar?",
+                text= "Por favor, elija algunas de las opciones presentadas.",
+                buttons=[
+                    #Boton de Cancelar
+                    MDFlatButton(
+                        text= 'Cancelar',
+                        #text_color=self.theme_cls.primary_color,
+                        on_press = lambda x: ModalsDialog.CloseDialog(RecycleViewTable.dialog.dismiss())
+                    ),
+                    #Boton de eliminar
+                    MDRaisedButton(
+                        text= 'Eliminar',
+                        md_bg_color="red",
+                        text_color="white",
+                        on_press = lambda x: ModalsDialog.ShowAlertDialogDelete()
+                    ),
+                    #Boton de Aceptar
+                    MDRaisedButton(
+                        text= 'Modificar',
+                        md_bg_color="orange",
+                        on_release = lambda x: ModalsDialog.ChooseUpdateObject()
+                                                        
+                    ),
+                ],
+            )
         #Abre el modal
         RecycleViewTable.dialog.open()
 
@@ -491,7 +558,7 @@ class ModalsDialog():
 
         #Cierra el modal 1
         ModalsDialog.CloseDialog(RecycleViewTable.dialog.dismiss())
-        
+
         #Si no existe, normalmente no, lo crea
         #if not RecycleViewTable.dialog2:
         RecycleViewTable.dialog2 = MDDialog(
@@ -512,11 +579,46 @@ class ModalsDialog():
                     #Dar click a este boton, Aceptar eliminar, llama la función ChooseDeleteConfirmationObject
                     on_release = lambda x: ModalsDialog.ChooseDeleteConfirmationObject()
                 ),
-            ],
+            ]
         )
 
         #Abre el modal
         RecycleViewTable.dialog2.open()
+
+    #Modal 3
+    '''
+    def ShowAddProducts(self):
+        title_delete_confirmation = global_rv[global_modal_rv].objecto.modalChooseDeleteConfirmationTitle
+        text_delete_confirmation = global_rv[global_modal_rv].objecto.modalChooseDeletConfirmationeText
+
+        custom_modal = global_rv[global_modal_rv].objecto.customModal
+        #Cierra el modal 1
+        ModalsDialog.CloseDialog(RecycleViewTable.dialog.dismiss())
+
+        RecycleViewTable.dialog2 = MDDialog(
+                title=title_delete_confirmation,
+                type="custom",
+                content_cls=custom_modal,
+                buttons=[
+                    MDFlatButton(
+                        text="Cancelar",
+                        md_bg_color="red",
+                        text_color="white",
+        
+                        #on_release = lambda x='': self.CloseDialog(self_name)
+                    ),
+                    MDRaisedButton(
+                        text="Aceptar",
+                        md_bg_color="blue",
+                        #on_release= lambda x='': self.OptionsChageUserData(indexData, global_self_content_configuration.ids.inputOne.text, global_self_content_configuration.ids.inputTwo.text, self_name)
+                        #text_color=self.theme_cls.primary_color,
+                    ), 
+                ],
+            )
+        
+        #Abre el modal
+        RecycleViewTable.dialog2.open()
+    '''
 
     #Cerrar Modal
     def CloseDialog(typeDialog):
@@ -723,6 +825,25 @@ class ModalsDialog():
         with concurrent.futures.ThreadPoolExecutor() as executor:
             executor.submit(global_rv[global_modal_rv].objecto.TableData, global_rv[global_modal_rv].objecto.DictionaryDataset, '')
 
+    def ActualizeData(self, global_modal_rv):   
+
+
+        #self = global_rv[global_modal_rv]
+        #print(global_modal_rv.objecto.test)
+
+        exec(self.objecto.test)
+
+        ModalsDialog.ChangeItemsAmountButtons('', global_modal_rv)
+        
+
+    '''
+    def CallAgainTableData():
+
+        exec('global_rv[global_modal_rv].objecto.DictionaryDataset.update(global_rv[global_modal_rv].objecto.root.ShowDataCashierProductsShoppingCartController(global_rv[global_modal_rv].objecto.StartPagination, global_rv[global_modal_rv].objecto.StaticItemsAccountPagination, global_rv[global_modal_rv].objecto.DirectionPagination))')
+        
+        print('HECHO')
+    ''' 
+
     #def ChooseDeleteObject(*args):
     #    option_delete = global_rv[global_modal_rv].objecto.modalChooseDelete
         
@@ -791,5 +912,7 @@ class ModalsDialog():
         )
         #Abre el modal
         RecycleViewTable.dialogShowUpdate.open()
+
+    
 
 ############
