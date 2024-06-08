@@ -1,8 +1,13 @@
 from kivy.properties import StringProperty
 from kivymd.uix.screen import MDScreen
+from kivymd.uix.scrollview import MDScrollView
 
 import MVC.controller.functions as functions
 
+
+
+class ScrollViewCustom(MDScrollView):
+    pass
 
 #PAGINA DE INICIO
 class InitialPage(MDScreen):    

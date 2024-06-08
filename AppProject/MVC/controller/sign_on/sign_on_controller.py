@@ -1,10 +1,16 @@
 
 from kivymd.uix.screen import MDScreen
+from kivymd.uix.scrollview import MDScrollView
+
 from MVC.model.sign_on.sign_on_model import SignOnDatabase
 from passlib.hash import sha256_crypt
 
 
 import MVC.controller.functions as functions
+
+
+class ScrollViewCustom(MDScrollView):
+    pass
 
 #PAGINA DE REGISTRAR CUENTA
 class SignOnPage(MDScreen):

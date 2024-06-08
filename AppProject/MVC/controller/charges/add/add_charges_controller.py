@@ -496,6 +496,7 @@ class ChargeAddPage(MDScreen):
                             
                             verificationProduct= False,
                             icon_left= 'alpha-p-circle-outline',
+                            required= True
                         )
                 case 1:
                     #crea el widget
@@ -506,7 +507,9 @@ class ChargeAddPage(MDScreen):
 
                             max_text_length= 10,
                             input_filter= 'int',
-                            write_tab= False
+                            write_tab= False,
+                            required= True
+
                         
                         )
                 case 2:
@@ -521,6 +524,8 @@ class ChargeAddPage(MDScreen):
                             max_text_length= 10,
                             input_filter= 'float',
                             write_tab= False,
+                            required= True
+
                         )
                 case 3:
                     #onText = 'ganancia'
@@ -534,6 +539,7 @@ class ChargeAddPage(MDScreen):
                             max_text_length= 10,
                             input_filter= 'float',
                             write_tab= False,
+                            required= True
                         )
             
             #Lo añade al grid creado desde el comienzo
@@ -734,6 +740,30 @@ class ChargeAddPage(MDScreen):
         
         if return_value == True:
             
+
+            from MVC.controller.charges.charges_controller import self_charge_page
+            from MVC.controller.store.store_controller import self_store_page
+
+            from templates.table.table import ModalsDialog
+
+            objecto = self_charge_page.ids.tableCharge.objecto
+            objectoRv = self_charge_page.ids.tableCharge.objecto.rv
+
+            objectoStore = self_store_page.ids.tableAlmacen.objecto
+            objectoStoreRv = self_store_page.ids.tableAlmacen.objecto.rv
+
+            #el primero es el objecto (variable objecto que lleva el widget weak), el segundo es el objecto.rv del recycleview
+            
+            with concurrent.futures.ThreadPoolExecutor() as executor:
+                #Actualiza de la tabla Encargos/Compra
+                executor.submit(ModalsDialog.ActualizeData, objecto, objectoRv)
+                #Actualiza de la tabla Encargos/Compra
+                executor.submit(ModalsDialog.ActualizeData, objectoStore, objectoStoreRv)
+
+            toast('¡Compra agregada con éxito!')            
             functions.FunctionsKivys.ChangePage('self', 'ChargePage','Encargo')
+
+        else:
+            toast('Hubo un error' + str( return_value ))
 
         

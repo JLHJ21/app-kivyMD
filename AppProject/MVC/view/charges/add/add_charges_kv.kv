@@ -116,6 +116,8 @@
                         #on_text: root.ChangeIconProduct(root.ids.idProducto.text)
                         verificationProduct: False
 
+                        required: True
+
 
                     MDTextField:
                         id: idCantidad
@@ -129,6 +131,7 @@
                         input_filter: 'int'
 
                         write_tab: False
+                        required: True
 
                     TextInputBuyAndProfit:
                         id: idCompra
@@ -141,6 +144,7 @@
                         max_characters: 10
                         input_filter: 'float'
                         write_tab: False
+                        required: True
 
                         on_text: root.updateNumberTextChargeNew()
 
@@ -155,6 +159,7 @@
                         max_characters: 10
                         input_filter: 'float'
                         write_tab: False
+                        required: True
 
                         on_text: root.updateNumberTextChargeNew()
 

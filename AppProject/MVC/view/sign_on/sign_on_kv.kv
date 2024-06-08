@@ -2,15 +2,22 @@
 <SignOnPage>:
     name: "SignOnPage"
 
+    
     MDBoxLayout:
-        #adaptive_height: True
-        orientation: 'horizontal'
-        padding: dp(100)
-        MDScrollView:
+        id: boxLayoutAllScreen
+        orientation: 'vertical'
+        padding: dp(16), dp(root.manager.parent.parent.ids.toolbar.height), dp(16), dp(root.manager.parent.parent.ids.toolbarbottom.height)
+
+        ScrollViewCustom:
 
             MDGridLayout:
                 cols: 1
-                adaptive_height: True
+
+                size_hint_y: None
+                height: self.minimum_height
+                padding: dp(16), dp(16), dp(16),  dp(8)
+
+                padding: dp(100 - root.manager.parent.parent.ids.toolbar.height)
 
                 MDLabel:
                     text: 'REGISTRAR CUENTA'

@@ -2,80 +2,93 @@
 <ClientsPage>:
     name: "ClientsPage"
 
+    
+    
     MDBoxLayout:
+        id: boxLayoutAllScreen
         orientation: 'vertical'
-        size_hint: 1, 1
-        MDGridLayout:
-            cols: 1
-            padding: dp(16), dp(root.manager.parent.parent.ids.toolbar.height), dp(16), dp(root.manager.parent.parent.ids.toolbarbottom.height)
-                    
+        padding: dp(16), dp(root.manager.parent.parent.ids.toolbar.height), dp(16), dp(root.manager.parent.parent.ids.toolbarbottom.height)
+       
+        MDScrollView:
+
             MDGridLayout:
-                cols: 5
-                spacing: dp(10)
-                padding: dp(16), dp(16), dp(16), dp(16)
+                cols: 1
+
                 size_hint_y: None
-                height: dp(root.manager.parent.parent.ids.toolbar.height)
-                MDTextField:
-                    id: ButtonMenuSearchingClient
+                height: self.minimum_height   
 
-                    size_hint_x: None
-                    width: "100dp"
+                MDGridLayout:
+                    cols: 5
+                    spacing: dp(10)
+                    padding: dp(16), dp(16), dp(16), dp(16)
+                    size_hint_y: None
+                    height: dp(root.manager.parent.parent.ids.toolbar.height)
 
-                    text: "TODO"
-                    hint_text: "Tipo:"
-                    icon_right: "arrow-down"
+                    MDTextField:
+                        id: ButtonMenuSearchingClient
 
-                    mode: "rectangle"
-                    readonly: True 
-                    focus: True
+                        size_hint_x: None
+                        width: "100dp"
 
-                    on_focus: if self.focus: root.CallbackMenuClients(self)
+                        text: "TODO"
+                        hint_text: "Tipo:"
+                        icon_right: "arrow-down"
 
-                MDTextField:
-                    id: SearchProduct
-                    hint_text: 'Buscar cliente'
-                    icon_right: "android"
-                    mode: "rectangle"
+                        mode: "rectangle"
+                        readonly: True 
+                        focus: True
 
-                    size_hint_x: None
-                    width: "400dp"
+                        on_focus: if self.focus: root.CallbackMenuClients(self)
 
-                MDFloatingActionButton:
-                    id: ButtonSearchingClient
+                    MDTextField:
+                        id: SearchProduct
+                        hint_text: 'Buscar cliente'
+                        icon_right: "android"
+                        mode: "rectangle"
 
-                    icon: "book-search"
-                    type: "standard"
+                        size_hint_x: None
+                        width: "400dp"
 
-                MDLabel:
+                    MDFloatingActionButton:
+                        id: ButtonSearchingClient
 
-                MDFloatingActionButton:
-                    icon: "account-multiple-plus"
-                    type: "standard"
+                        icon: "book-search"
+                        type: "standard"
 
-                    on_release: root.ChangePageClientPage()
+                    MDLabel:
+
+                    MDFloatingActionButton:
+                        icon: "account-multiple-plus"
+                        type: "standard"
+
+                        on_release: root.ChangePageClientPage()
 
 
-            
-            RecycleViewTable:
+                
+                RecycleViewTable:
 
-                id: tableClient
-                id_table: "tableCliente"
+                    
+                    size_hint_y: None
+                    height: dp(400)
 
-                padding: dp(16), dp(root.manager.parent.parent.ids.toolbar.height / 2), dp(16), dp(root.manager.parent.parent.ids.toolbarbottom.height /2)
+                    id: tableClient
+                    id_table: "tableCliente"
 
-                objecto: self
-                need_image: False
-                columns: 3
-                root: root
+                    padding: dp(16), dp(root.manager.parent.parent.ids.toolbar.height / 2), dp(16), dp(root.manager.parent.parent.ids.toolbarbottom.height /2)
 
-                titles_labels: ["Nombre", "Cédula", "Teléfono"]
-                list_table_data: ["name_client", "id_client", "phone_client"]
+                    objecto: self
+                    need_image: False
+                    columns: 3
+                    root: root
 
-                #Datos del Modal de eliminar "¿Esta seguro?"
-                modalChooseDeleteConfirmationTitle: '¿De verdad quiere eliminar a este cliente?'
-                modalChooseDeletConfirmationeText: 'Recuerda que esta opción no se puede revertir.'
-                modalChooseDeleteConfirmation: 'from MVC.model.clients.clients_model import ClientsDB; ClientsDB.DeleteClient(global_id_modal); self = global_self_modal; exec(self.test)'
+                    titles_labels: ["Nombre", "Cédula", "Teléfono"]
+                    list_table_data: ["name_client", "id_client", "phone_client"]
 
-                modalChooseUpdate: 'ModalsDialog.ChangePage("self","ClientUpdatePage", "Cliente - Modificar")'
+                    #Datos del Modal de eliminar "¿Esta seguro?"
+                    modalChooseDeleteConfirmationTitle: '¿De verdad quiere eliminar a este cliente?'
+                    modalChooseDeletConfirmationeText: 'Recuerda que esta opción no se puede revertir.'
+                    modalChooseDeleteConfirmation: 'from MVC.model.clients.clients_model import ClientsDB; ClientsDB.DeleteClient(global_id_modal); self = global_self_modal; exec(self.test)'
 
-                test: 'self.objecto.DictionaryDataset.update(self.objecto.root.ShowDataClientsController(self.objecto.StartPagination, self.objecto.StaticItemsAccountPagination, self.objecto.DirectionPagination))'
+                    modalChooseUpdate: 'ModalsDialog.ChangePage("self","ClientUpdatePage", "Cliente - Modificar")'
+
+                    test: 'self.objecto.DictionaryDataset.update(self.objecto.root.ShowDataClientsController(self.objecto.StartPagination, self.objecto.StaticItemsAccountPagination, self.objecto.DirectionPagination))'

@@ -2,132 +2,137 @@
     name: "ConfigurationPage"
 
     MDBoxLayout:
+        id: boxLayoutAllScreen
+        orientation: 'vertical'
+        padding: dp(16), dp(root.manager.parent.parent.ids.toolbar.height), dp(16), dp(root.manager.parent.parent.ids.toolbarbottom.height)
 
-        padding: dp(1), dp(root.manager.parent.parent.ids.toolbar.height), dp(1), dp(root.manager.parent.parent.ids.toolbarbottom.height)
-        
-        MDGridLayout:
-            cols: 1
-            padding: dp(16), dp(8)
-                    
+        MDScrollView:
             MDGridLayout:
                 cols: 1
-                padding: dp(1), dp(32)
-
+                            
                 size_hint_y: None
-                height: self.minimum_height  # required to size GridLayout
-
-                MDLabel:
-                    text: "Modificar datos de la cuenta"
-                    halign: "center"
-                    font_style: "H4"
-
-            MDGridLayout:
-                cols: 3
-                spacing: dp(20)
-                padding: dp(16), dp(0), dp(16), dp(8) 
-                size_hint_y: None
-                height: self.minimum_height  # required to size GridLayout
-                MDLabel:
-                    size_hint_x: 0.38
-                    #width: "250dp"
-                    padding: dp(32), dp(1)
-
-                    text: "Nombre:"
-                    halign: "right"
-                    font_style: "H5"
-                
-                MDTextField:
-
-                    id: usernameConfiguration
-                    size_hint_x: 0.7
-                    #width: "375dp"
-
-                    hint_text: "Usuario actual"
-                    text: "NOMBREDEUSUARIO"
-
-                    mode: "rectangle"
-                
-                MDFloatingActionButton:
-                    size_hint_x: 0.1
+                height: self.minimum_height
                     
-                    icon: "account-multiple-plus"
-                    type: "standard"
-
-                    on_release: root.OpenModal("Usuario", "Repetir usuario", "dialogUsername", "Cambiar usuario")
-
-
-            MDGridLayout:
-                cols: 3
-                spacing: dp(20)
-                padding: dp(16), dp(8)
-                #padding: ["16dp", "16dp", "16dp", "16dp"]  if len(inputSupplierMenu.text) == 0 else ["16dp", "8dp", "16dp", "8dp"] 
-                size_hint_y: None
-                height: self.minimum_height  # required to size GridLayout
-                MDLabel:
-                    size_hint_x: 0.38
-                    #width: "250dp"
-                    padding: dp(32), dp(1)
-
-                    text: "Correo:"
-                    halign: "right"
-                    font_style: "H5"
-                
-                MDTextField:
-
-                    id: emailConfiguration
-                    size_hint_x: 0.7
-
-                    hint_text: "Correo electrónico actual"
-                    text: "CORREODEPRUEBA@GMAIL.COM"
-
+                MDGridLayout:
+                    cols: 1
+                    padding: dp(32)
                     
-                    mode: "rectangle"
+                    size_hint_y: None
+                    height: dp(20)
 
-                MDFloatingActionButton:
-                    size_hint_x: 0.1
+
+                    MDLabel:
+                        text: "Modificar datos de la cuenta"
+                        halign: "center"
+                        font_style: "H4"
+
+                MDGridLayout:
+                    cols: 3
+                    spacing: dp(20)
+                    padding: dp(16), dp(0), dp(16), dp(8) 
+                    size_hint_y: None
+                    height: dp(100) # required to size GridLayout
+                    MDLabel:
+                        size_hint_x: 0.38
+                        #width: "250dp"
+                        padding: dp(32), dp(1)
+
+                        text: "Nombre:"
+                        halign: "right"
+                        font_style: "H5"
                     
-                    icon: "account-multiple-plus"
-                    type: "standard"
+                    MDTextField:
 
-                    on_release: root.OpenModal("Correo electrónico", "Repetir correo electrónico", "dialogEmail", "Cambiar correo electrónico")
+                        id: usernameConfiguration
+                        size_hint_x: 0.7
+                        #width: "375dp"
 
-            MDGridLayout:
-                cols: 3
-                spacing: dp(20)
-                padding: dp(16), dp(8)
-                size_hint_y: None
-                height: self.minimum_height  # required to size GridLayout
-                MDLabel:
-                    size_hint_x: 0.38
-                    #width: "250dp"
-                    padding: dp(32), dp(1)
+                        hint_text: "Usuario actual"
+                        text: "NOMBREDEUSUARIO"
 
-                    text: "Contraseña:"
-                    halign: "right"
-                    font_style: "H5"
-                
-                MDTextField:
-
-                    id: passwordConfiguration
-                    size_hint_x: 0.7
-                    #width: "375dp"
-                    text: 'contraseña12345'
-
-                    hint_text: "Contraseña actual"
-                    text: "CONTRASEÑAACTUAL"
-
-                    password: True
-                    password_mask: "X"
-
-                    mode: "rectangle"
-                
-                MDFloatingActionButton:
-                    size_hint_x: 0.1
+                        mode: "rectangle"
                     
-                    icon: "account-multiple-plus"
-                    type: "standard"
+                    MDFloatingActionButton:
+                        size_hint_x: 0.1
+                        
+                        icon: "account-multiple-plus"
+                        type: "standard"
 
-                    on_release: root.OpenModal("Contraseña", "Repetir contraseña", "dialogPassword", "Cambiar contraseña")
+                        on_release: root.OpenModal("Usuario", "Repetir usuario", "dialogUsername", "Cambiar usuario")
+
+
+                MDGridLayout:
+                    cols: 3
+                    spacing: dp(20)
+                    padding: dp(16), dp(8)
+                    #padding: ["16dp", "16dp", "16dp", "16dp"]  if len(inputSupplierMenu.text) == 0 else ["16dp", "8dp", "16dp", "8dp"] 
+                    size_hint_y: None
+                    height: self.minimum_height  # required to size GridLayout
+                    MDLabel:
+                        size_hint_x: 0.38
+                        #width: "250dp"
+                        padding: dp(32), dp(1)
+
+                        text: "Correo:"
+                        halign: "right"
+                        font_style: "H5"
+                    
+                    MDTextField:
+
+                        id: emailConfiguration
+                        size_hint_x: 0.7
+
+                        hint_text: "Correo electrónico actual"
+                        text: "CORREODEPRUEBA@GMAIL.COM"
+
+                        
+                        mode: "rectangle"
+
+                    MDFloatingActionButton:
+                        size_hint_x: 0.1
+                        
+                        icon: "account-multiple-plus"
+                        type: "standard"
+
+                        on_release: root.OpenModal("Correo electrónico", "Repetir correo electrónico", "dialogEmail", "Cambiar correo electrónico")
+
+                MDGridLayout:
+                    cols: 3
+                    spacing: dp(20)
+                    padding: dp(16), dp(8)
+                    size_hint_y: None
+                    height: self.minimum_height  # required to size GridLayout
+                    MDLabel:
+                        size_hint_x: 0.38
+                        #width: "250dp"
+                        padding: dp(32), dp(1)
+
+                        text: "Contraseña:"
+                        halign: "right"
+                        font_style: "H5"
+                    
+                    MDTextField:
+
+                        id: passwordConfiguration
+                        size_hint_x: 0.7
+                        #width: "375dp"
+                        text: 'contraseña12345'
+
+                        hint_text: "Contraseña actual"
+                        text: "CONTRASEÑAACTUAL"
+
+                        password: True
+                        password_mask: "X"
+
+                        mode: "rectangle"
+                    
+                    MDFloatingActionButton:
+                        size_hint_x: 0.1
+                        
+                        icon: "account-multiple-plus"
+                        type: "standard"
+
+                        on_release: root.OpenModal("Contraseña", "Repetir contraseña", "dialogPassword", "Cambiar contraseña")
 
 
 

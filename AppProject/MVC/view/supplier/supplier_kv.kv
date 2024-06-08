@@ -5,11 +5,16 @@
     name: "SupplierPage"
 
     MDBoxLayout:
+        id: boxLayoutAllScreen
+        orientation: 'vertical'
+        padding: dp(16), dp(root.manager.parent.parent.ids.toolbar.height), dp(16), dp(root.manager.parent.parent.ids.toolbarbottom.height)
 
-        padding: dp(1), dp(root.manager.parent.parent.ids.toolbar.height), dp(1), dp(root.manager.parent.parent.ids.toolbarbottom.height)
-
-        MDGridLayout:
-            cols: 1
+        MDScrollView:
+            MDGridLayout:
+                cols: 1
+                            
+                size_hint_y: None
+                height: self.minimum_height
              
             #MDGridLayout:
             #    cols: 1
@@ -23,72 +28,75 @@
             #        halign: "center"
             #        font_style: "H4"
 
-            MDGridLayout:
-                cols: 5
-                spacing: dp(10)
-                padding: dp(16), dp(16), dp(16), dp(16)
-                size_hint_y: None
-                height: dp(root.manager.parent.parent.ids.toolbar.height)
-                MDTextField:
-                    id: ButtonMenuSearchingSupplier
+                MDGridLayout:
+                    cols: 5
+                    spacing: dp(10)
+                    padding: dp(16), dp(16), dp(16), dp(16)
+                    size_hint_y: None
+                    height: dp(root.manager.parent.parent.ids.toolbar.height)
+                    MDTextField:
+                        id: ButtonMenuSearchingSupplier
 
-                    size_hint_x: None
-                    width: "100dp"
+                        size_hint_x: None
+                        width: "100dp"
 
-                    text: "TODO"
-                    hint_text: "Tipo:"
-                    icon_right: "arrow-down"
+                        text: "TODO"
+                        hint_text: "Tipo:"
+                        icon_right: "arrow-down"
 
-                    mode: "rectangle"
-                    readonly: True 
-                    focus: True
+                        mode: "rectangle"
+                        readonly: True 
+                        focus: True
 
-                    on_focus: if self.focus: root.CallbackMenuSupplier(self)
+                        on_focus: if self.focus: root.CallbackMenuSupplier(self)
 
-                MDTextField:
-                    id: SearchSupplier
-                    hint_text: 'Buscar proveedor'
-                    icon_right: "android"
-                    mode: "rectangle"
+                    MDTextField:
+                        id: SearchSupplier
+                        hint_text: 'Buscar proveedor'
+                        icon_right: "android"
+                        mode: "rectangle"
 
-                    size_hint_x: None
-                    width: "400dp"
+                        size_hint_x: None
+                        width: "400dp"
 
-                MDFloatingActionButton:
-                    id: ButtonSearchingSupplier
+                    MDFloatingActionButton:
+                        id: ButtonSearchingSupplier
 
-                    icon: "book-search"
-                    type: "standard"
+                        icon: "book-search"
+                        type: "standard"
 
-                MDLabel:
+                    MDLabel:
 
-                MDFloatingActionButton:
-                    icon: "account-multiple-plus"
-                    type: "standard"
+                    MDFloatingActionButton:
+                        icon: "account-multiple-plus"
+                        type: "standard"
 
-                    on_release: root.ChangePageSupplierPage()
+                        on_release: root.ChangePageSupplierPage()
 
 
-            RecycleViewTable:
+                RecycleViewTable:
 
-                id: tableSuppliers
-                id_table: "tableSuppliers"
+                    size_hint_y: None
+                    height: dp(400)
 
-                padding: dp(16), dp(root.manager.parent.parent.ids.toolbar.height / 2), dp(16), dp(root.manager.parent.parent.ids.toolbarbottom.height /2)
+                    id: tableSuppliers
+                    id_table: "tableSuppliers"
 
-                objecto: self
-                need_image: False
-                columns: 4
-                root: root
+                    padding: dp(16), dp(root.manager.parent.parent.ids.toolbar.height / 2), dp(16), dp(root.manager.parent.parent.ids.toolbarbottom.height /2)
 
-                titles_labels: ["Nombre", "Dirección", "RIF", "Teléfono"]
-                list_table_data: ["name_supplier", "address_supplier", "rif_supplier", "phone_supplier"]
+                    objecto: self
+                    need_image: False
+                    columns: 4
+                    root: root
 
-                #Datos del Modal de eliminar "¿Esta seguro?"
-                modalChooseDeleteConfirmationTitle: '¿De verdad quiere eliminar a este proveedor?'
-                modalChooseDeletConfirmationeText: 'Recuerda que esta opción no se puede revertir.'
-                modalChooseDeleteConfirmation: 'from MVC.model.supplier.supplier_model import SupplierDB; SupplierDB.DeleteSupplier(global_id_modal); self = global_self_modal; exec(self.test)'
+                    titles_labels: ["Nombre", "Dirección", "RIF", "Teléfono"]
+                    list_table_data: ["name_supplier", "address_supplier", "rif_supplier", "phone_supplier"]
 
-                modalChooseUpdate: 'ModalsDialog.ChangePage("self","SupplierUpdatePage", "Proveedor - Modificar")'
+                    #Datos del Modal de eliminar "¿Esta seguro?"
+                    modalChooseDeleteConfirmationTitle: '¿De verdad quiere eliminar a este proveedor?'
+                    modalChooseDeletConfirmationeText: 'Recuerda que esta opción no se puede revertir.'
+                    modalChooseDeleteConfirmation: 'from MVC.model.supplier.supplier_model import SupplierDB; SupplierDB.DeleteSupplier(global_id_modal); self = global_self_modal; exec(self.test)'
 
-                test: 'self.objecto.DictionaryDataset.update(self.objecto.root.ShowDataSupplierController(self.objecto.StartPagination, self.objecto.StaticItemsAccountPagination, self.objecto.DirectionPagination))'
+                    modalChooseUpdate: 'ModalsDialog.ChangePage("self","SupplierUpdatePage", "Proveedor - Modificar")'
+
+                    test: 'self.objecto.DictionaryDataset.update(self.objecto.root.ShowDataSupplierController(self.objecto.StartPagination, self.objecto.StaticItemsAccountPagination, self.objecto.DirectionPagination))'

@@ -4,75 +4,86 @@
     name: "ChargePage"
 
     MDBoxLayout:
+        id: boxLayoutAllScreen
+        orientation: 'vertical'
+        padding: dp(16), dp(root.manager.parent.parent.ids.toolbar.height), dp(16), dp(root.manager.parent.parent.ids.toolbarbottom.height)
 
-        padding: dp(1), dp(root.manager.parent.parent.ids.toolbar.height), dp(1), dp(root.manager.parent.parent.ids.toolbarbottom.height)
-
-        MDGridLayout:
-            cols: 1
-                        
+        MDScrollView:
             MDGridLayout:
-                cols: 5
-                spacing: dp(10)
-                padding: dp(16), dp(16), dp(16), dp(16)
+                cols: 1
+                            
                 size_hint_y: None
-                height: dp(root.manager.parent.parent.ids.toolbar.height)
-                MDTextField:
-                    id: ButtonMenuSearchingCharge
+                height: self.minimum_height
 
-                    size_hint_x: None
-                    width: "100dp"
+                MDGridLayout:
+                    cols: 5
+                    spacing: dp(10)
+                    padding: dp(16), dp(16), dp(16), dp(16)
 
-                    text: "TODO"
-                    hint_text: "Tipo:"
-                    icon_right: "arrow-down"
+                    size_hint_y: None
+                    height: dp(root.manager.parent.parent.ids.toolbar.height)
 
-                    mode: "rectangle"
-                    readonly: True 
-                    focus: True
+                    MDTextField:
+                        id: ButtonMenuSearchingCharge
 
-                    on_focus: if self.focus: root.CallbackMenuCharge(self)
+                        size_hint_x: None
+                        width: "100dp"
 
-                MDTextField:
-                    id: SearchProduct
-                    hint_text: 'Buscar encargo'
-                    icon_right: "android"
-                    mode: "rectangle"
+                        text: "TODO"
+                        hint_text: "Tipo:"
+                        icon_right: "arrow-down"
 
-                    size_hint_x: None
-                    width: "400dp"
+                        mode: "rectangle"
+                        readonly: True 
+                        focus: True
 
-                MDFloatingActionButton:
-                    id: ButtonSearchingCharge
+                        on_focus: if self.focus: root.CallbackMenuCharge(self)
 
-                    icon: "book-search"
-                    type: "standard"
+                    MDTextField:
+                        id: SearchProduct
+                        hint_text: 'Buscar encargo'
+                        icon_right: "android"
+                        mode: "rectangle"
 
-                    #on_release: root.test()
+                        size_hint_x: None
+                        width: "400dp"
 
-                MDLabel:
+                    MDFloatingActionButton:
+                        id: ButtonSearchingCharge
 
-                MDFloatingActionButton:
-                    icon: "account-multiple-plus"
-                    type: "standard"
+                        icon: "book-search"
+                        type: "standard"
 
-                    on_release: root.ChangePageChargeAddPage()
+                        #on_release: root.test()
 
-            
-            RecycleViewTable:
+                    MDLabel:
 
-                id_table: "tableCharge"
+                    MDFloatingActionButton:
+                        icon: "account-multiple-plus"
+                        type: "standard"
 
-                padding: dp(16), dp(root.manager.parent.parent.ids.toolbar.height / 2), dp(16), dp(root.manager.parent.parent.ids.toolbarbottom.height /2)
+                        on_release: root.ChangePageChargeAddPage()
 
-                objecto: self
-                need_image: False
-                columns: 4
-                root: root
-
-                titles_labels: ["Proveedor", "Compra", 'Fecha', "Cant. Productos"]
-                list_table_data: ["name_supplier", "buy_products", "date", "products"]
-
-                modalData: 
-                    'ModalsDialog.ShowAlertDialog("self","¿Que desea realizar?", "Por favor, elija algunas de las opciones presentadas.", "Cancelar", "Eliminar", "Modificar",  lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog.dismiss()),lambda x: ModalsDialog.ShowAlertDialogDelete ("self","¿De verdad quiere eliminar este producto?", "Si es así, adelante","Cancelar","Eliminar",lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog2.dismiss()),lambda x: print("cerrar")    ),lambda x: ModalsDialog.ChangePage("self", "StorePageUpdate", "Almacen - Modificar"))'
                 
-                test: 'self.objecto.DictionaryDataset.update(self.objecto.root.ShowDataChargesController(self.objecto.StartPagination, self.objecto.StaticItemsAccountPagination, self.objecto.DirectionPagination))'
+                RecycleViewTable:
+
+                    size_hint_y: None
+                    height: dp(400)
+
+                    id: tableCharge
+                    id_table: "tableCharge"
+
+                    padding: dp(16), dp(root.manager.parent.parent.ids.toolbar.height / 2), dp(16), dp(root.manager.parent.parent.ids.toolbarbottom.height /2)
+
+                    objecto: self
+                    need_image: False
+                    columns: 4
+                    root: root
+
+                    titles_labels: ["Proveedor", "Compra", 'Fecha', "Cant. Productos"]
+                    list_table_data: ["name_supplier", "buy_products", "date", "products"]
+
+                    modalData: 
+                        'ModalsDialog.ShowAlertDialog("self","¿Que desea realizar?", "Por favor, elija algunas de las opciones presentadas.", "Cancelar", "Eliminar", "Modificar",  lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog.dismiss()),lambda x: ModalsDialog.ShowAlertDialogDelete ("self","¿De verdad quiere eliminar este producto?", "Si es así, adelante","Cancelar","Eliminar",lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog2.dismiss()),lambda x: print("cerrar")    ),lambda x: ModalsDialog.ChangePage("self", "StorePageUpdate", "Almacen - Modificar"))'
+                    
+                    test: 'self.objecto.DictionaryDataset.update(self.objecto.root.ShowDataChargesController(self.objecto.StartPagination, self.objecto.StaticItemsAccountPagination, self.objecto.DirectionPagination))'

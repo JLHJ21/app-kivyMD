@@ -1,9 +1,16 @@
 
 from kivymd.uix.screen import MDScreen
+from kivymd.uix.scrollview import MDScrollView
+
 from MVC.model.sign_in.sign_in_model import SignInDatabase
 
 
 import MVC.controller.functions as functions
+
+
+class ScrollViewCustom(MDScrollView):
+    pass
+
 
 #PAGINA DE INICIAR SESION
 class SignInPage(MDScreen):

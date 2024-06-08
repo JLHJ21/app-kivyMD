@@ -2,69 +2,83 @@
 <StorePage>:
     name: "StorePage"
 
+    
     MDBoxLayout:
+        id: boxLayoutAllScreen
         orientation: 'vertical'
-        size_hint: 1, 1
-        MDGridLayout:
-            cols: 1
-            padding: dp(16), dp(root.manager.parent.parent.ids.toolbar.height), dp(16), dp(root.manager.parent.parent.ids.toolbarbottom.height)
-                    
+        padding: dp(16), dp(root.manager.parent.parent.ids.toolbar.height), dp(16), dp(root.manager.parent.parent.ids.toolbarbottom.height)
+
+        MDScrollView:
+
             MDGridLayout:
-                cols: 3
-                spacing: dp(20)
-                padding: dp(16), dp(16), dp(16), dp(16)
+                cols: 1                        
                 size_hint_y: None
-                height: dp(root.manager.parent.parent.ids.toolbar.height)
-                MDTextField:
-                    id: ButtonMenuSearchingStore
-
-                    size_hint_x: None
-                    width: "100dp"
-
-                    text: "TODO"
-                    hint_text: "Tipo:"
-                    icon_right: "arrow-down"
-
-                    mode: "rectangle"
-                    readonly: True 
-                    focus: True
-
-                    on_focus: if self.focus: root.CallbackMenuProduct(self)
-
-                MDTextField:
-                    id: SearchProduct
-                    hint_text: 'Buscar producto'
-                    icon_right: "android"
-                    mode: "rectangle"
-
-                MDFloatingActionButton:
-                    id: ButtonSearchingStore
-                    icon: "book-search"
-                    style: "standard"
-                    width: "100dp"
-
-                    on_release: root.test()
+                height: self.minimum_height
                     
+                MDGridLayout:
 
-            RecycleViewTable:
+                    
+                    size_hint_y: None
+                    height: dp(root.manager.parent.parent.ids.toolbar.height)
 
-                id_table: "tableAlmacen"
+                    cols: 3
+                    spacing: dp(20)
+                    padding: dp(16), dp(16), dp(16), dp(16)
+                    MDTextField:
+                        id: ButtonMenuSearchingStore
 
-                padding: dp(16), dp(root.manager.parent.parent.ids.toolbar.height / 2), dp(16), dp(root.manager.parent.parent.ids.toolbarbottom.height /2)
+                        size_hint_x: None
+                        width: "100dp"
 
-                objecto: self
-                need_image: False
-                columns: 5
-                root: root
+                        text: "TODO"
+                        hint_text: "Tipo:"
+                        icon_right: "arrow-down"
 
-                titles_labels: ["Nombre", "Cantidad", "Precio", 'Proveedor']
-                list_table_data: ["name_product", "amount_product", "profit_product", "name_supplier"]
+                        mode: "rectangle"
+                        readonly: True 
+                        focus: True
 
-                #Datos del Modal de eliminar "¿Esta seguro?"
-                modalChooseDeleteConfirmationTitle: '¿De verdad quiere eliminar a este producto?'
-                modalChooseDeletConfirmationeText: 'Recuerda que esta opción no se puede revertir.'
-                modalChooseDeleteConfirmation: 'from MVC.model.store.store_model import StoreDB; StoreDB.DeleteProduct(global_id_modal); self = global_self_modal; exec(self.test)'
+                        on_focus: if self.focus: root.CallbackMenuProduct(self)
 
-                modalChooseUpdate: 'ModalsDialog.ChangePage("self","StorePageUpdate", "Almacen - Modificar")'
+                    MDTextField:
+                        id: SearchProduct
+                        hint_text: 'Buscar producto'
+                        icon_right: "android"
+                        mode: "rectangle"
 
-                test: 'self.objecto.DictionaryDataset.update(self.objecto.root.ShowDataStoreController(self.objecto.StartPagination, self.objecto.StaticItemsAccountPagination, self.objecto.DirectionPagination))'
+                    MDFloatingActionButton:
+                        id: ButtonSearchingStore
+                        icon: "book-search"
+                        style: "standard"
+                        width: "100dp"
+
+                        on_release: root.test()
+                        
+
+                RecycleViewTable:
+
+                    
+                    size_hint_y: None
+                    height: dp(400)
+
+                    id: tableAlmacen
+                    id_table: "tableAlmacen"
+
+                    padding: dp(16), dp(root.manager.parent.parent.ids.toolbar.height / 2), dp(16), dp(root.manager.parent.parent.ids.toolbarbottom.height /2)
+
+                    objecto: self
+                    need_image: False
+                    columns: 5
+                    root: root
+
+                    titles_labels: ["Nombre", "Cantidad", "Precio", 'Proveedor']
+                    list_table_data: ["name_product", "amount_product", "profit_product", "name_supplier"]
+
+                    #Datos del Modal de eliminar "¿Esta seguro?"
+                    modalChooseDeleteConfirmationTitle: '¿De verdad quiere eliminar a este producto?'
+                    modalChooseDeletConfirmationeText: 'Recuerda que esta opción no se puede revertir.'
+                    modalChooseDeleteConfirmation: 'from MVC.model.store.store_model import StoreDB; StoreDB.DeleteProduct(global_id_modal); self = global_self_modal; exec(self.test)'
+
+                    modalChooseUpdate: 'ModalsDialog.ChangePage("self","StorePageUpdate", "Almacen - Modificar")'
+
+                    test: 'self.objecto.DictionaryDataset.update(self.objecto.root.ShowDataStoreController(self.objecto.StartPagination, self.objecto.StaticItemsAccountPagination, self.objecto.DirectionPagination))'

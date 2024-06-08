@@ -1,351 +1,266 @@
 <InitialPage>:
     name: "InitialPage"
 
+
+    
     MDBoxLayout:
+        id: boxLayoutAllScreen
         orientation: 'vertical'
-        size_hint: 1, 1
-        MDGridLayout:
-            cols: 1
-            padding: dp(0), dp(root.manager.parent.parent.ids.toolbar.height), dp(0), dp(root.manager.parent.parent.ids.toolbarbottom.height)
-            
-            MDBoxLayout:
-                adaptive_height: True               
-                size_hint: 1, 1
+        padding: dp(16), dp(root.manager.parent.parent.ids.toolbar.height), dp(16), dp(root.manager.parent.parent.ids.toolbarbottom.height)
+
+        MDScrollView:
+
+            MDGridLayout:
+                cols: 1
+                
+                size_hint_y: None
+                height: self.minimum_height
+                padding: dp(1), dp(32)
 
                 MDGridLayout:
-                    cols: 1                                
+                    id: gridDataUser
+                    cols: 1
                     
-                    #DATOS
+                    size_hint_y: None
+                    height: self.minimum_height
+
+                    
+                    padding: dp(16), dp(20), dp(16), dp(1)
+
+                    #Datos
                     MDLabel:
                         markup: True
-                        padding: dp(50), dp(20), dp(16), dp(1)
+                        padding: dp(50), dp(20), dp(16), dp(32)
                         text: "[b][i]Datos[/i][/b]"
 
                         halign: "left"
                         font_style: "H3"
-                        adaptive_height: True       
-
-                    #DATOS DE USUARIO
+                                
+                    #input datos
                     MDBoxLayout:
-                        orientation: 'horizontal'
-                        #size_hint: 1, None
-                        #height:75
-
-
+                        orientation: 'vertical'
                         MDGridLayout:
-                        
-                            cols: 2                             
-                            padding: dp(1), dp(1), dp(1), dp(1)
-
+                            cols: 2
 
                             MDGridLayout:
-                                cols: 2
-                                adaptive_height: True
+                                cols: 4
+                                padding: dp(16)
 
-                                MDGridLayout:
-                                    adaptive_height: True
-                                    cols: 4
-                                    padding: dp(32), dp(1), dp(32), dp(16)
+                                MDLabel:
+                                    size_hint_x: 0.025
 
-
-                                    MDLabel:
-                                        size_hint_x: 0.025
-
-
-                                    MDIcon:
-                                        padding: dp(1), dp(1), dp(1), dp(1)
-                                        icon: "account"
-                                        font_size: '36sp' 
-                                        size_hint_x: 0.4
+                                MDIcon:
+                                    padding: dp(1), dp(1), dp(1), dp(1)
+                                    icon: "account"
+                                    font_size: '36sp' 
+                                    size_hint_x: 0.4
 
 
-                                    MDLabel:
-                                        size_hint_x: 0.05
-                                        
-                                    MDTextField:
-                                        id: usernameHomeLabel
-                                        text: ''
-                                        hint_text: "Nombre:"
-                                        mode: "rectangle"
-                                        disabled: True 
-                                        focus: True
-                                        size_hint_x: 0.4
+                                MDLabel:
+                                    size_hint_x: 0.05
+                                    
+                                MDTextField:
+                                    id: usernameHomeLabel
+                                    text: ''
+                                    hint_text: "Nombre:"
+                                    mode: "rectangle"
+                                    disabled: True 
+                                    focus: True
+                                    size_hint_x: 0.4
 
                             MDGridLayout:
-                                cols: 2
-                                adaptive_height: True
-
-                                MDGridLayout:
-                                    adaptive_height: True
-                                    cols: 4
-                                    padding: dp(32), dp(1), dp(32), dp(16)
+                                cols: 4
+                                padding: dp(16)
 
 
-                                    MDLabel:
-                                        size_hint_x: 0.025
+                                MDLabel:
+                                    size_hint_x: 0.025
 
 
-                                    MDIcon:
-                                        padding: dp(1), dp(1), dp(1), dp(1)
-                                        icon: "account-hard-hat"
-                                        font_size: '36sp' 
-                                        size_hint_x: 0.4
+                                MDIcon:
+                                    padding: dp(1), dp(1), dp(1), dp(1)
+                                    icon: "account-hard-hat"
+                                    font_size: '36sp' 
+                                    size_hint_x: 0.4
 
 
-                                    MDLabel:
-                                        size_hint_x: 0.05
-                                        
-                                    MDTextField:
-                                        id: accessLevelHomeLabel
-                                        text: ''
-                                        hint_text: "Nivel de usuario:"
-                                        mode: "rectangle"
-                                        disabled: True 
-                                        focus: True
-                                        size_hint_x: 0.4
+                                MDLabel:
+                                    size_hint_x: 0.05
+                                    
+                                MDTextField:
+                                    id: accessLevelHomeLabel
+                                    text: ''
+                                    hint_text: "Nivel de usuario:"
+                                    mode: "rectangle"
+                                    disabled: True 
+                                    focus: True
+                                    size_hint_x: 0.4
 
+                MDGridLayout:
+                    cols: 1
+                    
+                    size_hint_y: None
+                    height: root.ids.gridDataUser.height * 12
+                    
+                    padding: dp(16), dp(20), dp(16), dp(16)
 
-                    #CUENTAS
-                    MDLabel:                                
+                    #Dinero
+                    MDLabel:
                         markup: True
-                        padding: dp(50), dp(1), dp(1), dp(1)
+                        padding: dp(50), dp(100), dp(16), dp(16)
                         text: "[b][i]Cuenta[/i][/b]"
+
                         halign: "left"
                         font_style: "H3"
-                        adaptive_height: True             
-
+                                
                     MDBoxLayout:
-                        orientation: 'horizontal'
-                        #size_hint: 1, None
-                        #height:75
-
-                        MDGridLayout:
+                        orientation: 'vertical'
                         
-                            cols: 2                             
-                            padding: dp(1), dp(1), dp(1), dp(1)
-
+                        MDGridLayout:
+                            cols: 2
 
                             MDGridLayout:
-                                cols: 2
-                                adaptive_height: True
+                                cols: 4
+                                padding: dp(16)
 
-                                MDGridLayout:
-                                    adaptive_height: True
-                                    cols: 4
-                                    padding: dp(32), dp(1), dp(32), dp(16)
+                                MDLabel:
+                                    size_hint_x: 0.025
 
-
-                                    MDLabel:
-                                        size_hint_x: 0.025
-
-
-                                    MDIcon:
-                                        padding: dp(1), dp(1), dp(1), dp(1)
-                                        icon: "cash-plus"
-                                        font_size: '36sp' 
-                                        size_hint_x: 0.4
+                                MDIcon:
+                                    padding: dp(1), dp(1), dp(1), dp(1)
+                                    icon: "account"
+                                    font_size: '36sp' 
+                                    size_hint_x: 0.4
 
 
-                                    MDLabel:
-                                        size_hint_x: 0.05
-                                        
-
+                                MDLabel:
+                                    size_hint_x: 0.05
                                     
-                                    MDTextField:
-                                        text: "100$"
-                                        hint_text: "Dinero Credito:"
-                                        mode: "rectangle"
-                                        disabled: True 
-                                        focus: True
-                                        size_hint_x: 0.4
+                                MDTextField:
+                                    id: usernameHomeLabel
+                                    text: ''
+                                    hint_text: "Nombre:"
+                                    mode: "rectangle"
+                                    disabled: True 
+                                    focus: True
+                                    size_hint_x: 0.4
 
                             MDGridLayout:
-                                cols: 2
-                                adaptive_height: True
-
-                                MDGridLayout:
-                                    adaptive_height: True
-                                    cols: 4
-                                    padding: dp(32), dp(1), dp(32), dp(16)
+                                cols: 4
+                                padding: dp(16)
 
 
-                                    MDLabel:
-                                        size_hint_x: 0.025
+                                MDLabel:
+                                    size_hint_x: 0.025
 
 
-                                    MDIcon:
-                                        padding: dp(1), dp(1), dp(1), dp(1)
-                                        icon: "cash-minus"
-                                        font_size: '36sp' 
-                                        size_hint_x: 0.4
+                                MDIcon:
+                                    padding: dp(1), dp(1), dp(1), dp(1)
+                                    icon: "account-hard-hat"
+                                    font_size: '36sp' 
+                                    size_hint_x: 0.4
 
 
-                                    MDLabel:
-                                        size_hint_x: 0.05
-                                        
-                                    MDTextField:
-                                        text: "24$"
-                                        hint_text: "Dinero prestado:"
-                                        mode: "rectangle"
-                                        disabled: True 
-                                        focus: True
-                                        size_hint_x: 0.4
+                                MDLabel:
+                                    size_hint_x: 0.05
+                                    
+                                MDTextField:
+                                    id: accessLevelHomeLabel
+                                    text: ''
+                                    hint_text: "Nivel de usuario:"
+                                    mode: "rectangle"
+                                    disabled: True 
+                                    focus: True
+                                    size_hint_x: 0.4
 
-                    #DINERO DIVISAS
-                    MDBoxLayout:
-                        orientation: 'horizontal'
                         MDGridLayout:
                         
                             cols: 3                             
-                            padding: dp(1), dp(1), dp(1), dp(1)
+                            padding: dp(1), dp(48), dp(1), dp(48)
 
 
                             MDGridLayout:
-                                cols: 2
-                                adaptive_height: True
-
-                                MDGridLayout:
-                                    adaptive_height: True
-                                    cols: 4
-                                    padding: dp(32), dp(1), dp(32), dp(16)
+                                cols: 4
+                                #padding: dp(1), dp(1), dp(1), dp(16)
 
 
-                                    MDLabel:
-                                        size_hint_x: 0.025
+                                MDLabel:
+                                    size_hint_x: 0.025
 
 
-                                    MDIcon:
-                                        padding: dp(1), dp(1), dp(1), dp(1)
-                                        icon: "cash"
-                                        font_size: '36sp' 
-                                        size_hint_x: 0.4
+                                MDIcon:
+                                    padding: dp(1), dp(1), dp(1), dp(1)
+                                    icon: "cash"
+                                    font_size: '36sp' 
+                                    size_hint_x: 0.4
 
 
-                                    MDLabel:
-                                        size_hint_x: 0.05
-                                        
-
+                                MDLabel:
+                                    size_hint_x: 0.05
                                     
-                                    MDTextField:
-                                        text: "100$"
-                                        hint_text: "Dinero en dólares:"
-                                        mode: "rectangle"
-                                        disabled: True 
-                                        focus: True
-                                        size_hint_x: 0.4
+
+                                
+                                MDTextField:
+                                    text: "100$"
+                                    hint_text: "Dinero en dólares:"
+                                    mode: "rectangle"
+                                    disabled: True 
+                                    focus: True
+                                    size_hint_x: 0.4
 
                             MDGridLayout:
-                                cols: 2
-                                adaptive_height: True
-
-                                MDGridLayout:
-                                    adaptive_height: True
-                                    cols: 4
-                                    padding: dp(32), dp(1), dp(32), dp(16)
+                                cols: 4
+                                #padding: dp(32), dp(1), dp(32), dp(16)
 
 
-                                    MDLabel:
-                                        size_hint_x: 0.025
+                                MDLabel:
+                                    size_hint_x: 0.025
 
 
-                                    MDIcon:
-                                        padding: dp(1), dp(1), dp(1), dp(1)
-                                        icon: "cash-minus"
-                                        font_size: '36sp' 
-                                        size_hint_x: 0.4
+                                MDIcon:
+                                    padding: dp(1), dp(1), dp(1), dp(1)
+                                    icon: "cash-minus"
+                                    font_size: '36sp' 
+                                    size_hint_x: 0.4
 
 
-                                    MDLabel:
-                                        size_hint_x: 0.05
-                                        
-                                    MDTextField:
-                                        text: "24$"
-                                        hint_text: "Dinero en pesos:"
-                                        mode: "rectangle"
-                                        disabled: True 
-                                        focus: True
-                                        size_hint_x: 0.4
+                                MDLabel:
+                                    size_hint_x: 0.05
+                                    
+                                MDTextField:
+                                    text: "24$"
+                                    hint_text: "Dinero en pesos:"
+                                    mode: "rectangle"
+                                    disabled: True 
+                                    focus: True
+                                    size_hint_x: 0.4
 
                             MDGridLayout:
-                                cols: 2
-                                adaptive_height: True
-
-                                MDGridLayout:
-                                    adaptive_height: True
-                                    cols: 4
-                                    padding: dp(32), dp(1), dp(32), dp(16)
+                                cols: 4
+                                #padding: dp(32), dp(1), dp(32), dp(16)
 
 
-                                    MDLabel:
-                                        size_hint_x: 0.025
+                                MDLabel:
+                                    size_hint_x: 0.025
 
 
-                                    MDIcon:
-                                        padding: dp(1), dp(1), dp(1), dp(1)
-                                        icon: "cash-minus"
-                                        font_size: '36sp' 
-                                        size_hint_x: 0.4
+                                MDIcon:
+                                    padding: dp(1), dp(1), dp(1), dp(1)
+                                    icon: "cash-minus"
+                                    font_size: '36sp' 
+                                    size_hint_x: 0.4
 
 
-                                    MDLabel:
-                                        size_hint_x: 0.05
-                                        
-                                    MDTextField:
-                                        text: "24$"
-                                        hint_text: "Dinero en bolívares:"
-                                        mode: "rectangle"
-                                        disabled: True 
-                                        focus: True
-                                        size_hint_x: 0.4
-
-                    #DINERO MENSUAL
-                    MDBoxLayout:
-                        orientation: 'horizontal'
-                        MDGridLayout:
+                                MDLabel:
+                                    size_hint_x: 0.05
+                                    
+                                MDTextField:
+                                    text: "24$"
+                                    hint_text: "Dinero en bolívares:"
+                                    mode: "rectangle"
+                                    disabled: True 
+                                    focus: True
+                                    size_hint_x: 0.4
                         
-                            cols: 1                             
-                            padding: dp(1), dp(1), dp(1), dp(1)
 
 
-                            MDGridLayout:
-                                cols: 3
-                                adaptive_height: True
-
-                                MDLabel:
-                                    size_hint_x: 0.2
-
-
-                                MDGridLayout:
-                                    adaptive_height: True
-                                    cols: 4
-                                    padding: dp(32), dp(1), dp(32), dp(16)
-                                    size_hint_x: 0.8
-
-
-                                    MDLabel:
-                                        size_hint_x: 0.025
-
-
-                                    MDIcon:
-                                        padding: dp(1), dp(1), dp(1), dp(1)
-                                        icon: "cash"
-                                        font_size: '36sp' 
-                                        size_hint_x: 0.4
-
-
-                                    MDLabel:
-                                        size_hint_x: 0.025
-                                        
-
-                                    
-                                    MDTextField:
-                                        text: "100$"
-                                        hint_text: "Dinero en mensual:"
-                                        mode: "rectangle"
-                                        disabled: True 
-                                        focus: True
-                                        size_hint_x: 0.4
-
-                            
-                                MDLabel:
-                                    size_hint_x: 0.2

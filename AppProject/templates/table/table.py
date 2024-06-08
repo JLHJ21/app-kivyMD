@@ -700,30 +700,27 @@ class ModalsDialog():
                 pass
 
     #AL DAR CLICK AL BOTON "ITEMS POR PAGINA", LLAMADO POR EL ARCHIVO TABLE.KV
-    def ChangeItemsAmount(self, rv):
+    def ChangeItemsAmount(self, rv, stay = False):
 
         #Reinicia la variable a 0
         global_rv[rv].objecto.StartPagination = 0
 
 
         #Switch que cambia la cantidad de items a mostrar segun la cantidad que tenia previamente
-        match global_rv[rv].objecto.StaticItemsAccountPagination:
-            case 5:
-                global_rv[rv].objecto.ItemsAccountPagination = global_rv[rv].objecto.StaticItemsAccountPagination = 10
-            case 10:
-                global_rv[rv].objecto.ItemsAccountPagination = global_rv[rv].objecto.StaticItemsAccountPagination = 15
-            case 15:
-                global_rv[rv].objecto.ItemsAccountPagination = global_rv[rv].objecto.StaticItemsAccountPagination = 5
-            case _:
-                global_rv[rv].objecto.ItemsAccountPagination = global_rv[rv].objecto.StaticItemsAccountPagination = 5
-
-        
+        if stay == True:
+            match global_rv[rv].objecto.StaticItemsAccountPagination:
+                case 5:
+                    global_rv[rv].objecto.ItemsAccountPagination = global_rv[rv].objecto.StaticItemsAccountPagination = 10
+                case 10:
+                    global_rv[rv].objecto.ItemsAccountPagination = global_rv[rv].objecto.StaticItemsAccountPagination = 15
+                case 15:
+                    global_rv[rv].objecto.ItemsAccountPagination = global_rv[rv].objecto.StaticItemsAccountPagination = 5
+                case _:
+                    global_rv[rv].objecto.ItemsAccountPagination = global_rv[rv].objecto.StaticItemsAccountPagination = 5
 
         #Cambia el texto del boton ItemsAmount
 
         global_rv[rv].objecto.ids.ItemsAmount.text = "Items por página: " + str(global_rv[rv].objecto.ItemsAccountPagination)
-
-        
 
         #Llama la funcion para ver si ambas flechas se desactivan al actualizar los datos
         ModalsDialog.StatusButtonPagination(rv, "both")
@@ -831,13 +828,8 @@ class ModalsDialog():
         #print(global_modal_rv.objecto.test)
         exec(self.objecto.test)
 
-        ModalsDialog.ChangeItemsAmountButtons('', self_rv)
-
-        print()
-        print('logrado')
-
-
-        
+        #ModalsDialog.ChangeItemsAmountButtons('', self_rv)
+        ModalsDialog.ChangeItemsAmount('', self_rv, True)
 
     '''
     def CallAgainTableData():

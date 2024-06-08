@@ -128,6 +128,7 @@ from database.database import DatabaseClass
 
 #import intermediary
 import MVC.controller.functions as functions
+import concurrent.futures
 
 
 #Window.size = ( 720, 1600 )
@@ -143,7 +144,8 @@ global_self_client = ''
 self_store_page = self_ClientsPage = self_sales_history = self_SupplierCharge = self_charge_page = self_money_history = global_foreign_exchange_update = None
 
 # LLAMADA A LA BASE DE DATOS
-DatabaseClass.Conexion()
+with concurrent.futures.ThreadPoolExecutor() as executor:
+    executor.submit(DatabaseClass.Conexion)
 #productos
 #DatabaseClass.InsertData()
 

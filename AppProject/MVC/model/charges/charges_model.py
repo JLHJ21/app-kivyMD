@@ -157,75 +157,82 @@ class ChargesDB():
         #CONEXION A LA COLECCION
         collection = DataBase.db['charges']
         collection_products = DataBase.db['products']
+        collection_supplier = DataBase.db['supplier']
 
 
         date = datetime.today().strftime('%d-%m-%Y %H:%M:%S')
         list_ids_products = []
-        
-        #agregar/modificarlo producto
-        for index, item in enumerate(name_product):
 
-            #Si es nuevo el producto lo agrega
-            if new_product[index] == True:
-                #query
-                post = {'name_product': item, 'amount_product': str(amount_product[index]), 'buy_product': str(buy_product[index]), 'profit_product': str(profit_product[index]), 'name_supplier': name_supplier, 'state_product': 1}
+        result_supplier = collection_supplier.count_documents({'name_supplier': name_supplier, 'state_supplier': 1}, limit = 1)
 
-                #insertar
-                collection_products.insert_one(post)
-                list_ids_products.append(list(collection_products.find({}, {'_id': 1}).sort({'_id':-1}).limit(1) ))
-            #Si es viejo, revisa que datos ha cambiado
-            else:
-                #datos del producto ya existente
-                results = collection_products.find_one({'name_product': item, 'state_product': 1}, {'_id': 1, 'amount_product': 1, 'buy_product': 1, 'profit_product': 1, 'name_supplier': 1})
-            
-                new_amount = int(results['amount_product']) + int(amount_product[index])
-                new_buy = float(buy_product[index])
-                new_profit = float(profit_product[index])
+        if result_supplier > 0:
+                
+            #agregar/modificarlo producto
+            for index, item in enumerate(name_product):
 
+                #Si es nuevo el producto lo agrega
+                if new_product[index] == False:
+                    #query
+                    post = {'name_product': item, 'amount_product': str(amount_product[index]), 'buy_product': str(buy_product[index]), 'profit_product': str(profit_product[index]), 'name_supplier': name_supplier, 'state_product': 1}
 
-                if results['name_supplier'] == name_supplier:
-                    query = {'amount_product': str(new_amount), 'buy_product': str(new_buy), 'profit_product': str(new_profit)}
-
+                    #insertar
+                    collection_products.insert_one(post)
+                    list_ids_products.append(list(collection_products.find({}, {'_id': 1}).sort({'_id':-1}).limit(1) ))
+                #Si es viejo, revisa que datos ha cambiado
                 else:
-                    new_supplier = name_supplier
-
-                    query = {'amount_product': str(new_amount), 'buy_product': str(new_buy), 'profit_product': str(new_profit), 'name_supplier': new_supplier}
-
-                collection_products.update_one({'_id': ObjectId(results['_id'])}, {'$set': query })
-
-
-                id = [{'_id': results['_id']}]
-                list_ids_products.append(id)
+                    #datos del producto ya existente
+                    results = collection_products.find_one({'name_product': item, 'state_product': 1}, {'_id': 1, 'amount_product': 1, 'buy_product': 1, 'profit_product': 1, 'name_supplier': 1})
+                
+                    new_amount = int(results['amount_product']) + int(amount_product[index])
+                    new_buy = float(buy_product[index])
+                    new_profit = float(profit_product[index])
 
 
-        products = []
+                    if results['name_supplier'] == name_supplier:
+                        query = {'amount_product': str(new_amount), 'buy_product': str(new_buy), 'profit_product': str(new_profit)}
 
-        #Insertar en Charges/Encargos
-        for index, item in enumerate(list_ids_products[::-1]):
+                    else:
+                        new_supplier = name_supplier
 
-            noSQL = {'name_product': name_product[index],
-                'amount_product': str(amount_product[index]),
-                'buy_product': str(buy_product[index]),
-                'profit_product': str(profit_product[index]),
-                'id_product': ObjectId(item[0]['_id'])
+                        query = {'amount_product': str(new_amount), 'buy_product': str(new_buy), 'profit_product': str(new_profit), 'name_supplier': new_supplier}
+
+                    collection_products.update_one({'_id': ObjectId(results['_id'])}, {'$set': query })
+
+
+                    id = [{'_id': results['_id']}]
+                    list_ids_products.append(id)
+
+
+            products = []
+
+            #Insertar en Charges/Encargos
+            for index, item in enumerate(list_ids_products[::-1]):
+
+                noSQL = {'name_product': name_product[index],
+                    'amount_product': str(amount_product[index]),
+                    'buy_product': str(buy_product[index]),
+                    'profit_product': str(profit_product[index]),
+                    'id_product': ObjectId(item[0]['_id'])
+                }
+
+                products.append(noSQL)
+
+
+            post = {'name_supplier': name_supplier,
+                'id_supplier': ObjectId(id_supplier),
+                'products': products,
+                'date': date,
+                'buy_products': str(money_buys),
+                'profit_products': str(money_profits),
+                'total_money': str(money_total) ,
+                'state_charges': 1
             }
 
-            products.append(noSQL)
+            collection.insert_one(post)
 
-
-        post = {'name_supplier': name_supplier,
-            'id_supplier': ObjectId(id_supplier),
-            'products': products,
-            'date': date,
-            'buy_products': str(money_buys),
-            'profit_products': str(money_profits),
-            'total_money': str(money_total) ,
-            'state_charges': 1
-        }
-
-        collection.insert_one(post)
-
-        return True
+            return True
+        else:
+            return ', no existe el proveedor que escribiste.'
     
     def ExistProduct(textProduct):
         
