@@ -246,7 +246,7 @@ class App(MDApp):
 
         menu_foreign_exchange = [
             {
-                "text": "Dolar",
+                "text": "Dólar",
                 "leading_icon": "cash-100",
                 "on_press": lambda x='Item Dolar': CashierPage.CashierPaymentType(x, 'Dólar'),
             },

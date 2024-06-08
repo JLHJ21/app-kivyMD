@@ -10,7 +10,7 @@ class SignInPage(MDScreen):
 
 
     def ChangePageToSignOn(self):
-        functions.FunctionsKivys.ChangePage('SignOnPage', 'Registrarse')
+        functions.FunctionsKivys.ChangePage('self', 'SignOnPage', 'Registrarse')
 
 
     def SignIn(self, username, password):
@@ -26,7 +26,7 @@ class SignInPage(MDScreen):
 
         functions.have_session = True
 
-        functions.FunctionsKivys.ChangePage('InitialPage', 'Panel de Control')
+        functions.FunctionsKivys.ChangePage('self', 'InitialPage', 'Panel de Control')
 
         #obtiene el self principal del kivy
         #self_main = functions.global_variable_self

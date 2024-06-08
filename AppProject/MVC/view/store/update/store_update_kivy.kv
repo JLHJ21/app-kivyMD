@@ -147,41 +147,41 @@
                             MDLabel:
                                 size_hint_x: 0.1
 
-                        MDGridLayout:
-                            cols: 3
-                            spacing: dp(20)
-                            padding: dp(16), dp(8)
-                            size_hint_y: None
-                            height: self.minimum_height  # required to size GridLayout
-                            MDLabel:
-                                size_hint_x: 0.38
+                        #MDGridLayout:
+                        #    cols: 3
+                        #    spacing: dp(20)
+                        #    padding: dp(16), dp(8)
+                        #    size_hint_y: None
+                        #    height: self.minimum_height  # required to size GridLayout
+                        #    MDLabel:
+                        #        size_hint_x: 0.38
                                 #width: "250dp"
-                                padding: dp(32), dp(1)
+                        #        padding: dp(32), dp(1)
 
-                                text: "Cantidad:"
-                                halign: "right"
-                                font_style: "H5"
+                        #        text: "Cantidad:"
+                        #        halign: "right"
+                        #        font_style: "H5"
                             
-                            MDTextField:
+                        #    MDTextField:
 
-                                id: amountProduct
-                                size_hint_x: 0.7
+                        #        id: amountProduct
+                        #        size_hint_x: 0.7
                                 #width: "375dp"
 
-                                text: root.amountProduct
-                                hint_text: "Cantidad del producto"
+                        #        text: root.amountProduct
+                        #        hint_text: "Cantidad del producto"
 
-                                required: True
+                        #        required: True
 
-                                helper_text_mode: "on_error"
-                                helper_text: "Por favor, ingrese la cantidad del producto." if len(self.text) == 0 else ""
+                        #        helper_text_mode: "on_error"
+                        #        helper_text: "Por favor, ingrese la cantidad del producto." if len(self.text) == 0 else ""
 
-                                max_text_length: 5
-                                mode: "rectangle"
-                                line_color_normal: "red" if len(self.text) == 0 else "blue"
+                        #        max_text_length: 5
+                        #        mode: "rectangle"
+                        #        line_color_normal: "red" if len(self.text) == 0 else "blue"
                             
-                            MDLabel:
-                                size_hint_x: 0.1
+                        #    MDLabel:
+                        #        size_hint_x: 0.1
 
                         MDGridLayout:
                             cols: 3
@@ -296,7 +296,9 @@
                                 md_bg_color: "blue"
 
                                 on_release: 
-                                    root.UpdateProduct(root.ids.nameProduct.text, root.ids.amountProduct.text, root.ids.profitProduct.text, root.ids.searchingSupplier.text)
+                                    root.UpdateProduct(root.ids.nameProduct.text, root.ids.profitProduct.text, root.ids.searchingSupplier.text)
+
+                                    #root.UpdateProduct(root.ids.nameProduct.text, root.ids.amountProduct.text, root.ids.profitProduct.text, root.ids.searchingSupplier.text)
                                     #Permite ACTUALIZAR los datos de la tabla
                                     app.modals.ChangeItemsAmountButtons(root.RV)
                                     #app.table.TableData(root.RV, '')

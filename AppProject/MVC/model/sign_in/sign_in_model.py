@@ -20,9 +20,12 @@ class SignInDatabase():
 
             #cambia los datos que se muestran en HomePage
 
-            functions.username_text = user['username']
-            functions.email_text = user['email']
-            functions.password_text = user['password']
+            functions.idStaff = user['_id']
+            
+            functions.usernameStaff = user['username']
+            functions.emailStaff = user['email']
+            functions.passwordStaff = user['password']
+
             functions.access_text = user['access_level']
 
             #Configuration.ConfigurationPage.username_text = 

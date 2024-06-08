@@ -110,7 +110,7 @@ class SelectableLabel(RecycleDataViewBehavior, MDFlatButton):
                         )
 
                     else:
-
+                        
                         l=MDLabel(
                             text= dictionary[dic][0][i]  ,
                             halign="center",
@@ -203,7 +203,6 @@ class SelectableLabel(RecycleDataViewBehavior, MDFlatButton):
     #Controller de los datos de los modales
     def ButtonDialog(self, idObject, rvObject, diferrentColumn):
 
-        print(idObject)
         global global_self_modal, global_id_modal, global_modal_rv, global_different_column
 
         global_self_modal = self
@@ -439,10 +438,8 @@ class RecycleViewTable(MDBoxLayout):
 
                 #Obtener el id del objecto a buscar
                 idObject = dictionary[dic][0]['_id']
+
                 
-
-
-
                 #crea diccionario el on_release al diccionario principal
                 i = {'on_release': partial(SelectableLabel.ButtonDialog, self.objecto, idObject, self.objecto.rv, self.objecto.differentColumn)}
 
@@ -487,6 +484,8 @@ class ModalsDialog():
                     )
                 ],
             )
+        elif global_different_column == 'nothing':
+            return
         elif global_different_column == 'tableProductsShoppingCart':
             #Caracteristicas
             RecycleViewTable.dialog = MDDialog(
@@ -825,15 +824,19 @@ class ModalsDialog():
         with concurrent.futures.ThreadPoolExecutor() as executor:
             executor.submit(global_rv[global_modal_rv].objecto.TableData, global_rv[global_modal_rv].objecto.DictionaryDataset, '')
 
-    def ActualizeData(self, global_modal_rv):   
+    def ActualizeData(self, self_rv):   
 
 
         #self = global_rv[global_modal_rv]
         #print(global_modal_rv.objecto.test)
-
         exec(self.objecto.test)
 
-        ModalsDialog.ChangeItemsAmountButtons('', global_modal_rv)
+        ModalsDialog.ChangeItemsAmountButtons('', self_rv)
+
+        print()
+        print('logrado')
+
+
         
 
     '''

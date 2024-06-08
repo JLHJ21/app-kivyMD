@@ -14,7 +14,7 @@ class ConfigurationPage(MDScreen):
 
     dialogUsername = dialogPassword = dialogEmail = None
 
-    username_text =  email_text = password_text = ''
+    #username_text =  email_text = password_text = ''
 
     def on_pre_enter(self):
 
@@ -26,7 +26,7 @@ class ConfigurationPage(MDScreen):
             print('puede entrar')
         else:
             print('no puede entrar')
-            functions.FunctionsKivys.ChangePage('SignInPage', 'Iniciar Sesión')
+            functions.FunctionsKivys.ChangePage('self', 'SignInPage', 'Iniciar Sesión')
 
     def OpenModal(self, inputOneName, inputTwoName, dialogName, title):
 
@@ -85,8 +85,8 @@ class ConfigurationPage(MDScreen):
 
     def UpdateDataUser(self):
         print('UpdateDataUser')
-        self.ids.usernameConfiguration.text = functions.username_text
-        self.ids.emailConfiguration.text = functions.email_text
+        self.ids.usernameConfiguration.text = functions.usernameStaff
+        self.ids.emailConfiguration.text = functions.emailStaff
         
 
 global_self_content_configuration = None

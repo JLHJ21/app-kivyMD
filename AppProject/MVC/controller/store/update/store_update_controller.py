@@ -9,6 +9,7 @@ from MVC.model.charges.charges_model import ChargesDB
 import MVC.controller.functions as functions
 
 import concurrent.futures
+from kivymd.toast import toast
 
 #Pagina de almacen modificar
 class StoreUpdatePage(MDScreen):
@@ -37,13 +38,18 @@ class StoreUpdatePage(MDScreen):
         self.profitProduct = dataClient['profit_product']
         self.supplierProduct = dataClient['name_supplier']
 
-    def UpdateProduct(self, nameProduct, amountProduct, profitProduct, supplierProduct):
-        
+    #def UpdateProduct(self, nameProduct, amountProduct, profitProduct, supplierProduct):
+    def UpdateProduct(self, nameProduct, profitProduct, supplierProduct):
+    
         #print(name, id, phone)
-        results = StoreDB.UpdateProduct(nameProduct, amountProduct, profitProduct, supplierProduct, self.idObject)
+        #results = StoreDB.UpdateProduct(nameProduct, amountProduct, profitProduct, supplierProduct, self.idObject)
+        results = StoreDB.UpdateProduct(nameProduct, profitProduct, supplierProduct, self.idObject)
         
         if results == True:
-            functions.FunctionsKivys.ChangePage('StorePage', 'Almacen')
+            toast('¡Se ha realizado la modificación con éxito!')
+            functions.FunctionsKivys.ChangePage('self', 'StorePage', 'Almacen')
+        else:
+            toast('Hubo un error ' + results)
 
 
     ##SELECCIONAR PROVEEDOR
@@ -51,8 +57,8 @@ class StoreUpdatePage(MDScreen):
     #MENU DE PROVEEDORES
     def SelectItem(self, nameSupplier, nameID):
         
-        self.ids.searchingSupplier.text = nameSupplier
-        self.ids.searchingSupplier.name = nameID
+        self.ids.searchingSupplier.text = (nameSupplier)
+        self.ids.searchingSupplier.name = str(nameID)
         self.ids.searchingSupplier.icon_left = "account-check"
 
         #self.ids.searchingSupplier.icon_left = 'account-star'

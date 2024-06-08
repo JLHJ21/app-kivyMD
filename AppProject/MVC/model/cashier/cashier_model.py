@@ -1,7 +1,7 @@
 import database.database as DataBase
 from pymongo import ASCENDING
 from bson import ObjectId
-
+from datetime import datetime
 
 
 
@@ -113,9 +113,72 @@ class CashierDB():
 
         return list_variables
     
-    def UpdateAmountProduct(nameProduct, amountProduct):
+    def CreateClient(nameClient, idClient, phoneClient):
+        collection = DataBase.db['clients']
+
+        query = {'name_client': nameClient, 'id_client': idClient, 'phone_client': phoneClient, 'state_client': 1}
+
+        collection.insert_one(query)
+
+        resultID = collection.find_one({}, {'_id': 1}, sort= {'_id': -1})
+        return resultID
+    
+    def UpdateAmountProduct(idProduct, amountProduct):
         
         collection = DataBase.db['products']
         query = {'amount_product': amountProduct}
 
-        collection.update_one({'name_product': nameProduct},{'$set': query })
+        collection.update_one({'_id': ObjectId(idProduct)},{'$set': query })
+
+    def AddPurchase(idObjectClient, nameClient, phoneClient, idClient, idStaff, nameStaff, purchaseAmount, typeForeignExchange,itemsProducts):
+        collection = DataBase.db['sales']
+        datePurchase = datetime.today().strftime('%d-%m-%Y %H:%M:%S')
+
+        key_products = list(itemsProducts.keys())
+
+        products = []
+
+        for item in (key_products)[1:]:
+
+            dictionaryItem = {
+                #identificar _id del producto
+                'id_product': itemsProducts[item][0]['_id'],
+                #nombre del producto
+                'name_product': itemsProducts[item][0]['name_product'],
+                #cantidad deseada
+                'amount_wanted': itemsProducts[item][0]['amount_wanted'],
+                #cantidad original del producto antes de la compra
+                'amount_original': itemsProducts[item][0]['amount_original'],
+                #precio del producto, teniendo en cuenta los datos de amount_wanted
+                'total_price': itemsProducts[item][0]['total_price'],
+                
+            }
+            products.append(dictionaryItem)
+
+        print('aqui')
+        print(idObjectClient)
+        print(type(idObjectClient))
+        print()
+
+        post = {
+                'data_client': {
+                        '_id_client': ObjectId(idObjectClient), 
+                        'name_client': nameClient, 
+                        'phone_client': phoneClient, 
+                        'id_client': idClient
+                    }, 
+                'data_staff': {
+                        '_id_staff': ObjectId(idStaff), 
+                        'name_staff': nameStaff
+                    }, 
+                'purchase_amount': str(purchaseAmount), 
+                'date_purchase': datePurchase, 
+                'type_money': typeForeignExchange,
+                'products': products, 
+                'state_sales': 1
+            }
+
+        print('MODEL')
+        print(products)
+        collection.insert_one(post)
+        

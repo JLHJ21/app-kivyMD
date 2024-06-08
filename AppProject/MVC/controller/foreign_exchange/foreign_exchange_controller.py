@@ -26,6 +26,9 @@ class ForeignExchangePage(MDScreen):
     def UpdateForeignExchange(self):
         listData = ForeignExchangeDB.ChangePreferenceExchangeForeign()
 
+
+        functions.GlobalVariables.AddForeignExchange(listData[2], listData[1], listData[0])
+
         match (listData[3]):
             case 'dolar':
                     

@@ -4,13 +4,14 @@ from MVC.model.clients.clients_model import ClientsDB
 
 import concurrent.futures
 
+self_clients_page = None
 
 #PAGINA DEL CLIENTE
 class ClientsPage(MDScreen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        global self_ClientsPage
-        self_ClientsPage = self
+        global self_clients_page
+        self_clients_page = self
 
 
     def CallbackMenuClients(self, button):
@@ -20,12 +21,12 @@ class ClientsPage(MDScreen):
 
     def ChangePageClientPage(self):
 
-        functions.FunctionsKivys.ChangePage('ClientAddPage', 'Cliente - Agregar')
+        functions.FunctionsKivys.ChangePage('self', 'ClientAddPage', 'Cliente - Agregar')
         
 
     ## CALLBACK DEL SELECT BUSCADOR DEL MENU ALMACEN
     def ChangeSearchingTypeClients(self = None, Text = ""):
-        functions.MenuAndTitleSelect.ChangeNameDropMenu(self_ClientsPage, functions.global_variable_self.MenuTypeClientsPage, "ButtonMenuSearchingClient", Text)
+        functions.MenuAndTitleSelect.ChangeNameDropMenu(self_clients_page, functions.global_variable_self.MenuTypeClientsPage, "ButtonMenuSearchingClient", Text)
 
 
     def ShowDataClientsController(self, start, end, state):

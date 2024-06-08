@@ -94,23 +94,22 @@ class SupplierDB():
 
         #data
 
-        if collection.count_documents({'name': name}, limit = 1):
+        if collection.count_documents({'name_supplier': name}, limit = 1):
 
-            return 'name: ' + str(collection.find({'name': name}))
+            return 'ya existe un nombre así'
 
         #elif collection.count_documents({'address': address}, limit = 1):
         #    return 'address: ' + str(collection.find({'address': address}))
         
-        elif collection.count_documents({'rif': rif}, limit = 1):
-            return 'rif: ' + str(collection.find({'rif': rif}))
+        elif collection.count_documents({'rif_supplier': rif}, limit = 1):
+            return 'ya existe un RIF así'
         
-        elif collection.count_documents({'phone': phone}, limit = 1):
-            return 'phone: ' + str(collection.find({'phone': phone}))
+        elif collection.count_documents({'phone_supplier': phone}, limit = 1):
+            return 'ya existe un teléfono así'
         
         else:
 
-
-            post = {'name': name, 'address': address, 'rif': rif, 'phone': phone}
+            post = {'name_supplier': name, 'address_supplier': address, 'rif_supplier': rif, 'phone_supplier': phone, 'state_supplier': 1}
             collection.insert_one(post)
 
             return True
@@ -120,32 +119,57 @@ class SupplierDB():
         query = {}
         collection = DataBase.db['supplier']
 
-        #data
+        #Revisa si el dato existe en otros proveedores
+        if collection.count_documents( {
+                "_id":  {"$nin" : [ObjectId(idObject)]},
+                "name_supplier": nameSupplier,
+                "state_supplier": 1
+            }):
+            return ', ya existe registrado este nombre.'
+        elif collection.count_documents( {
+                "_id":  {"$nin" : [ObjectId(idObject)]},
+                'address_supplier': addressSupplier,
+                "state_supplier": 1
+            }):
+            return ', ya existe registrado esta dirección.'
+        elif collection.count_documents( {
+                "_id":  {"$nin" : [ObjectId(idObject)]},
+                'rif_supplier': rifSupplier,
+                "state_supplier": 1
+            }):
+            return ', ya existe registrado este RIF.'
+        elif collection.count_documents( {
+                "_id":  {"$nin" : [ObjectId(idObject)]},
+                'phone_supplier': phoneSupplier,
+                "state_supplier": 1
+            }):
+            return ', ya existe registrado este número de teléfono.'
 
-        ####Si no existe el dato introducido, lo añade al query
-        #name_supplier
-        if collection.count_documents({'_id': ObjectId(idObject), 'name_supplier': nameSupplier}, limit = 1) <= 0:
-            query['name_supplier'] = nameSupplier
-
-        #address_supplier
-        if collection.count_documents({'_id': ObjectId(idObject), 'address_supplier': addressSupplier}, limit = 1) <= 0:
-            query['address_supplier'] = addressSupplier
-
-        #rif_supplier
-        if collection.count_documents({'_id': ObjectId(idObject), 'rif_supplier': rifSupplier}, limit = 1) <= 0:
-            query['rif_supplier'] = rifSupplier
-
-        #phone_supplier
-        if collection.count_documents({'_id': ObjectId(idObject), 'phone_supplier': phoneSupplier}, limit = 1) <= 0:
-            query['phone_supplier'] = phoneSupplier
-
-
-        #Si no tiene items el query (no hay datos nuevos), regresar si hacer cambios  a la base de datos
-        if len(query) == 0:
-            return True
         else:
-            collection.update_one({'_id': ObjectId(idObject)},{'$set': query })
-            return True
+            #data
+            ####Si no es el mismo el dato introducido anteriormente, lo añade al query
+            #name_supplier
+            if collection.count_documents({'_id': ObjectId(idObject), 'name_supplier': nameSupplier}, limit = 1) <= 0:
+                query['name_supplier'] = nameSupplier
+
+            #address_supplier
+            if collection.count_documents({'_id': ObjectId(idObject), 'address_supplier': addressSupplier}, limit = 1) <= 0:
+                query['address_supplier'] = addressSupplier
+
+            #rif_supplier
+            if collection.count_documents({'_id': ObjectId(idObject), 'rif_supplier': rifSupplier}, limit = 1) <= 0:
+                query['rif_supplier'] = rifSupplier
+
+            #phone_supplier
+            if collection.count_documents({'_id': ObjectId(idObject), 'phone_supplier': phoneSupplier}, limit = 1) <= 0:
+                query['phone_supplier'] = phoneSupplier
+
+            #Si no tiene items el query (no hay datos nuevos), regresar si hacer cambios  a la base de datos
+            if len(query) == 0:
+                return ', los datos ingresados son los mismos que habia antes.'
+            else:
+                collection.update_one({'_id': ObjectId(idObject)},{'$set': query })
+                return True
     
     def DeleteSupplier(id):
 

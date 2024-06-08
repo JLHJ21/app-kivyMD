@@ -115,39 +115,47 @@ class StoreDB():
 
             return True
     '''
-
-    def UpdateProduct(nameProduct, amountProduct, profitProduct, supplierProduct, idObject):
+    #def UpdateProduct(nameProduct, amountProduct, profitProduct, supplierProduct, idObject):
+    def UpdateProduct(nameProduct, profitProduct, supplierProduct, idObject):
         
         query = {}
         collection = DataBase.db['products']
 
-        #data
+        
+        #Revisa si el dato existe en otros proveedores
+        if collection.count_documents( {
+                "_id":  {"$nin" : [ObjectId(idObject)]},
+                'name_product': nameProduct,
+                "state_product": 1
+            }):
+            return ', ya existe registrado este nombre.'
 
-        ####Si no existe el dato introducido, lo añade al query
-        #name_product
-        if collection.count_documents({'_id': ObjectId(idObject), 'name_product': nameProduct}, limit = 1) <= 0:
-            query['name_product'] = nameProduct
-
-        #amount_product
-        if collection.count_documents({'_id': ObjectId(idObject), 'amount_product': amountProduct}, limit = 1) <= 0:
-            query['amount_product'] = amountProduct
-
-        #profit_product
-        if collection.count_documents({'_id': ObjectId(idObject), 'profit_product': profitProduct}, limit = 1) <= 0:
-            query['profit_product'] = profitProduct
-
-        #name_supplier
-        if collection.count_documents({'_id': ObjectId(idObject), 'name_supplier': supplierProduct}, limit = 1) <= 0:
-            query['name_supplier'] = supplierProduct
-
-
-
-        #Si no tiene items el query (no hay datos nuevos), regresar si hacer cambios  a la base de datos
-        if len(query) == 0:
-            return True
         else:
-            collection.update_one({'_id': ObjectId(idObject)},{'$set': query })
-            return True
+            #data
+            ####Si no existe el dato introducido, lo añade al query
+            #name_product
+            if collection.count_documents({'_id': ObjectId(idObject), 'name_product': nameProduct}, limit = 1) <= 0:
+                query['name_product'] = nameProduct
+
+            #amount_product
+            #if collection.count_documents({'_id': ObjectId(idObject), 'amount_product': amountProduct}, limit = 1) <= 0:
+            #    query['amount_product'] = amountProduct
+
+            #profit_product
+            if collection.count_documents({'_id': ObjectId(idObject), 'profit_product': profitProduct}, limit = 1) <= 0:
+                query['profit_product'] = profitProduct
+
+            #name_supplier
+            if collection.count_documents({'_id': ObjectId(idObject), 'name_supplier': supplierProduct}, limit = 1) <= 0:
+                query['name_supplier'] = supplierProduct
+
+            ##########
+            #Si no tiene items el query (no hay datos nuevos), regresar si hacer cambios  a la base de datos
+            if len(query) == 0:
+                return ', los datos ingresados son los mismos que habia antes.'
+            else:
+                collection.update_one({'_id': ObjectId(idObject)},{'$set': query })
+                return True
 
     
     def DeleteProduct(id):

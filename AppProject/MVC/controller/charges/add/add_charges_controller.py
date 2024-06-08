@@ -7,17 +7,19 @@ from kivymd.uix.screen import MDScreen
 from kivymd.uix.button import MDFloatingActionButton, MDRectangleFlatButton
 from kivymd.uix.gridlayout import MDGridLayout
 from kivymd.uix.textfield import MDTextField
-from kivymd.uix.selectioncontrol import MDSwitch, MDCheckbox
-from kivy.app import App
+#from kivymd.uix.selectioncontrol import MDSwitch, MDCheckbox
+from kivymd.toast import toast
+
+#from kivy.app import App
 
 from MVC.model.charges.charges_model import ChargesDB
 import MVC.controller.functions as functions
 
 from kivymd.uix.list import OneLineIconListItem
-from kivy.properties import StringProperty, ObjectProperty, NumericProperty, BooleanProperty
+from kivy.properties import StringProperty, NumericProperty, BooleanProperty #ObjectProperty
 import concurrent.futures
-from kivy.uix.recycleview import RecycleView
-from kivymd.uix.filemanager import MDFileManager
+#from kivy.uix.recycleview import RecycleView
+#from kivymd.uix.filemanager import MDFileManager
 
 import weakref
 
@@ -87,8 +89,8 @@ class ChargeAddPage(MDScreen):
     #MENU DE PROVEEDORES
     def SelectItem(self, nameSupplier, nameID):
         
-        self.ids.searchingSupplier.text = nameSupplier
-        self.ids.searchingSupplier.name = nameID
+        self.ids.searchingSupplier.text = str(nameSupplier)
+        self.ids.searchingSupplier.name = str(nameID)
 
         #self.ids.searchingSupplier.icon_left = 'account-star'
 
@@ -139,7 +141,7 @@ class ChargeAddPage(MDScreen):
 
             for item in return_value:
 
-                text = return_value[item]['name']
+                text = return_value[item]['name_supplier']
                 name = return_value[item]['_id']
 
                 add_icon_item(text, name, True)
@@ -204,15 +206,17 @@ class ChargeAddPage(MDScreen):
 
         if existProduct == True:
 
+            toast('Existe el producto, se actualizaran sus datos.')
             instance.icon_left = 'alpha-v-circle-outline'
             instance.verificationProduct = True
 
-            print('existe')
+            
         else:
+
+            toast('No existe el producto, se crearán sus datos.')
             instance.icon_left = 'alpha-n-circle-outline'
             instance.verificationProduct = False
 
-            print('no existe')
 
     #####################
     #Producto nuevo, opciones
@@ -584,7 +588,9 @@ class ChargeAddPage(MDScreen):
         self.ids.BoxLayoutChargeAdd.children[0].ids.NewButtonAddItem = weakref.ref(NewButton)
 
         buttonItemNew = self.ids.BoxLayoutChargeAdd.children[0].children[1]
-        buttonItemNew.on_release = lambda x='a': self.CheckProductExist(buttonItemNew)
+        textInput = self.ids.BoxLayoutChargeAdd.children[0].children[-1]
+        
+        buttonItemNew.on_release = lambda x='a': self.CheckProductExist(textInput)
 
     #Cambia número de ganancias, compras y total al escribir algún on_key en los inputs
     def updateNumberTextChargeNew(self, *args):
@@ -728,6 +734,6 @@ class ChargeAddPage(MDScreen):
         
         if return_value == True:
             
-            functions.FunctionsKivys.ChangePage('ChargePage','Encargo')
+            functions.FunctionsKivys.ChangePage('self', 'ChargePage','Encargo')
 
         

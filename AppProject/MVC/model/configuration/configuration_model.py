@@ -10,7 +10,7 @@ class ConfigurationBD():
         collection = DataBase.db['users']
 
         #busca si existe un usuario con el dato dado
-        user = collection.find_one({"username": functions.username_text})
+        user = collection.find_one({"username": functions.usernameStaff})
 
 
         if user:
@@ -30,7 +30,7 @@ class ConfigurationBD():
                     return
 
         
-                documentToChange = { 'username': functions.username_text}
+                documentToChange = { 'username': functions.usernameStaff}
                 newValue = { "$set": { indexData: value1 } }
 
 
@@ -39,13 +39,13 @@ class ConfigurationBD():
                 
                 match indexData:
                     case 'username':
-                        functions.username_text = value1
+                        functions.usernameStaff = value1
                         
                     case 'email':
-                        functions.email_text = value1
+                        functions.emailStaff = value1
 
                     case 'password':
-                        functions.password_text = value1
+                        functions.passwordStaff = value1
 
                 return
                     

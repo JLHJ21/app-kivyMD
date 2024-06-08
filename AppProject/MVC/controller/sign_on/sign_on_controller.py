@@ -10,7 +10,7 @@ import MVC.controller.functions as functions
 class SignOnPage(MDScreen):
 
     def ChangePageToSignIn(self):
-        functions.FunctionsKivys.ChangePage('SignInPage', 'Iniciar Sesión')
+        functions.FunctionsKivys.ChangePage('self', 'SignInPage', 'Iniciar Sesión')
 
     
     def CreateAccount(self, username, email, password, password2):

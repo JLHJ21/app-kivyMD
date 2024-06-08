@@ -1,10 +1,10 @@
 from kivymd.uix.screen import MDScreen
+from kivymd.toast import toast
 
 from kivy.properties import BooleanProperty, ObjectProperty, ListProperty, StringProperty, NumericProperty 
 
 from MVC.model.clients.clients_model import ClientsDB
 import MVC.controller.functions as functions
-
 
 class ClientUpdatePage(MDScreen):
 
@@ -36,5 +36,8 @@ class ClientUpdatePage(MDScreen):
         results = ClientsDB.UpdateClient(nameClient, idClient, phoneClient, self.idObject)
         
         if results == True:
-            functions.FunctionsKivys.ChangePage('ClientsPage', 'Cliente')
+            toast('¡Se ha realizado la modificación con éxito!')
+            functions.FunctionsKivys.ChangePage('self', 'ClientsPage', 'Cliente')
+        else:
+            toast('Hubo un error ' + results)
     

@@ -123,6 +123,7 @@
 
                                         id: nameClient
                                         size_hint_x: 0.4
+                                        name: ''
 
                                         hint_text: "Nombre del cliente"
 
@@ -194,7 +195,8 @@
                                         on_focus: if self.focus: root.CallbackMenuCashierPaymentType(self)
 
                                 MDGridLayout:
-                                    cols: 3
+                                    #cols: 3
+                                    cols: 2
                                     spacing: dp(10)
                                     padding: dp(16), dp(12), dp(1), dp(12)
 
@@ -209,20 +211,23 @@
 
                                     MDTextField:
 
-                                        id: name_field
+                                        id: inputPaid
                                         size_hint_x: 0.4
 
-                                        text: "100$"
-                                        readonly: True
-
+                                        text: "0" 
                                         mode: "rectangle"
+                                        on_text: root.UpdateTotalCost() #if self.text != '' else root.UpdateTotalCost()
+                                        
+                                        input_filter: 'float'
+                                        write_tab: False
+                                        max_text_length: 12
 
-                                    MDFloatingActionButton:
+                                    #MDFloatingActionButton:
 
-                                        size_hint_x: 0.2
-                                        icon: "cash-plus"
-                                        style: "standard"
-                                        elevation: 0
+                                    #    size_hint_x: 0.2
+                                    #    icon: "cash-plus"
+                                    #    style: "standard"
+                                    #    elevation: 0
 
 
                                 MDGridLayout:
@@ -241,10 +246,10 @@
 
                                     MDTextField:
 
-                                        id: name_field
+                                        id: totalCost
                                         size_hint_x: 0.4
 
-                                        text: "10$"
+                                        text: "0$"
                                         readonly: True
 
                                         mode: "rectangle"
@@ -332,26 +337,6 @@
 
                                     test: 'self.objecto.DictionaryDataset.update(self.objecto.root.ShowDataCashierProductsController(self.objecto.StartPagination, self.objecto.StaticItemsAccountPagination, self.objecto.DirectionPagination))'
 
-                                            
-                                #RecycleViewTable:
-
-                                    #id_table: "tableCajeroProducto"
-
-                                    #padding: dp(16), dp(root.manager.parent.parent.ids.toolbar.height / 2), dp(16), dp(root.manager.parent.parent.ids.toolbarbottom.height /2)
-
-                                    #objecto: self
-                                    #need_image: True
-                                    #columnas: 5
-
-                                    #list_table_labels: ["id_imagen", "id_cedula", "id_proveedor"]
-                                    #list_table_data: ["imagen", "cedula", "proveedor"]
-
-                                    #modalData: 
-                                        #'ModalsDialog.ShowAlertDialog("self","¿Que desea realizar?", "Por favor, elija algunas de las opciones presentadas.", "", "Cancelar", "Agregar",  lambda x: print("click cancerlar"),       lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog.dismiss()),        lambda x: ModalsDialog.ChangePage("self", "StorePageUpdate", "Almacen - Modificar"))'
-                                    
-                                    #test: 
-                                        #'for i in range(1,5): d = {f"dato{i}": [f"images/logo.jpg", f"dato{i}_cedula", f"dato{i}_proveedor"]};self.objecto.DictionaryDataset.update(d)'
-
                 #PRODUCTOS EN LA CAJA/CARRITO
                 MDBoxLayout:
                     orientation: 'vertical'
@@ -378,7 +363,7 @@
 
                         titles_labels: ['Nombre', 'Cantidad', 'Total']
                         #titles_labels: ["Nombre", "Cantidad", "Precio"]
-                        list_table_data: ['name_product', 'amount_wanted', 'total_product']
+                        list_table_data: ['name_product', 'amount_wanted', 'total_price']
                         #list_table_data: ["name_product", "amount_product", "profit_product"]
 
                         #Datos del Modal de eliminar "¿Esta seguro?"
@@ -390,27 +375,6 @@
 
                         test: 'self.objecto.DictionaryDataset.update(self.objecto.root.ShowDataCashierProductsShoppingCartController(self.objecto.StartPagination, self.objecto.StaticItemsAccountPagination, self.objecto.DirectionPagination))'
                         
-                        #RecycleViewTable:
-                        
-                            #id_table: "tableCashier"
-
-                            #size_hint_y: None
-                            #height: dp(400)
-                            #padding: dp(16), dp(16), dp(16), dp(root.manager.parent.parent.ids.toolbarbottom.height /2)
-
-                            #objecto: self
-                            #columnas: 5
-                            #need_image: True
-                            
-                            #list_table_labels: ["id_imagen", "id_dado", "id_fecha", "id_monto"]
-                            #list_table_data: ["imagen","dado por", "fecha", "monto"]
-
-                            #modalData: 
-                                #'ModalsDialog.ShowAlertDialog("self","¿Que desea realizar?","Por favor, elija algunas de las opciones presentadas.","Cancelar","Eliminar","Modificar",     lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog.dismiss()),    lambda x: ModalsDialog.ShowAlertDialogDelete("self","¿De verdad quiere eliminar este producto?","Si es así, adelante","Cancelar","Eliminar",lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog2.dismiss()),lambda x: print("cerrar")),     lambda x: ModalsDialog.ChangeAmountProductModal("self", "Cambiar cantidad del producto"))'
-
-                            #test: 
-                                #'for i in range(1,5): d = {f"dato{i}": [f"images/logo.jpg", f"dato{i}_dado", f"dato{i}_fecha", f"dato{i}_monto"]};self.objecto.DictionaryDataset.update(d)'
-
                 
                 #OPCIONES DE LOS BOTONES
                 MDBoxLayout:
@@ -443,7 +407,8 @@
                             MDRaisedButton:
                                 text: "Aceptar"
                                 text_color: "white"
-                                md_bg_color: "blue"    
+                                md_bg_color: "blue"   
+                                on_release: root.SubmitDataShoppingCart() 
 
 
 
@@ -487,4 +452,7 @@
             id: amountWanted
             hint_text: 'Cantidad a desear'
             mode: "rectangle"
+            max_text_length: 12
+            input_filter: 'int'
+            write_tab: False
 

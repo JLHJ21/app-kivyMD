@@ -15,7 +15,6 @@ class ContentNavigationDrawer(MDScrollView):
 
 #CABECERA Y PIE DE PAGINA DE LA PAGINA
 class HeaderAndFooter(MDScreen):
-
     
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -62,7 +61,7 @@ class HeaderAndFooter(MDScreen):
             {
                 "text": "Configuración",
                 "leading_icon": "account-settings",
-                "on_press": lambda x='Item configuracion': functions.FunctionsKivys.ChangePage('ConfigurationPage', 'Configuración'),
+                "on_press": lambda x='Item configuracion': functions.FunctionsKivys.ChangePage('self', 'ConfigurationPage', 'Configuración'),
             },
             {
                 "text": "Cerrar Sesión",
@@ -127,6 +126,6 @@ class HeaderAndFooter(MDScreen):
         self_main = functions.global_variable_self
 
         functions.have_session = False
-        functions.FunctionsKivys.ChangePage('SignInPage', 'Iniciar Sesión')
+        functions.FunctionsKivys.ChangePage('self', 'SignInPage', 'Iniciar Sesión')
 
         self_main.menu_configuration_header.dismiss()

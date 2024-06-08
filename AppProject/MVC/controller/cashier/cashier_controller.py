@@ -10,12 +10,13 @@ import concurrent.futures
 from kivymd.uix.dialog import MDDialog
 from kivymd.uix.button import MDFlatButton, MDRaisedButton
 from kivymd.uix.boxlayout import MDBoxLayout
+from kivymd.toast import toast
 
 from kivy.properties import StringProperty, NumericProperty, ObjectProperty
 
 #Pagina de cajero
 
-self_cashier_page = self_custom_modal = None
+self_cashier_page = self_custom_modal = global_table_products = None
 items_shopping_cart = {'characteristics': [2, 0, 5]}
 
 class ScrollViewCashierPage(MDScrollView):
@@ -35,10 +36,10 @@ class CustomModal(MDBoxLayout):
     
     def Variables(idProduct, nameProduct, amountProduct, profitProduct):
 
-        CustomModal.idProduct = idProduct
-        CustomModal.nameProduct = nameProduct
-        CustomModal.amountProduct = amountProduct
-        CustomModal.profitProduct = profitProduct
+        CustomModal.idProduct = str(idProduct)
+        CustomModal.nameProduct = str(nameProduct)
+        CustomModal.amountProduct = str(amountProduct)
+        CustomModal.profitProduct = str(profitProduct)
 
 
 class CashierPage(MDScreen):
@@ -51,15 +52,128 @@ class CashierPage(MDScreen):
         global self_cashier_page
         self_cashier_page = self
 
+    def on_pre_enter(self):
+
+        if functions.have_session != True:
+            functions.FunctionsKivys.ChangePage('self', 'SignInPage', 'Iniciar Sesión')
+
+    def SubmitDataShoppingCart(self):
+
+        global items_shopping_cart
+
+        totalCost = self.ids.totalCost.text
+        intTotalCost = totalCost.rstrip("$")
+
+        if float(intTotalCost) <= 0:
+
+            if (len(items_shopping_cart) - 1) <= 0:
+                #print('no hay items agregados')
+                toast('No hay ningún producto por comprar.')
+
+            else:
+                idClient = self.ids.idClient.text
+                
+                idObjectClient = self.ids.nameClient.name
+                nameClient = self.ids.nameClient.text
+                phoneClient = self.ids.phoneClient.text
+
+            
+                if idClient != '' and nameClient != '' and phoneClient != '':
+                    from templates.table.table import global_rv, global_self_shoppingCart, ModalsDialog
+
+                    if idObjectClient == '':
+                        with concurrent.futures.ThreadPoolExecutor() as executor:
+                            future = executor.submit(CashierDB.CreateClient, nameClient, idClient, phoneClient)
+                            return_value = future.result()
+
+                            idObjectClient = str(return_value)
+
+                    idStaff = functions.idStaff
+                    nameStaff = functions.usernameStaff
+
+                    purchaseAmount = self.ids.inputPaid.text
+                    typePurchase = self.ids.ButtonMenuCashierPaymentType.text
+
+                    products = items_shopping_cart
+                    
+
+                    CashierDB.AddPurchase(idObjectClient, nameClient, phoneClient, idClient, idStaff, nameStaff, purchaseAmount, typePurchase, products)
+
+                    items_shopping_cart.clear()
+                    items_shopping_cart = {'characteristics': [2, 0, 5]}
+
+                    self.CleanInput([nameClient, phoneClient, idClient, purchaseAmount, totalCost])
+
+                    ModalsDialog.ActualizeData(global_rv[global_self_shoppingCart], global_self_shoppingCart)
+
+                    toast('¡Compra realizada con éxito!')
+                else:
+                    toast('Faltan datos del cliente')
+            
+        else:
+            toast('No se puede realizar la compra porque falta dinero por pagar.')
+            #print('falta dinero')
+
+    def CleanInput(self, itemClean):
+
+        for item in itemClean:
+
+            item = ""
+
+            try:
+                item = ""
+            except:
+                pass
+
+    def UpdateTotalCost(self):
+
+        foreign_exchange = ''
+        totalCost = 0
+        listPrices = 0
+        totalMoneyPaid = 0
+        moneyPaid =  self_cashier_page.ids.inputPaid.text
+        typeForeignExchange = self_cashier_page.ids.ButtonMenuCashierPaymentType.text
+        data = list(items_shopping_cart.keys())
+
+        if moneyPaid != '':
+            totalMoneyPaid = moneyPaid
+
+        match typeForeignExchange:
+            case 'Dólar':
+                foreign_exchange = functions.global_dolar
+            case 'Peso':
+                foreign_exchange = functions.global_peso
+
+            case 'Bolívar':
+                foreign_exchange = functions.global_bolivar
+
+        for d in (data)[1:]:
+            try:
+                listPrices = float(listPrices) + float(items_shopping_cart[d][0]['total_price'])
+            except:
+                pass
+
+        #CAMBIOS DEPENDIENDO DE LA MONEDA
+        listPrices = float(listPrices) * float(foreign_exchange)
+        #totalMoneyPaid = float(totalMoneyPaid) * float(foreign_exchange)
+
+        #totalCost = self_cashier_page.ids.totalCost.text.rstrip("$") 
+        totalCost = float(listPrices) - float(totalMoneyPaid)
+        totalCost = f"{totalCost:.3f}"
+        #totalCostForeignExchange = float(totalCost)
+        #totalCostForeignExchange = f"{totalCostForeignExchange:.3f}"
+        
+        #if float(totalCost) < 0:
+        #    self_cashier_page.ids.totalCost.text = '0$'
+        #else:
+
+        self_cashier_page.ids.totalCost.text = str(totalCost) + '$'
+
+
     def ModalAddProductToShoppingCart():
 
         from templates.table.table import global_self_modal, global_id_modal, global_modal_rv, global_rv, ModalsDialog
-
-        #print('AQUI')
-
-        #print(global_rv[global_modal_rv].objecto.rv.data)
         
-
         results = CashierDB.GetDataProduct(global_id_modal)
         CustomModal.Variables(results['_id'], results['name_product'], results['amount_product'], results['profit_product'])
 
@@ -100,23 +214,55 @@ class CashierPage(MDScreen):
 
         for d in (data)[1:]:
 
-            if items_shopping_cart[d][0]['name_product'] == global_id_modal:
+            if items_shopping_cart[d][0]['_id'] == global_id_modal:
+                idProductShoppingCart = items_shopping_cart[d][0]['_id']
+                amountOriginal = items_shopping_cart[d][0]['amount_original']
                 del items_shopping_cart[d]
                 break
-
-        print()
-        print(CustomModal.amountProduct)
         
+
         with concurrent.futures.ThreadPoolExecutor() as executor:
-            executor.submit(CashierDB.UpdateAmountProduct, global_id_modal, CustomModal.amountProduct)
+            executor.submit(CashierDB.UpdateAmountProduct, idProductShoppingCart, amountOriginal)
+
+        CashierPage.ActualizeItemShoppingCart(global_self_shoppingCart)
+        self_cashier_page.UpdateTotalCost()
 
         ModalsDialog.ActualizeData(global_rv[global_self_shoppingCart], global_self_shoppingCart)
-        #OJO
-        #ModalsDialog.ActualizeData(global_rv[global_modal_rv], global_modal_rv)
+        ModalsDialog.ActualizeData(global_rv[global_table_products], global_table_products)
+          
+    def ActualizeItemShoppingCart(self):
 
-            
-            
-        pass
+        global items_shopping_cart, self_custom_modal
+        from templates.table.table import global_self_shoppingCart, global_rv    
+
+        start = global_rv[global_self_shoppingCart].objecto.StartPagination
+        end = global_rv[global_self_shoppingCart].objecto.StaticItemsAccountPagination
+
+        data = list(items_shopping_cart.keys())
+        #Cantidad de items que se mostrarán en el "Mostrando X-X"
+
+        if (len(items_shopping_cart) - 1) <= 0:
+            count_items = 0
+        else:
+            count_items = len(items_shopping_cart) - 1
+
+        new_items = {'characteristics': [count_items, start, end]}
+
+        for index, d in enumerate((data)[1:]):
+
+            idProductShoppingCart = items_shopping_cart[d][0]['_id']
+            nameProduct = items_shopping_cart[d][0]['name_product']
+            amountWanted = items_shopping_cart[d][0]['amount_wanted']
+            totalPrice = items_shopping_cart[d][0]['total_price']
+            amountOriginal = items_shopping_cart[d][0]['amount_original']
+
+            new_item = {'dato'+str(index): [{'_id': idProductShoppingCart, 'name_product': nameProduct, 'amount_wanted': amountWanted, 'total_price': totalPrice, 'amount_original': amountOriginal}]}
+
+            new_items.update(new_item)
+
+        items_shopping_cart.clear()
+        items_shopping_cart.update(new_items)
+        
 
     def AddProductToShoppingCart(self, global_rv, global_modal_rv):
 
@@ -134,29 +280,26 @@ class CashierPage(MDScreen):
         for item in global_rv[global_modal_rv].objecto.rv.data:
 
             if item['dato']['name_product'] == CustomModal.nameProduct:
-
-                #print('ENCONTRADO COINCIDENCIA')
-                #print(item['dato']['amount_product'])
-                #print()
-                #item['dato']['amount_product'] = int(item['dato']['amount_product']) - int(CustomModal.amountProduct)
-                #print(int(CustomModal.amountProduct))
                 amount_discount = int(item['dato']['amount_product']) - int(amountWanted)
-                #print(item['dato']['name_product'])
-                #print(item['dato']['amount_product'])
-
                 break
 
         if int(amountWanted) > int(amountProduct):
             print('te pasas del producto')
         else:
 
-            idProduct = CustomModal.idProduct
+            global global_table_products
+            global_table_products = global_modal_rv
+
+            idProduct = str(CustomModal.idProduct)
             nameProduct = CustomModal.nameProduct
             profitProduct = CustomModal.profitProduct
 
+
+
+
             #Cambia la cantidad de produtos en la base de datos            
             with concurrent.futures.ThreadPoolExecutor() as executor:
-                executor.submit(CashierDB.UpdateAmountProduct, CustomModal.nameProduct, str(amount_discount))
+                executor.submit(CashierDB.UpdateAmountProduct, idProduct, str(amount_discount))
             
             #Actualiza los datos de la tabla de productos de cajero página
             ModalsDialog.ActualizeData(global_rv[global_modal_rv], global_modal_rv)
@@ -167,6 +310,7 @@ class CashierPage(MDScreen):
             start = global_rv[global_self_shoppingCart].objecto.StartPagination
             end = global_rv[global_self_shoppingCart].objecto.StaticItemsAccountPagination
 
+            #OJO
             #Cantidad de items que se mostrarán en el "Mostrando X-X"
             if (len(items_shopping_cart) - 1) <= 0:
                 count_items = 0
@@ -182,11 +326,13 @@ class CashierPage(MDScreen):
                 new_characteristics = {'characteristics': [count_items, start, end]}
                 items_shopping_cart.update(new_characteristics)
 
-
-            new_item = {'dato'+str(count_items): [{'_id': idProduct, 'name_product': nameProduct, 'amount_wanted': amountWanted, 'total_product': totalPrice}]}
+            new_item = {'dato'+str(count_items): [{'_id': idProduct, 'name_product': nameProduct, 'amount_wanted': amountWanted, 'total_price': totalPrice, 'amount_original': CustomModal.amountProduct}]}
 
             items_shopping_cart.update(new_item)
-            
+
+            #actualiza el costo total
+            self_cashier_page.UpdateTotalCost()
+            #actualiza los datos de la tabla de carrito de comprar
             ModalsDialog.ActualizeData(global_rv[global_self_shoppingCart], global_self_shoppingCart)
 
     def CallbackMenuCashierPaymentType(self, button):
@@ -196,8 +342,9 @@ class CashierPage(MDScreen):
 
     ## CALLBACK DEL SELECT BUSCADOR DEL MENU ALMACEN
     def CashierPaymentType(self = None, instance = ""):
-        
+
         self_cashier_page.ids.ButtonMenuCashierPaymentType.text = instance
+        self_cashier_page.UpdateTotalCost()
         functions.global_variable_self.MenuCashierPaymentType.dismiss()
 
     def ShowDataCashierProductsController(self, start, end, state):
@@ -213,16 +360,17 @@ class CashierPage(MDScreen):
         characteristics = items_shopping_cart['characteristics']
 
         list_return = {'characteristics': characteristics}
-
         data = list(items_shopping_cart.keys())
 
         for d in (data)[start + 1 :end]:
+            
 
             new_item = {d: [
-                    {'_id': items_shopping_cart[d][0]['name_product'], 
+                    #AAAAA
+                    {'_id': items_shopping_cart[d][0]['_id'], 
                     'name_product': items_shopping_cart[d][0]['name_product'], 
                     'amount_wanted': items_shopping_cart[d][0]['amount_wanted'], 
-                    'total_product': items_shopping_cart[d][0]['total_product']}
+                    'total_price': items_shopping_cart[d][0]['total_price']}
                 ]}
 
             list_return.update(new_item)
@@ -240,8 +388,9 @@ class CashierPage(MDScreen):
         
         if return_value[0] == True:
 
-            self.ids.nameClient.text = return_value[1]['name_client']
-            self.ids.phoneClient.text = return_value[1]['phone_client']
+            self.ids.nameClient.name = str(return_value[1]['_id'])
+            self.ids.nameClient.text = str(return_value[1]['name_client'])
+            self.ids.phoneClient.text = str(return_value[1]['phone_client'])
             self.ids.idClient.icon_left = 'smart-card'
         
         else:

@@ -4,20 +4,20 @@ from MVC.model.supplier.supplier_model import SupplierDB
 import MVC.controller.functions as functions
 import concurrent.futures
 
-
+self_supplier_page = None
 #PAGINA DE PROVEEDOR
 class SupplierPage(MDScreen):
 
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        global self_SupplierCharge
-        self_SupplierCharge = self
+        global self_supplier_page
+        self_supplier_page = self
 
     
     def ChangePageSupplierPage(self):
 
-        functions.FunctionsKivys.ChangePage('SupplierAddPage', 'Proveedor - Agregar')
+        functions.FunctionsKivys.ChangePage('self', 'SupplierAddPage', 'Proveedor - Agregar')
         
 
     def ShowDataSupplierController(self, start, end, state):
@@ -45,4 +45,4 @@ class SupplierPage(MDScreen):
     ## CALLBACK DEL SELECT BUSCADOR DEL MENU ALMACEN
     def ChangeSearchingTypeSupplier(self = None, Text = ""):
 
-        functions.MenuAndTitleSelect.ChangeNameDropMenu(self_SupplierCharge, functions.global_variable_self.MenuTypeSupplierPage, 'ButtonMenuSearchingSupplier', Text)
+        functions.MenuAndTitleSelect.ChangeNameDropMenu(self_supplier_page, functions.global_variable_self.MenuTypeSupplierPage, 'ButtonMenuSearchingSupplier', Text)

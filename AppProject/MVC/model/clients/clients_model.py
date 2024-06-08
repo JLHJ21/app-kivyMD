@@ -97,43 +97,72 @@ class ClientsDB():
             
         collection = DataBase.db['clients']
 
-        #data
+        
+        if collection.count_documents({'name_client': name}, limit = 1):
 
-        post = {'name_client': name, 'id_client': id, 'phone_client': phone, 'state_client': 1}
-        collection.insert_one(post)
+            return 'ya existe un nombre así.'
 
-        return True
+        elif collection.count_documents({'id_client': id}, limit = 1):
+            return 'ya existe una cédula así registrada.'
+        
+        elif collection.count_documents({'phone_client': phone}, limit = 1):
+            return 'ya existe un teléfono así.'
+        
+        else:
+
+            #data
+            post = {'name_client': name, 'id_client': id, 'phone_client': phone, 'state_client': 1}
+            collection.insert_one(post)
+
+            return True
     
     def UpdateClient(nameClient, idClient, phoneClient, idObject):
         
         query = {}
         collection = DataBase.db['clients']
 
-        #data
-
-        ####Si no existe el dato introducido, lo añade al query
-        #name_client
-        if collection.count_documents({'_id': ObjectId(idObject), 'name_client': nameClient}, limit = 1) <= 0:
-            query['name_client'] = nameClient
-
-        #id_client
-        if collection.count_documents({'_id': ObjectId(idObject), 'id_client': idClient}, limit = 1) <= 0:
-            query['id_client'] = idClient
-
-        #phone_client
-        if collection.count_documents({'_id': ObjectId(idObject), 'phone_client': phoneClient}, limit = 1) <= 0:
-            query['phone_client'] = phoneClient
-
-        #Si no tiene items el query (no hay datos nuevos), regresar si hacer cambios  a la base de datos
-        if len(query) == 0:
-            return True
+        #Revisa si el dato existe en otros proveedores
+        if collection.count_documents( {
+                "_id":  {"$nin" : [ObjectId(idObject)]},
+                'name_client': nameClient,
+                "state_client": 1
+            }):
+            return ', ya existe registrado este nombre.'
+        elif collection.count_documents( {
+                "_id":  {"$nin" : [ObjectId(idObject)]},
+                'id_client': idClient,
+                "state_client": 1
+            }):
+            return ', ya existe registrado esta cédula.'
+        elif collection.count_documents( {
+                "_id":  {"$nin" : [ObjectId(idObject)]},
+                'phone_client': phoneClient,
+                "state_client": 1
+            }):
+            return ', ya existe registrado este número de teléfono.'
         else:
-            collection.update_one({'_id': ObjectId(idObject)},{'$set': query })
-            return True
 
-        #post = {'name_client': name, 'id_client': id, 'phone_client': phone, 'state_client': 1}
-        #collection.insert_one(post)
+            #data
 
+            ####Si no existe el dato introducido, lo añade al query
+            #name_client
+            if collection.count_documents({'_id': ObjectId(idObject), 'name_client': nameClient}, limit = 1) <= 0:
+                query['name_client'] = nameClient
+
+            #id_client
+            if collection.count_documents({'_id': ObjectId(idObject), 'id_client': idClient}, limit = 1) <= 0:
+                query['id_client'] = idClient
+
+            #phone_client
+            if collection.count_documents({'_id': ObjectId(idObject), 'phone_client': phoneClient}, limit = 1) <= 0:
+                query['phone_client'] = phoneClient
+
+            #Si no tiene items el query (no hay datos nuevos), regresar si hacer cambios  a la base de datos
+            if len(query) == 0:
+                return True
+            else:
+                collection.update_one({'_id': ObjectId(idObject)},{'$set': query })
+                return True
 
     def DeleteClient(id):
 

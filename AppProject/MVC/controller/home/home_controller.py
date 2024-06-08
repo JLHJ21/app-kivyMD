@@ -24,11 +24,11 @@ class InitialPage(MDScreen):
                 case _:
                     access_text_string = 'Empleado'
 
-            self.ids.usernameHomeLabel.text = functions.username_text
+            self.ids.usernameHomeLabel.text = functions.usernameStaff
             self.ids.accessLevelHomeLabel.text = access_text_string
             print('puede entrar')
         else:
             print('no puede entrar')
-            functions.FunctionsKivys.ChangePage('SignInPage', 'Iniciar Sesión')
+            functions.FunctionsKivys.ChangePage('self', 'SignInPage', 'Iniciar Sesión')
 
     

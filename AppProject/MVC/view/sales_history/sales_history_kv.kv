@@ -45,22 +45,31 @@
                     style: "standard"
                     width: "100dp"
                     
-            #RecycleViewTable:
 
-            #    id_table: "tableSalesHistory"
+            RecycleViewTable:
 
-            #    padding: dp(16), dp(root.manager.parent.parent.ids.toolbar.height / 2), dp(16), dp(root.manager.parent.parent.ids.toolbarbottom.height /2)
+                id_table: "tableSalesHistory"
 
-            #    need_image: True
-            #    objecto: self
-            #    columnas: 5
+                padding: dp(16), dp(root.manager.parent.parent.ids.toolbar.height / 2), dp(16), dp(root.manager.parent.parent.ids.toolbarbottom.height /2)
 
-            #    list_table_labels: ["id_imagen", "id_cliente", "id_empleado", "id_monto", "id_fecha"]
-            #    list_table_data: ["imagen","cliente", "empleado", "monto", "fecha"]
+                objecto: self
+                need_image: False
+                columns: 4
+                root: root
 
-            #    modalData: 
-            #        'ModalsDialog.ShowAlertDialog("self","¿Que desea realizar?","Por favor, elija algunas de las opciones presentadas.","Cancelar","Eliminar","Modificar",lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog.dismiss()),lambda x: ModalsDialog.ShowAlertDialogDelete("self","¿De verdad quiere eliminar este producto?","Si es así, adelante","Cancelar","Eliminar",lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog2.dismiss()),lambda x: print("cerrar")),lambda x: ModalsDialog.ChangePage("self","StorePageUpdate", "Almacen - Modificar"))'
-                
-            #    test: 
-            #        'for i in range(1,5): d = {f"dato{i}": [f"images/logo.jpg", f"dato{i}_cliente", f"dato{i}_empleado", f"dato{i}_monto", f"dato{i}_fecha"]};self.objecto.DictionaryDataset.update(d)'
+                differentColumn: 'nothing'
+                #customModal: 'ModalsDialog.CloseDialog(RecycleViewTable.dialog.dismiss()); from MVC.controller.cashier.cashier_controller import CashierPage; CashierPage.ModalAddProductToShoppingCart();'
+
+
+                titles_labels: ["Cliente", "Empleado", "Monto", "Fecha"]
+                list_table_data: ["name_client", "name_staff", "purchase", "date"]
+
+                #Datos del Modal de eliminar "¿Esta seguro?"
+                modalChooseDeleteConfirmationTitle: 'modalChooseDeleteConfirmationTitle'
+                modalChooseDeletConfirmationeText: 'modalChooseDeletConfirmationeText'
+                modalChooseDeleteConfirmation: 'print("modalChooseDeleteConfirmation")'
+
+                modalChooseUpdate: 'print("modalChooseUpdate")'
+
+                test: 'self.objecto.DictionaryDataset.update(self.objecto.root.ShowDataSalesHistoryController(self.objecto.StartPagination, self.objecto.StaticItemsAccountPagination, self.objecto.DirectionPagination))'
                 

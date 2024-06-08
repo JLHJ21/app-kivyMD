@@ -12,8 +12,8 @@
         left_action_items: [["menu", lambda x: root.ids.nav_drawer.set_state("open")]]
         right_action_items:
             [
-            ["cash-100", lambda x: root.CallbackMenuChangeMoney(x), "Tipo de tasa - Dolar", "Tipo de tasa - Dolar"],
-            ["weather-sunny", lambda x: root.CallbackModeScreen(x, 'oscuro'), "Modo Claro", "Modo Claro"],
+            #["cash-100", lambda x: root.CallbackMenuChangeMoney(x), "Tipo de tasa - Dolar", "Tipo de tasa - Dolar"],
+            #["weather-sunny", lambda x: root.CallbackModeScreen(x, 'oscuro'), "Modo Claro", "Modo Claro"],
             ["account-settings", lambda x: root.CallbackMenuUser(x), "Perfil" , "Perfil"],
             ]
             
@@ -28,11 +28,11 @@
         
         right_action_items:
             [             
-            ["account-cog", lambda x: app.callback(x), "", "Configuracion"],             
-            ["cash-remove", lambda x: app.callback(x), "", "Prestamos"],             
-            ["home", lambda x: app.functions_callback.ChangePage("InitialPage", "Panel de control"), "", "Panel de control"],    
-            ["cash-register", lambda x: app.callback(x), "", "Cajero"],             
-            ["store", lambda x: app.callback(x), "", "Almacen"],             
+            ["account-cog", lambda x: app.functions_callback.ChangePage('ConfigurationPage', 'Configuracion'), "", "Configuracion"],             
+            ["cash", lambda x: app.functions_callback.ChangePage('ForeignExchangePage', 'Divisas'), "", "Divisas"],             
+            ["home", lambda x: app.functions_callback.ChangePage("InitialPage", "Inicio"), "", "Inicio"],    
+            ["cash-register", lambda x: app.functions_callback.ChangePage('CashierPage', 'Cajero'), "", "Cajero"],             
+            ["store", lambda x: app.functions_callback.ChangePage('StorePage', 'Almacén'), "", "Almacén"],             
             ]
 
 ############################# ITEMS DEL MENU LATERAL
@@ -75,7 +75,7 @@
         DrawerClickableItem:
             icon: "home"
             text_right_color: "#4a4939"
-            text: "Panel de control"
+            text: "Inicio"
 
             on_press:
                 root.screen_manager.current = "InitialPage"
@@ -90,6 +90,7 @@
             on_press:
                 root.screen_manager.current = "CashierPage"
 
+                #app.functions_callback.ChangePage("CashierPage", self.text)
                 app.root.ids.toolbar.title = self.text
 
         DrawerClickableItem:
@@ -122,7 +123,7 @@
         DrawerClickableItem:
             icon: "cube-send"
             text_right_color: "#4a4939"
-            text: "Encargos"
+            text: "Compras"
 
             on_press:
                 root.screen_manager.current = "ChargePage"
@@ -149,15 +150,15 @@
 
                 app.root.ids.toolbar.title = self.text
         
-        DrawerClickableItem:
-            icon: "cash-remove"
-            text_right_color: "#4a4939"
-            text: "Prestamos"
+        #DrawerClickableItem:
+        #    icon: "cash-remove"
+        #    text_right_color: "#4a4939"
+        #    text: "Prestamos"
 
-            on_press:
-                root.screen_manager.current = "LoanPage"
+        #    on_press:
+        #        root.screen_manager.current = "LoanPage"
 
-                app.root.ids.toolbar.title = self.text
+        #        app.root.ids.toolbar.title = self.text
 
         DrawerClickableItem:
             icon: "receipt-text-clock"
@@ -169,15 +170,15 @@
 
                 app.root.ids.toolbar.title = self.text
         
-        DrawerClickableItem:
-            icon: "text-box-search"
-            text_right_color: "#4a4939"
-            text: "Historial de Dinero"
+        #DrawerClickableItem:
+        #    icon: "text-box-search"
+        #    text_right_color: "#4a4939"
+        #    text: "Historial de Dinero"
 
-            on_press:
-                root.screen_manager.current = "MoneyHistoryPage"
+        #    on_press:
+        #        root.screen_manager.current = "MoneyHistoryPage"
 
-                app.root.ids.toolbar.title = self.text
+        #        app.root.ids.toolbar.title = self.text
 
 
                 

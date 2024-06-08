@@ -5,6 +5,8 @@ from kivy.properties import BooleanProperty, ObjectProperty, ListProperty, Strin
 from MVC.model.supplier.supplier_model import SupplierDB
 import MVC.controller.functions as functions
 
+from kivymd.toast import toast
+
 class SupplierUpdatePage(MDScreen):
 
     
@@ -37,4 +39,7 @@ class SupplierUpdatePage(MDScreen):
         results = SupplierDB.UpdateSupplier(nameSupplier, addressSupplier, rifSupplier, phoneSupplier, self.idObject)
         
         if results == True:
-            functions.FunctionsKivys.ChangePage('SupplierPage', 'Proveedor')
+            toast('¡Se ha realizado la modificación con éxito!')
+            functions.FunctionsKivys.ChangePage('self', 'SupplierPage', 'Proveedor')
+        else:
+            toast('Hubo un error ' + results)
