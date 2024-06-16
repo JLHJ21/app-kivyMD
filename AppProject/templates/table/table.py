@@ -278,11 +278,19 @@ class RecycleViewTable(MDBoxLayout):
         #Mediante el uso de Clock, ya que __init__ inicia antes de que el .kv exista
         #Clock.schedule_once(lambda dt: SelectableLabel.CreateLabelsWidgets(global_selectable))
 
-        Clock.schedule_once(lambda dt: self.shoppingCartIdTable(self))
+        Clock.schedule_once(lambda dt: self.on_pre_enter(), 0.1)
 
-        Clock.schedule_once(lambda dt: self.CreateLabels(self))
+    def on_pre_enter(self):
+    
+        #Clock.schedule_once(lambda dt: self.shoppingCartIdTable(self))
+        functions.executor.submit(self.shoppingCartIdTable(self))
+
+        functions.executor.submit(self.CreateLabels(self))
+        #Clock.schedule_once(lambda dt: self.CreateLabels(self))
         #Clock.schedule_once(lambda dt: self.on_window_resize)
-        Clock.schedule_once(lambda dt: self.TableData(self.objecto.DictionaryDataset, ''))
+
+        functions.executor.submit(self.TableData(self.objecto.DictionaryDataset, ''))
+        #Clock.schedule_once(lambda dt: self.TableData(self.objecto.DictionaryDataset, ''), 2)
         #Clock.schedule_once(lambda dt: self.Test())
 
         #self.TableData(self.DictionaryDataset)
@@ -487,6 +495,9 @@ class ModalsDialog():
         elif global_different_column == 'nothing':
             return
         elif global_different_column == 'tableProductsShoppingCart':
+
+            custom_modal =  global_rv[global_modal_rv].objecto.customModal
+
             #Caracteristicas
             RecycleViewTable.dialog = MDDialog(
                 title= "¿Que desea realizar?",
@@ -509,7 +520,8 @@ class ModalsDialog():
                     MDRaisedButton(
                         text= 'Modificar',
                         md_bg_color="orange",
-                        on_release = lambda x: ModalsDialog.ChooseUpdateObject()
+                        #on_release = lambda x: ModalsDialog.ChooseUpdateObject()
+                        on_press = lambda x: exec(custom_modal)
                                                         
                     ),
                 ],
@@ -700,14 +712,17 @@ class ModalsDialog():
                 pass
 
     #AL DAR CLICK AL BOTON "ITEMS POR PAGINA", LLAMADO POR EL ARCHIVO TABLE.KV
-    def ChangeItemsAmount(self, rv, stay = False):
+    def ChangeItemsAmount(self, rv, actualize = False):
 
         #Reinicia la variable a 0
         global_rv[rv].objecto.StartPagination = 0
 
+        if actualize == True:
+            pass
+        else:
 
-        #Switch que cambia la cantidad de items a mostrar segun la cantidad que tenia previamente
-        if stay == True:
+            #Switch que cambia la cantidad de items a mostrar segun la cantidad que tenia previamente
+            #if stay == True:
             match global_rv[rv].objecto.StaticItemsAccountPagination:
                 case 5:
                     global_rv[rv].objecto.ItemsAccountPagination = global_rv[rv].objecto.StaticItemsAccountPagination = 10
@@ -719,15 +734,15 @@ class ModalsDialog():
                     global_rv[rv].objecto.ItemsAccountPagination = global_rv[rv].objecto.StaticItemsAccountPagination = 5
 
         #Cambia el texto del boton ItemsAmount
-
         global_rv[rv].objecto.ids.ItemsAmount.text = "Items por página: " + str(global_rv[rv].objecto.ItemsAccountPagination)
-
-        #Llama la funcion para ver si ambas flechas se desactivan al actualizar los datos
-        ModalsDialog.StatusButtonPagination(rv, "both")
 
         #Llama la función TableData para rellenar los datos de la tabla
         with concurrent.futures.ThreadPoolExecutor() as executor:
             executor.submit(global_rv[rv].objecto.TableData, global_rv[rv].objecto.DictionaryDataset, '')
+
+        #Llama la funcion para ver si ambas flechas se desactivan al actualizar los datos
+        ModalsDialog.StatusButtonPagination(rv, "both")
+
 
     #OJO
     #AL DAR CLICK A LOS BOTONES; TANTO DE ATRAS COMO ADELANTE
@@ -826,8 +841,7 @@ class ModalsDialog():
 
         #self = global_rv[global_modal_rv]
         #print(global_modal_rv.objecto.test)
-        exec(self.objecto.test)
-
+        #exec(self.objecto.test)
         #ModalsDialog.ChangeItemsAmountButtons('', self_rv)
         ModalsDialog.ChangeItemsAmount('', self_rv, True)
 

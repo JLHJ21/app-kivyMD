@@ -6,23 +6,30 @@ from kivy.metrics import dp
 from kivy.clock import Clock
 
 import MVC.controller.functions as functions
+from MVC.controller.foreign_exchange.foreign_exchange_controller import ForeignExchangePage
+
 
 #MENU LATERAL
 class ContentNavigationDrawer(MDScrollView):
     screen_manager = ObjectProperty()
     nav_drawer = ObjectProperty()
 
+self_header_and_footer = None
 
 #CABECERA Y PIE DE PAGINA DE LA PAGINA
 class HeaderAndFooter(MDScreen):
     
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        global self_header_and_footer
+        self_header_and_footer = self
 
         Clock.schedule_once(lambda dt: self.MenusSelects())
     
+    #datos que tendra el select o menu de los tipos de tasa
     def MenusSelects(self):
 
+        
         self_main = functions.global_variable_self
 
         #PROCESO QUE ALMACENA DE FORMA GLOBAL LOS DATOS DE SELF EN GLOBAL_SELF
@@ -55,6 +62,9 @@ class HeaderAndFooter(MDScreen):
             elevation= 4
         )
 
+        #Permite cambiar el icono segun la preferencia del dinero
+        self.CallbackTypeMoney(functions.money_preference, True)
+
     
         #PERFIL DE USUARIO
         menu_configuration_header = [
@@ -78,7 +88,8 @@ class HeaderAndFooter(MDScreen):
             elevation= 4
         )
         
-    def CallbackTypeMoney(self, action = None):
+    #me pone como primer icono, el dinero elegido
+    def CallbackTypeMoney(self, action = None, firstTime = False):
 
         self_main = functions.global_variable_self
 
@@ -103,7 +114,10 @@ class HeaderAndFooter(MDScreen):
         self_main.root.ids.toolbar.right_action_items[0] = items[0]
         self_main.menu_foreign_exchange.dismiss()
 
-    #Callbacks de los botones
+        if firstTime == False:
+            ForeignExchangePage.UpdateMoneyPreference('', action)
+
+    #Callbacks de los botones de tipos de tasa
     #####################
     def CallbackMenuChangeMoney(self, button):
 

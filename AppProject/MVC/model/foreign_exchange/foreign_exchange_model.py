@@ -1,8 +1,66 @@
 import database.database as DataBase
-
+import MVC.controller.functions as functions
+from datetime import datetime
 
 class ForeignExchangeDB():
 
+    def GetForeignExchange():
+        
+        collection = DataBase.db['foreign_exchange']
+        results = collection.find_one()
+        
+        return results
+    
+    def UpdateRateMoney(dolar, bolivar):
+        query = {}
+
+        #SI LOS DATOS NO SE REPITEN, SE AGREGA AL QUERY PARA MODIFICAR DATO
+        if (bolivar == functions.rate_bolivar) == False:
+            #OJO
+            #functions.rate_bolivar = bolivar
+            query['rate_bolivar'] = bolivar
+            
+        #SI LOS DATOS NO SE REPITEN, SE AGREGA AL QUERY PARA MODIFICAR DATO
+        if (dolar == functions.rate_dolar) == False:
+            #OJO
+            #functions.rate_dolar = dolar
+            query['rate_dolar'] = dolar
+
+        if len(query) == 0:
+            return ', no hay ningun dato por cambiar.'
+        else:
+
+            collection = DataBase.db['foreign_exchange']
+
+            last_change = datetime.today().strftime('%d-%m-%Y')
+            query['last_change'] = last_change
+
+            documentToChange = {'money_preference': functions.money_preference}
+            newValue = { "$set":  query  }
+
+            collection.update_one(documentToChange, newValue)
+
+            return True
+        
+    def UpdateMoneyPreference(new_preference):
+        try:
+            collection = DataBase.db['foreign_exchange']
+
+            last_change = datetime.today().strftime('%d-%m-%Y')
+            documentToChange = {'money_preference': functions.money_preference}
+
+            newValue = { "$set": { 'money_preference': new_preference, 'last_change': last_change } }
+
+            collection.update_one(documentToChange, newValue)
+
+            functions.money_preference = new_preference
+
+            return True
+        except:
+            return ', error al usar la base de datos.'
+        
+
+    '''
     def ChangePreferenceExchangeForeign(preference = None):
 
         collection = DataBase.db['foreign_exchange']
@@ -73,3 +131,5 @@ class ForeignExchangeDB():
         dataList.append(results['changeToDolar'])
 
         return dataList
+    
+    '''

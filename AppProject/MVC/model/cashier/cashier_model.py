@@ -90,7 +90,7 @@ class CashierDB():
 
     def GetDataProduct(idProduct):
         collection = DataBase.db['products']
-        results_items = collection.find_one({'_id': idProduct, 'state_product': 1}, {'_id': 1, 'name_product': 1, 'amount_product': 1, 'profit_product': 1})
+        results_items = collection.find_one({'_id': ObjectId(idProduct), 'state_product': 1}, {'_id': 1, 'name_product': 1, 'amount_product': 1, 'profit_product': 1})
         return results_items
 
     def SearchClient(self, textIdClient):
@@ -130,7 +130,7 @@ class CashierDB():
 
         collection.update_one({'_id': ObjectId(idProduct)},{'$set': query })
 
-    def AddPurchase(idObjectClient, nameClient, phoneClient, idClient, idStaff, nameStaff, purchaseAmount, typeForeignExchange,itemsProducts):
+    def AddPurchase(idObjectClient, nameClient, phoneClient, idClient, idStaff, nameStaff, purchaseAmount, typeForeignExchange,itemsProducts, purchaseAmountOriginal):
         collection = DataBase.db['sales']
         datePurchase = datetime.today().strftime('%d-%m-%Y %H:%M:%S')
 
@@ -155,30 +155,30 @@ class CashierDB():
             }
             products.append(dictionaryItem)
 
-        print('aqui')
-        print(idObjectClient)
-        print(type(idObjectClient))
-        print()
-
         post = {
-                'data_client': {
+                'data_client_sales': {
                         '_id_client': ObjectId(idObjectClient), 
                         'name_client': nameClient, 
                         'phone_client': phoneClient, 
                         'id_client': idClient
                     }, 
-                'data_staff': {
+                'data_staff_sales': {
                         '_id_staff': ObjectId(idStaff), 
                         'name_staff': nameStaff
                     }, 
-                'purchase_amount': str(purchaseAmount), 
-                'date_purchase': datePurchase, 
-                'type_money': typeForeignExchange,
-                'products': products, 
+                'data_money_sales': [
+                        {
+                            'type_money': typeForeignExchange,
+                            'purchase_money': str(purchaseAmount),
+                        }
+                ],
+                #'purchase_amount': str(purchaseAmount), en pesos
+                'total_purchase_sales': str(purchaseAmountOriginal),
+                'date_sales': datePurchase, 
+                #'type_money': typeForeignExchange,
+                'products_sales': products, 
                 'state_sales': 1
             }
-
-        print('MODEL')
-        print(products)
+        
         collection.insert_one(post)
         

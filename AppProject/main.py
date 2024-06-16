@@ -143,13 +143,10 @@ import concurrent.futures
 global_self_client = ''
 self_store_page = self_ClientsPage = self_sales_history = self_SupplierCharge = self_charge_page = self_money_history = global_foreign_exchange_update = None
 
-# LLAMADA A LA BASE DE DATOS
-with concurrent.futures.ThreadPoolExecutor() as executor:
-    executor.submit(DatabaseClass.Conexion)
 #productos
 #DatabaseClass.InsertData()
 
-
+import cProfile
 
 #CLASE DE DATEPICKER
 class DatePicker():
@@ -180,18 +177,25 @@ class DatePicker():
 
         self.datePicker.open()
 
+import threading
 #CLASE DE LA APLICACION
 class App(MDApp):
-
 
 
     #LO PRIMERO QUE SE CARGA
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
+        
+        # LLAMADA A LA BASE DE DATOS
+        #functions.executor.submit(DatabaseClass.Conexion)
+
         #Crea la variable global, self de la aplicación para poder ser utilizada en otras clases y archivos .py
         functions.GlobalVariables.GetGlobalSelf(self)
+        #DatabaseClass.Conexion()
 
+        t1 = threading.Thread(target=DatabaseClass.Conexion())# Here is where I have tried to thread the function
+        t1.start()
 
         #CARGA LOS DATOS DE .KV
         self.screen = Builder.load_file("styles.kv")
@@ -205,7 +209,7 @@ class App(MDApp):
         #self.table = RecycleViewTable()
         ##  MENU 2RA MANERA, PARA SOLO MDBUTTON
         #Menu almacen 
-
+        
 
         menu_store = [
             

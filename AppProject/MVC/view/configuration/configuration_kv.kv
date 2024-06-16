@@ -141,19 +141,24 @@
 <ContentConfigurationPage>:
     
     orientation: "vertical"
-    spacing: "12dp"
+    spacing: "15dp"
+    padding: dp(1), dp(20)
     size_hint_y: None
-    height: "120dp"
+    height: "130dp"
     id: idContentConfiguration
 
     MDTextField:
         id: inputOne
         hint_text: root.inputOne
         mode: "rectangle"
-
+        write_tab: False
+        max_text_length: root.textMaximumOne
+        password: root.passwordOne
 
     MDTextField:
         id: inputTwo
         hint_text: root.inputTwo
         mode: "rectangle"
-
+        write_tab: False
+        max_text_length: root.textMaximumTwo
+        password: root.passwordTwo

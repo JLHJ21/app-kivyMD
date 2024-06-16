@@ -1,3 +1,4 @@
+#:import Thread threading.Thread
 
 <SignOnPage>:
     name: "SignOnPage"
@@ -36,24 +37,26 @@
                         icon_left: "account"
                         hint_text: 'Escribir nombre de usuario'
                         mode: 'rectangle'
-                        required: True
+                        max_text_length: 20
+                        write_tab: False
 
                     MDTextField:
                         id: emailSignOn
                         icon_left: "email"
                         hint_text: 'Escribir correo electrónico'
                         mode: 'rectangle'
-                        validator: "email"
-                        required: True
-
+                        #validator: "email"
+                        max_text_length: 35
+                        write_tab: False
+                        
                     MDTextField:
                         id: passwordSignOn
                         icon_left: "account-key"
                         hint_text: 'Escribir contraseña'
                         mode: 'rectangle'
                         password: True
-                        required: True
-                        max_text_length: 5
+                        max_text_length: 20
+                        write_tab: False
                     
                     MDTextField:
                         id: repeatPasswordSignOn
@@ -61,8 +64,8 @@
                         hint_text: 'Repetir contraseña'
                         mode: 'rectangle'
                         password: True
-                        required: True
-                        max_text_length: 5
+                        max_text_length: 20
+                        write_tab: False
                 
                 MDGridLayout:
                     cols: 3
@@ -86,4 +89,6 @@
                         size_hint_x: 0.4
 
                         on_release: root.CreateAccount(root.ids.usernameSignOn.text, root.ids.emailSignOn.text, root.ids.passwordSignOn.text, root.ids.repeatPasswordSignOn.text)
+
+                        #on_release: Thread(target=root.CreateAccount(root.ids.usernameSignOn.text, root.ids.emailSignOn.text, root.ids.passwordSignOn.text, root.ids.repeatPasswordSignOn.text)).start()
 

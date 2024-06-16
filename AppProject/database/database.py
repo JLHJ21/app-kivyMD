@@ -7,12 +7,19 @@ from passlib.hash import sha256_crypt
 from bson import ObjectId
 
 
+
+import requests
+import json
+
 import certifi
 #username: giwileb320
 #password: w1ILQeJTCTtqVfba
 
 #mongodb+srv://giwileb320:w1ILQeJTCTtqVfba@cluster0.m0ki2xc.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
 
+
+#api key
+#0GPikKUv5FT2DDEpA3jE7ulhZGlfqT1PmnEQNvtkihGxy4YaXdse8oViFae2d7UO
 db = None
 
 class DatabaseClass():
@@ -74,7 +81,7 @@ class DatabaseClass():
 
         collection.insert_one(post)
 
-        '''
+        
         
         collection_2 = db['charges']
         collection_2.delete_many({})
@@ -110,7 +117,7 @@ class DatabaseClass():
 
             collection_2.insert_one(post)
         
-        '''
+        
         collection = db['products']
         #collection.delete_many({})
 
@@ -153,6 +160,9 @@ class DatabaseClass():
 
         #collection.delete_many({})
         '''
+        collection = db['products']
+
+        collection.delete_many({})
 
     def GetDataSupplier(text):
 
@@ -181,6 +191,252 @@ class DatabaseClass():
         #RETORNA LA INFORMACIÓN OBTENIDO
         return list_results
 
+    headers = {
+            'Content-Type': 'application/json',
+            'Access-Control-Request-Headers': '*',
+            'api-key': '0GPikKUv5FT2DDEpA3jE7ulhZGlfqT1PmnEQNvtkihGxy4YaXdse8oViFae2d7UO', 
+            'return_type': 'JSON'
+        }
+
+    def Find(collection, filter_query, projection, skip, limit, sort):
+
+        '''
+        collection, se refiere a la coleccion(tabla en sql) que se utilizará en este query
+        filter_query, se refiere al filtro que tendrá el query, ejm: cantidad': {"$ne" : "0"}, mostrará todos los documentos que la cantidad sea mayor a 0
+        projection, se refiere a los "items" o atributos que se mostrarán solamente, ejm: {'_id': 1} solo mostrará el id más no los otros datos
+        skip, salta la cantidad de documentos en el query
+        limit, limita la cantidad de documentos que regresará el query
+        sort, ordena los documentos entregados por el query, ya sea de mayor a menor o de menor a mayor
+        '''
+                
+        #cambiar por la opcion, ahorita es find
+        url = "https://us-east-1.aws.data.mongodb-api.com/app/data-rxxunxx/endpoint/data/v1/action/find"
+
+        json_query = {
+            "dataSource": "DataBaseIV",
+            "database": "programDB",
+        }
+
+        if collection != None:
+            json_query['collection'] = collection
+
+        if filter_query != None:
+            json_query['filter'] = filter_query
+
+        
+        if projection != None:
+            json_query['projection'] = projection
+
+
+        if skip != None:
+            json_query['skip'] = skip
+
+        if limit != None:
+            json_query['limit'] = limit
+
+        #"dataSource": "DataBaseIV",
+        #"database": "programDB",
+
+        #"collection": collection,
+        #"projection": projection,
+        #"filter": filter,
+        #"skip": skip,
+        #"limit": limit,
+        #"sort": sort
+            
+        if sort != None:
+            json_query['sort'] = sort
+
+        #El query a buscar
+        payload = json.dumps(
+            json_query
+        )
+
+        response = requests.request("POST", url, headers=DatabaseClass.headers, data=payload)
+
+        #transforma el json en dicitonario
+        out = response.json()
+        #print(response.text)
+        #print(type(out))
+        #print(out)
+
+        #lo entrega tal y como lo permite el sistema
+        return out['documents']
+            
+    #no usar
+    def FindOne(collection, filter_query, projection):
+        
+        '''
+        collection, se refiere a la coleccion(tabla en sql) que se utilizará en este query
+        filter, se refiere al filtro que tendrá el query, ejm: cantidad': {"$ne" : "0"}, mostrará todos los documentos que la cantidad sea mayor a 0
+        projection, se refiere a los "items" o atributos que se mostrarán solamente, ejm: {'_id': 1} solo mostrará el id más no los otros datos
+        '''
+                
+        #cambiar por la opcion, ahorita es find
+        url = "https://us-east-1.aws.data.mongodb-api.com/app/data-rxxunxx/endpoint/data/v1/action/findOne"
+
+        json_query = {
+            "dataSource": "DataBaseIV",
+            "database": "programDB",
+        }
+
+        if collection != None:
+            json_query['collection'] = collection
+
+        if projection != None:
+            json_query['projection'] = projection
+
+        if filter_query != None:
+            json_query['filter'] = filter_query
+        
+        payload = json.dumps(
+            json_query
+        )
+
+        response = requests.request("POST", url, headers=DatabaseClass.headers, data=payload)
+
+        #transforma el json en dicitonario
+        out = response.json()
+
+        #lo entrega tal y como lo permite el sistema
+        return out['document']
+    
+    def CountDocument(collection, match, skip, limit):
+        '''
+        collection, se refiere a la coleccion(tabla en sql) que se utilizará en este query
+        match, se refiere a los productos a buscar (el project)
+        skip, salta la cantidad de documentos en el query
+        limit, limita la cantidad de documentos que regresará el query
+        '''
+
+        #primero tiene que ir el limit para que si limite los documentos a buscar
+        #{"$limit": 1},
+        #{"$skip": 0},
+        #{'$match': {'state_product': 1, 'amount_product': {"$ne" : "0"} } },
+        #{ '$group': { '_id': 1, 'amount_item': { '$sum': 1 } } },
+                
+        #cambiar por la opcion, ahorita es aggregate
+        url = "https://us-east-1.aws.data.mongodb-api.com/app/data-rxxunxx/endpoint/data/v1/action/aggregate"
+
+        pipeline_query = []
+
+        if skip != None:
+            add = {"$skip": skip}
+            pipeline_query.append(add)
+
+        if limit != None:
+            add = {"$limit": limit}
+            pipeline_query.append(add)
+
+        add_match = {"$match": match}
+        pipeline_query.append(add_match)
+
+        add_match = { '$group': { '_id': 1, 'amount_item': { '$sum': 1 } } }
+        pipeline_query.append(add_match)
+
+
+
+        #"dataSource": "DataBaseIV",
+        #"database": "programDB",
+
+        #"collection": collection,
+        #"projection": projection,
+        #"filter": filter,
+        #"sort": sort
+        
+        payload = json.dumps(
+            {
+            
+                "dataSource": "DataBaseIV",
+                "database": "programDB",
+                "collection": "products",
+                "pipeline": pipeline_query 
+            }
+        )
+
+
+        response = requests.request("POST", url, headers=DatabaseClass.headers, data=payload)
+
+        #transforma el json en dicitonario
+        out = response.json()
+
+        #lo entrega tal y como lo permite el sistema
+        return out['documents'][0]['amount_item']
+
+    def UpdateOne(collection, filter, update):
+        
+        #cambiar por la opcion, ahorita es find
+        url = "https://us-east-1.aws.data.mongodb-api.com/app/data-rxxunxx/endpoint/data/v1/action/updateOne"
+
+        payload = json.dumps({
+            "database": "programDB",
+            "dataSource": "DataBaseIV",
+            "collection": collection,
+
+            "filter": filter,
+            #"_id": { "$oid": "666e3f2e264f9279bfa8fa53" } 
+            "update": {
+            "$set": update
+                #"state_product": 0
+            }
+        })
+
+        response = requests.request("POST", url, headers=DatabaseClass.headers, data=payload)
+
+        #transforma el json en dicitonario
+        out = response.json()
+        #lo entrega tal y como lo permite el sistema
+
+        #print( out['modifiedCount'] )
+        return  out['modifiedCount'] >= 1
+
+        
+    
+    def InsertInto(collection, document):
+
+        '''
+        collection, se refiere a la coleccion(tabla en sql) que se utilizará en este query
+        filter_query, se refiere al filtro que tendrá el query, ejm: cantidad': {"$ne" : "0"}, mostrará todos los documentos que la cantidad sea mayor a 0
+        projection, se refiere a los "items" o atributos que se mostrarán solamente, ejm: {'_id': 1} solo mostrará el id más no los otros datos
+        skip, salta la cantidad de documentos en el query
+        limit, limita la cantidad de documentos que regresará el query
+        sort, ordena los documentos entregados por el query, ya sea de mayor a menor o de menor a mayor
+        '''
+                
+        #cambiar por la opcion, ahorita es find
+        url = "https://us-east-1.aws.data.mongodb-api.com/app/data-rxxunxx/endpoint/data/v1/action/insertOne"
+
+        json_query = {
+            "dataSource": "DataBaseIV",
+            "database": "programDB",
+            "collection": collection,
+
+        }
+
+        if document != None:
+
+            json_query["document"] = document
+        else:
+            print('Error, falta el document/match en la función insertInto')
+            return
+
+        #El query a buscar
+        payload = json.dumps(
+            json_query
+        )
+
+        response = requests.request("POST", url, headers=DatabaseClass.headers, data=payload)
+
+        #transforma el json en dicitonario
+        out = response.json()
+        #print(response.text)
+        #print(type(out))
+        #print(out)
+
+        #lo entrega tal y como lo permite el sistema
+        print(out)
+        print()
+        print(json_query)
 
     
 

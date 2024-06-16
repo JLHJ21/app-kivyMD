@@ -218,7 +218,7 @@
                                         mode: "rectangle"
                                         on_text: root.UpdateTotalCost() #if self.text != '' else root.UpdateTotalCost()
                                         
-                                        input_filter: 'float'
+                                        #input_filter: 'float'
                                         write_tab: False
                                         max_text_length: 12
 
@@ -313,6 +313,7 @@
 
                                 RecycleViewTable:
 
+                                    id: tableCashierProducts
                                     id_table: "tableCashierProducts"
 
                                     padding: dp(16), dp(4)
@@ -322,7 +323,7 @@
                                     columns: 3
                                     root: root
                                     differentColumn: 'tableProductsCart'
-                                    customModal: 'ModalsDialog.CloseDialog(RecycleViewTable.dialog.dismiss()); from MVC.controller.cashier.cashier_controller import CashierPage; CashierPage.ModalAddProductToShoppingCart();'
+                                    customModal: 'ModalsDialog.CloseDialog(RecycleViewTable.dialog.dismiss()); from MVC.controller.cashier.cashier_controller import CashierPage; CashierPage.ModalAddProductToShoppingCart("add");'
 
 
                                     titles_labels: ["Nombre", "Cantidad", "Precio"]
@@ -352,6 +353,7 @@
 
                     RecycleViewTable:
 
+                        id: tableCashierCar
                         id_table: "tableCashierCar"
 
                         objecto: self
@@ -359,7 +361,10 @@
                         columns: 3
                         root: root
                         shoppingCart: self
+
                         differentColumn: 'tableProductsShoppingCart'
+
+                        customModal: 'ModalsDialog.CloseDialog(RecycleViewTable.dialog.dismiss()); from MVC.controller.cashier.cashier_controller import CashierPage; CashierPage.ModalAddProductToShoppingCart("a");'
 
                         titles_labels: ['Nombre', 'Cantidad', 'Total']
                         #titles_labels: ["Nombre", "Cantidad", "Precio"]
@@ -371,6 +376,7 @@
                         modalChooseDeletConfirmationeText: 'Recuerda que esta opción no se puede revertir.'
                         modalChooseDeleteConfirmation: 'from MVC.controller.cashier.cashier_controller import CashierPage; CashierPage.DeleteProductShoppingCart(); self = global_self_modal; exec(self.test)'
 
+                        #demas no sirve
                         modalChooseUpdate: 'ModalsDialog.ChangePage("self","ClientUpdatePage", "Cliente - Modificar")'
 
                         test: 'self.objecto.DictionaryDataset.update(self.objecto.root.ShowDataCashierProductsShoppingCartController(self.objecto.StartPagination, self.objecto.StaticItemsAccountPagination, self.objecto.DirectionPagination))'
@@ -432,7 +438,7 @@
 
     MDTextField:
         id: profitProduct
-        text: root.profitProduct
+        text: root.profitProductTransform
         hint_text: 'Precio del producto'
         mode: "rectangle"
         readonly: True

@@ -2,7 +2,6 @@
 <HeaderAndFooter>:
     id: headerandfooter
 
-
     MDTopAppBar:
         id: toolbar
         pos_hint: {"top": 1}
@@ -12,8 +11,9 @@
         left_action_items: [["menu", lambda x: root.ids.nav_drawer.set_state("open")]]
         right_action_items:
             [
-            #["cash-100", lambda x: root.CallbackMenuChangeMoney(x), "Tipo de tasa - Dolar", "Tipo de tasa - Dolar"],
-            #["weather-sunny", lambda x: root.CallbackModeScreen(x, 'oscuro'), "Modo Claro", "Modo Claro"],
+            #Abre el seelect/modal de los tipos de tasa de cambio
+            ["cash-100", lambda x: root.CallbackMenuChangeMoney(x), "Tipo de tasa - Dolar", "Tipo de tasa - Dolar"],
+            ["weather-sunny", lambda x: root.CallbackModeScreen(x, 'oscuro'), "Modo Claro", "Modo Claro"],
             ["account-settings", lambda x: root.CallbackMenuUser(x), "Perfil" , "Perfil"],
             ]
             
@@ -150,15 +150,15 @@
 
                 app.root.ids.toolbar.title = self.text
         
-        #DrawerClickableItem:
-        #    icon: "cash-remove"
-        #    text_right_color: "#4a4939"
-        #    text: "Prestamos"
+        DrawerClickableItem:
+            icon: "cash-remove"
+            text_right_color: "#4a4939"
+            text: "Prestamos"
 
-        #    on_press:
-        #        root.screen_manager.current = "LoanPage"
+            on_press:
+                root.screen_manager.current = "LoanPage"
 
-        #        app.root.ids.toolbar.title = self.text
+                app.root.ids.toolbar.title = self.text
 
         DrawerClickableItem:
             icon: "receipt-text-clock"
@@ -170,15 +170,15 @@
 
                 app.root.ids.toolbar.title = self.text
         
-        #DrawerClickableItem:
-        #    icon: "text-box-search"
-        #    text_right_color: "#4a4939"
-        #    text: "Historial de Dinero"
+        DrawerClickableItem:
+            icon: "text-box-search"
+            text_right_color: "#4a4939"
+            text: "Historial de Dinero"
 
-        #    on_press:
-        #        root.screen_manager.current = "MoneyHistoryPage"
+            on_press:
+                root.screen_manager.current = "MoneyHistoryPage"
 
-        #        app.root.ids.toolbar.title = self.text
+                app.root.ids.toolbar.title = self.text
 
 
                 

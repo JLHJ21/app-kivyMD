@@ -28,8 +28,8 @@
                         height: self.minimum_height  # required to size GridLayout
 
                         MDLabel:
-                            id: TitleUpdateForeignExchange
-                            text: "Modificar tasa de cambio de:"
+                            #id: TitleUpdateForeignExchange
+                            text: "Modificar tasa de cambio"
                             halign: "center"
                             font_style: "H4"
 
@@ -40,32 +40,31 @@
                         spacing: dp(20)
                         padding: dp(16)
                         size_hint_y: None
-                        height: self.minimum_height  # required to size GridLayout
+                        height: self.minimum_height   #required to size GridLayout
                         MDLabel:
-                            id: updateForeignExchangeLabelDollar
+                            #id: updateForeignExchangeLabelDollar
                             size_hint_x: 0.38
                             #width: "250dp"
                             padding: dp(32), dp(1)
 
-                            text: "Cambio de dolar a dolar:"
+                            text: "Tasa de dólar:"
                             halign: "right"
                             font_style: "H5"
                         
                         MDTextField:
 
-                            id: updateForeignExchangeTextFieldDollar
+                            id: inputUpdateDolar
                             size_hint_x: 0.7
-                            #width: "375dp"
+                            width: "375dp"
 
                             text: ''
 
                             hint_text: "Valor de la tasa"
 
-                            required: True
-                            readonly: False
+                            #readonly: False
 
                             helper_text_mode: "on_error"
-                            helper_text: "Por favor, ingrese la tasa de la moneda." if len(self.text) == 0 else ""
+                            #helper_text: "Por favor, ingrese la tasa de la moneda." if len(self.text) == 0 else ""
 
                             mode: "rectangle"
                             #line_color_normal: "red" if len(self.text) == 0 else "blue"
@@ -74,42 +73,39 @@
                             size_hint_x: 0.1
 
                     #PESOS
-                    MDGridLayout:
-                        cols: 3
-                        spacing: dp(20)
-                        padding: dp(16)
-                        size_hint_y: None
-                        height: self.minimum_height  # required to size GridLayout
-                        MDLabel:
-                            id: updateForeignExchangeLabelPeso
-                            size_hint_x: 0.38
-                            padding: dp(32), dp(1)
+                    #MDGridLayout:
+                    #    cols: 3
+                    #    spacing: dp(20)
+                    #    padding: dp(16)
+                    #    size_hint_y: None
+                    #    height: self.minimum_height  # required to size GridLayout
+                    #    MDLabel:
+                    #        id: updateForeignExchangeLabelPeso
+                    #        size_hint_x: 0.38
+                    #        padding: dp(32), dp(1)
 
-                            text: "Cambio de dolar a peso:"
-                            halign: "right"
-                            font_style: "H5"
+                    #        text: "Tasa de pesos:"
+                    #        halign: "right"
+                    #        font_style: "H5"
                         
-                        MDTextField:
+                    #    MDTextField:
 
-                            id: updateForeignExchangeTextFieldPeso
-                            size_hint_x: 0.7
+                    #        id: updateForeignExchangeTextFieldPeso
+                    #        size_hint_x: 0.7
                             #width: "375dp"
 
-                            text: ''
+                    #        text: ''
 
-                            hint_text: "Valor de la tasa"
+                    #        hint_text: "Valor de la tasa"
 
-                            required: True
-                            readonly: False
+                            #readonly: False
 
-                            helper_text_mode: "on_error"
-                            helper_text: "Por favor, ingrese la tasa de la moneda." if len(self.text) == 0 else ""
-
-                            mode: "rectangle"
-                            line_color_normal: "red" if len(self.text) == 0 else "blue"
+                    #        helper_text_mode: "on_error"
+                    #        helper_text: "Por favor, ingrese la tasa de la moneda." if len(self.text) == 0 else ""
+                    #        mode: "rectangle"
                         
-                        MDLabel:
-                            size_hint_x: 0.1
+                    #    MDLabel:
+                    #        size_hint_x: 0.1
 
                     #BOLIVAR
                     MDGridLayout:
@@ -119,33 +115,28 @@
                         size_hint_y: None
                         height: self.minimum_height  # required to size GridLayout
                         MDLabel:
-                            id: updateForeignExchangeLabelBolivar
+                            #id: updateForeignExchangeLabelBolivar
 
                             size_hint_x: 0.38
                             padding: dp(32), dp(1)
 
-                            text: "Cambio de dolar a bolívar:"
+                            text: "Tasa de bolívar:"
                             halign: "right"
                             font_style: "H5"
                         
                         MDTextField:
 
-                            id: updateForeignExchangeTextFieldBolivar
+                            id: inputUpdateBolivar
                             size_hint_x: 0.7
                             #width: "375dp"
 
-                            text: ''
-
                             hint_text: "Valor de la tasa"
-
-                            required: True
-                            readonly: False
+                            #readonly: False
 
                             helper_text_mode: "on_error"
-                            helper_text: "Por favor, ingrese la tasa de la moneda." if len(self.text) == 0 else ""
+                            #helper_text: "Por favor, ingrese la tasa de la moneda." if len(self.text) == 0 else ""
 
                             mode: "rectangle"
-                            line_color_normal: "red" if len(self.text) == 0 else "blue"
                         
                         MDLabel:
                             size_hint_x: 0.1
@@ -171,6 +162,6 @@
                             line_color: "blue"
                             md_bg_color: "blue"
 
-                            on_release: root.ChangeDataForeignExchange(root.ids.updateForeignExchangeTextFieldDollar.text, root.ids.updateForeignExchangeTextFieldPeso.text, root.ids.updateForeignExchangeTextFieldBolivar.text)
+                            on_release: root.UpdateRateMoney(root.ids.inputUpdateDolar.text, root.ids.inputUpdateBolivar.text)
 
 

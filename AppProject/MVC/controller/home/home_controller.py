@@ -3,6 +3,7 @@ from kivymd.uix.screen import MDScreen
 from kivymd.uix.scrollview import MDScrollView
 
 import MVC.controller.functions as functions
+from kivymd.toast.kivytoast.kivytoast import toast
 
 
 
@@ -18,7 +19,6 @@ class InitialPage(MDScreen):
 
             access_text_string = ''
 
-            
             match functions.access_text:
                 case 0:
                     access_text_string = 'Empleado'
@@ -31,9 +31,9 @@ class InitialPage(MDScreen):
 
             self.ids.usernameHomeLabel.text = functions.usernameStaff
             self.ids.accessLevelHomeLabel.text = access_text_string
-            print('puede entrar')
+            
         else:
-            print('no puede entrar')
+            toast('No tiene una sesión activa.')
             functions.FunctionsKivys.ChangePage('self', 'SignInPage', 'Iniciar Sesión')
 
     

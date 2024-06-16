@@ -13,7 +13,7 @@ class ChargePage(MDScreen):
         self_charge_page = self
 
     def ChangePageChargeAddPage(self):
-
+ 
         #obtiene el self principal del kivy
         self_main = functions.global_variable_self
         #cambia segun la pagina querida

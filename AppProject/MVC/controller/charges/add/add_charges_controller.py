@@ -522,7 +522,7 @@ class ChargeAddPage(MDScreen):
                             text= '',
                             hint_text= item,
                             max_text_length= 10,
-                            input_filter= 'float',
+                            #input_filter= 'float',
                             write_tab= False,
                             required= True
 
@@ -537,7 +537,7 @@ class ChargeAddPage(MDScreen):
                             text= '',
                             hint_text= item,
                             max_text_length= 10,
-                            input_filter= 'float',
+                            #input_filter= 'float',
                             write_tab= False,
                             required= True
                         )

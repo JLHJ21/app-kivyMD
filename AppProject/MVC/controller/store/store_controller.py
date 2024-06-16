@@ -5,6 +5,7 @@ from MVC.model.store.store_model import StoreDB
 
 import MVC.controller.functions as functions
 import concurrent.futures
+from kivymd.toast.kivytoast.kivytoast import toast
 
 #PAGINA DE ALMACEN
 class StorePage(MDScreen):
@@ -14,6 +15,13 @@ class StorePage(MDScreen):
         super().__init__(**kwargs)
         global self_store_page
         self_store_page = self
+
+
+    def on_pre_enter(self):
+        
+        if functions.have_session != True:
+            toast('No tiene una sesión activa.')
+            functions.FunctionsKivys.ChangePage('self', 'SignInPage', 'Iniciar Sesión')
 
     def CallbackMenuProduct(self, button):
 
@@ -57,6 +65,35 @@ class StorePage(MDScreen):
         with concurrent.futures.ThreadPoolExecutor() as executor:
             future = executor.submit(StoreDB.ShowDataStoreModel, start,end,state)
             return_value = future.result()
+
+            
+            data = list(return_value.keys())
+
+            for index, item in enumerate(data[1:]):
+                #usar la variable de money_preference con un match y se multiplica/divide con el valor obtenido de la base de datos (valor siempre en pesos)
+                profit = return_value['dato' + str(index)][0]['profit_product']
+                #profit = functions.FunctionsKivys.ChangeCommaAndDot(profit, False)
+
+                #Me da el valor del producto así -> 4500.00
+                profit = functions.FunctionsKivys.TransformProfit(profit, 'float')
+
+                match functions.money_preference:
+                    case 'bolivar':
+                        new_profit = float(profit) / float(functions.rate_bolivar)
+                        new_profit = f"{new_profit:.2f}"
+
+                    case 'dolar':
+                        new_profit = float(profit) / float(functions.rate_dolar)
+                        new_profit = f"{new_profit:.2f}"
+                    case 'peso':
+                        new_profit = profit
+                        #new_profit = f"{new_profit:.3f}"
+
+                #Me da el valor del producto así -> 4.500,00
+                new_profit = functions.FunctionsKivys.TransformProfit(new_profit, 'human')
+                return_value['dato' + str(index)][0]['profit_product'] = str(new_profit)
+
+            #print(return_value)
 
             return return_value
         

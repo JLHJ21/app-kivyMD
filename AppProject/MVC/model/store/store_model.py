@@ -15,7 +15,7 @@ class StoreDB():
         collection = DataBase.db['products']
 
         #OBTIENE TODOS LOS DATOS DE LA COLECCION
-        starting_id = collection.find({'state_product': 1})
+        starting_id = collection.find({'state_product': 1, 'amount_product': {"$ne" : "0"}}).sort({'id': -1})
 
         #SI EL ESTADO ES NONE, REINICIA LAS VARIABLES GLOBALES
         if state == '':
@@ -25,10 +25,10 @@ class StoreDB():
         if last_id == None:
 
             #OBTIENE LOS DATOS DE LA COLECCION
-            results = collection.find({'state_product': 1}, {'_id': 1, 'name_product': 1, 'amount_product': 1, 'profit_product': 1, 'name_supplier': 1}).skip(start).limit( end ).sort({'_id': 1}) #.sort({ '_id' : -1})
+            results = collection.find({'state_product': 1, 'amount_product': {"$ne" : "0"}}, {'_id': 1, 'name_product': 1, 'amount_product': 1, 'profit_product': 1, 'name_supplier': 1}).skip(start).limit( end ) #.sort({ '_id' : -1})
             
             #cantidad de productos que se encontraron
-            amount_items = collection.count_documents({'state_product': 1}, skip=start, limit=end)
+            amount_items = collection.count_documents({'state_product': 1, 'amount_product': {"$ne" : "0"}}, skip=start, limit=end)
 
             #Obtiene el ultimo id del producto
             last_id = results[amount_items - 1]['_id']
@@ -38,9 +38,9 @@ class StoreDB():
             #SI SE DA CLICK AL BOTON DE SIGUIENTE
             if state == 'next':
 
-                results = collection.find({'_id': {'$gt': last_id}, 'state_product': 1}, {'_id': 1, 'name_product': 1, 'amount_product': 1, 'profit_product': 1, 'name_supplier': 1} ).limit( end )#.sort({ '_id' : ObjectId(last_id)})
+                results = collection.find({'_id': {'$gt': last_id}, 'state_product': 1, 'amount_product': {"$ne" : "0"}}, {'_id': 1, 'name_product': 1, 'amount_product': 1, 'profit_product': 1, 'name_supplier': 1} ).limit( end )#.sort({ '_id' : ObjectId(last_id)})
 
-                amount_items = collection.count_documents({'_id': {'$gt': last_id}, 'state_product': 1}, limit=end)
+                amount_items = collection.count_documents({'_id': {'$gt': last_id}, 'state_product': 1, 'amount_product': {"$ne" : "0"}}, limit=end)
                 last_id = results[amount_items - 1]['_id']
 
                 
@@ -52,9 +52,9 @@ class StoreDB():
 
             #SI SE DA CLICK AL BOTON DE ATRÁS
             elif state == 'previous':
-                results = collection.find({'_id': {'$gte': previous_id}, 'state_product': 1}, {'_id': 1, 'name_product': 1, 'amount_product': 1, 'profit_product': 1, 'name_supplier': 1}).limit( end )#.sort({ '_id' : ObjectId(last_id)})
+                results = collection.find({'_id': {'$gte': previous_id}, 'state_product': 1, 'amount_product': {"$ne" : "0"}}, {'_id': 1, 'name_product': 1, 'amount_product': 1, 'profit_product': 1, 'name_supplier': 1}).limit( end )#.sort({ '_id' : ObjectId(last_id)})
 
-                amount_items = collection.count_documents({'_id': {'$gte': previous_id}, 'state_product': 1}, limit=end)
+                amount_items = collection.count_documents({'_id': {'$gte': previous_id}, 'state_product': 1, 'amount_product': {"$ne" : "0"}}, limit=end)
                 
                 #OBTIENE EL ULTIMO ID DEL ITEM DE LA COLECCION
                 last_id = results[amount_items - 1]['_id']
@@ -69,7 +69,7 @@ class StoreDB():
         #SE CREA DICCIONARIO QUE ALMACENARÁ LOS DATOS OBTENIDOS DE LA BASE DE DATOS
         list_results = {}
         #CUANTA LA CANTIDAD DE DOCUMENTOS DE LA COLECCIÓN
-        numbers_collection = collection.count_documents({'state_product': 1})#, skip=start, limit=end)
+        numbers_collection = collection.count_documents({'state_product': 1, 'amount_product': {"$ne" : "0"}})#, skip=start, limit=end)
 
         #SE AGREGA SIEMPRE COMO PRIMER DATO, LAS CARACTERISTICAS (CANTIDAD DE DOCUMENTOS, ARCHIVO COMIENZA, ARCHIVO TERMINADA)
         list_results.update({'characteristics': [numbers_collection, start, end]})

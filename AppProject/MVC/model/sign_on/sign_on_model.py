@@ -9,11 +9,10 @@ class SignOnDatabase():
         #data
 
         if collection.count_documents({'username': username}, limit = 1):
-
-            return 'USERNAME: ' + str(collection.find({'username': username}))
+            return ', ya existe este nombre de usuario'
 
         elif collection.count_documents({'email': email}, limit = 1):
-            return 'EMAIL: ' + str(collection.find({'email': email}))
+            return ', ya existe este correo electrónico'
         
         else:
 
@@ -27,4 +26,4 @@ class SignOnDatabase():
             post = {'username': username, 'email': email, 'password': password, 'access_level': 0}
             collection.insert_one(post)
 
-            return True
+        return True

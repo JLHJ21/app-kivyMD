@@ -112,23 +112,29 @@
 
                         halign: "left"
                         font_style: "H3"
-                                
+                    
+                    #dinero cuentas
                     MDBoxLayout:
                         orientation: 'vertical'
                         
                         MDGridLayout:
-                            cols: 2
+                        
+                            cols: 3                             
+                            padding: dp(1), dp(16), dp(1), dp(16)
+
 
                             MDGridLayout:
                                 cols: 4
-                                padding: dp(16)
+                                #padding: dp(1), dp(1), dp(1), dp(16)
+
 
                                 MDLabel:
                                     size_hint_x: 0.025
 
+
                                 MDIcon:
                                     padding: dp(1), dp(1), dp(1), dp(1)
-                                    icon: "account"
+                                    icon: "cash-clock"
                                     font_size: '36sp' 
                                     size_hint_x: 0.4
 
@@ -137,9 +143,8 @@
                                     size_hint_x: 0.05
                                     
                                 MDTextField:
-                                    id: usernameHomeLabel
-                                    text: ''
-                                    hint_text: "Nombre:"
+                                    text: "100$"
+                                    hint_text: "Dinero mensual:"
                                     mode: "rectangle"
                                     disabled: True 
                                     focus: True
@@ -147,7 +152,7 @@
 
                             MDGridLayout:
                                 cols: 4
-                                padding: dp(16)
+                                #padding: dp(32), dp(1), dp(32), dp(16)
 
 
                                 MDLabel:
@@ -156,7 +161,7 @@
 
                                 MDIcon:
                                     padding: dp(1), dp(1), dp(1), dp(1)
-                                    icon: "account-hard-hat"
+                                    icon: "cash-off"
                                     font_size: '36sp' 
                                     size_hint_x: 0.4
 
@@ -165,9 +170,35 @@
                                     size_hint_x: 0.05
                                     
                                 MDTextField:
-                                    id: accessLevelHomeLabel
-                                    text: ''
-                                    hint_text: "Nivel de usuario:"
+                                    text: "24$"
+                                    hint_text: "Dinero prestado:"
+                                    mode: "rectangle"
+                                    disabled: True 
+                                    focus: True
+                                    size_hint_x: 0.4
+
+                            MDGridLayout:
+                                cols: 4
+                                #padding: dp(32), dp(1), dp(32), dp(16)
+
+
+                                MDLabel:
+                                    size_hint_x: 0.025
+
+
+                                MDIcon:
+                                    padding: dp(1), dp(1), dp(1), dp(1)
+                                    icon: "cash-multiple"
+                                    font_size: '36sp' 
+                                    size_hint_x: 0.4
+
+
+                                MDLabel:
+                                    size_hint_x: 0.05
+                                    
+                                MDTextField:
+                                    text: "24$"
+                                    hint_text: "Dinero en credito:"
                                     mode: "rectangle"
                                     disabled: True 
                                     focus: True
@@ -190,7 +221,7 @@
 
                                 MDIcon:
                                     padding: dp(1), dp(1), dp(1), dp(1)
-                                    icon: "cash"
+                                    icon: "cash-plus"
                                     font_size: '36sp' 
                                     size_hint_x: 0.4
 
@@ -219,7 +250,7 @@
 
                                 MDIcon:
                                     padding: dp(1), dp(1), dp(1), dp(1)
-                                    icon: "cash-minus"
+                                    icon: "cash-sync"
                                     font_size: '36sp' 
                                     size_hint_x: 0.4
 
@@ -246,7 +277,7 @@
 
                                 MDIcon:
                                     padding: dp(1), dp(1), dp(1), dp(1)
-                                    icon: "cash-minus"
+                                    icon: "cash-remove"
                                     font_size: '36sp' 
                                     size_hint_x: 0.4
 

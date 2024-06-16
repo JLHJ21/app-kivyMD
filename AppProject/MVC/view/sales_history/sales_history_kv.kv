@@ -14,6 +14,7 @@
                 size_hint_y: None
                 height: self.minimum_height       
                 MDGridLayout:
+                    id: gridLayoutContent
                     cols: 3
                     spacing: dp(20)
                     padding: dp(16), dp(16), dp(16), dp(16)
@@ -57,28 +58,29 @@
                     size_hint_y: None
                     height: dp(400)
 
+                    id: tableSalesHistory
                     id_table: "tableSalesHistory"
 
                     padding: dp(16), dp(root.manager.parent.parent.ids.toolbar.height / 2), dp(16), dp(root.manager.parent.parent.ids.toolbarbottom.height /2)
 
                     objecto: self
                     need_image: False
-                    columns: 4
+                    columns: 5
                     root: root
 
                     differentColumn: 'nothing'
                     #customModal: 'ModalsDialog.CloseDialog(RecycleViewTable.dialog.dismiss()); from MVC.controller.cashier.cashier_controller import CashierPage; CashierPage.ModalAddProductToShoppingCart();'
 
 
-                    titles_labels: ["Cliente", "Empleado", "Monto", "Fecha"]
-                    list_table_data: ["name_client", "name_staff", "purchase", "date"]
+                    titles_labels: ["Cliente", "Empleado", "Monto (Peso)", "Cantidad", "Fecha"]
+                    list_table_data: ["name_client", "name_staff", "total_purchase_sales", "amount_products", "date_sales"]
 
                     #Datos del Modal de eliminar "¿Esta seguro?"
                     modalChooseDeleteConfirmationTitle: 'modalChooseDeleteConfirmationTitle'
                     modalChooseDeletConfirmationeText: 'modalChooseDeletConfirmationeText'
                     modalChooseDeleteConfirmation: 'print("modalChooseDeleteConfirmation")'
 
-                    modalChooseUpdate: 'print("modalChooseUpdate")'
+                    modalChooseUpdate: 'print(self)'
 
                     test: 'self.objecto.DictionaryDataset.update(self.objecto.root.ShowDataSalesHistoryController(self.objecto.StartPagination, self.objecto.StaticItemsAccountPagination, self.objecto.DirectionPagination))'
                     

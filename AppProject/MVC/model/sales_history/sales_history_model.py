@@ -21,12 +21,9 @@ class SalesHistoryDB():
         if last_id == None:
 
             #OBTIENE LOS DATOS DE LA COLECCION
-            results = collection.find({'state_sales': 1}).skip(start).limit( end ).sort({'_id': 1}) #.sort({ '_id' : -1})
-            results1 = collection.find({'state_sales': 1}).skip(start).limit( end ).sort({'_id': 1}) #.sort({ '_id' : -1})
+            results = collection.find({'state_sales': 1}).skip(start).limit( end )#.sort({'_id': 1}) #.sort({ '_id' : -1})
+            results1 = collection.find({'state_sales': 1}).skip(start).limit( end )#.sort({'_id': 1}) #.sort({ '_id' : -1})
 
-            print('aqui')
-            print(list(results1))
-            print()
             #cantidad de productos que se encontraron
             amount_items = collection.count_documents({'state_sales': 1}, skip=start, limit=end)
 
@@ -76,23 +73,28 @@ class SalesHistoryDB():
 
         #CICLO FOR QUE AGREGA LOS DATOS OBTENIDO DE LA BASE DE DATOS AL DICCIONARIO LIST_RESULTS, ESTO HACE QUE LA VARIABLE RESULTS(CURSOR) SE VACIE 
         
+
         for index, i in enumerate(results):
 
             #LO ALMACENA DE FORMA, DATO(POSICION): 'TODA LA INFORMACIÓN DE LA BASE DE DATOS
 
 
             idSalesHistory = i['_id']
-            nameClient = i['data_client']['name_client']
-            nameStaff = i['data_staff']['name_staff']
-            purchase_amount = i['purchase_amount']
-            date_purchase = i['date_purchase']
+
+            amount_products = SalesHistoryDB.GetAmountItemsSales(idSalesHistory)
+
+            nameClient = i['data_client_sales']['name_client']
+            nameStaff = i['data_staff_sales']['name_staff']
+            totalPurchase = i['total_purchase_sales']
+            datePurchase = i['date_sales']
 
             item_dictionary = {
                 "_id": idSalesHistory,
                 "name_client": nameClient,
                 "name_staff": nameStaff,
-                "purchase": purchase_amount,
-                "date": date_purchase
+                "total_purchase_sales": totalPurchase,
+                "amount_products": str(amount_products),
+                "date_sales": datePurchase
             }
 
 
@@ -105,3 +107,62 @@ class SalesHistoryDB():
 
         return list_results
     
+    def GetAmountItemsSales(id_sales):
+
+
+        collection = DataBase.db['sales']
+
+        '''
+        pipeline = [
+            '$project': {
+                'productsAmount': { 
+                    '$size': "$products_sales" 
+                },
+            },
+            {
+            '$match': {
+                    '_id': id_sales #results_amount_item[0]['name_supplier']
+                },
+            },
+        ]
+        
+        
+            {
+                "$unwind": "$products_sales" # descompone el array en un documento por separado
+            },
+            {
+                '$group': {
+                    '_id': "$products_sales.id_product", # agrupamos por el tags
+                    'count': {
+                    '$sum': 1 # Realizamos sumatoria
+                    }
+                }
+            }
+        
+        '''
+
+        result = collection.aggregate(
+            [
+                
+                {
+                '$match': {
+                        '_id': id_sales #results_amount_item[0]['name_supplier']
+                    },
+                },
+                
+                {
+                    '$project': {
+                        '_id' : 0 ,
+                        'productsAmount': { 
+                            '$size': "$products_sales" 
+                        },
+                    },
+                    
+                },
+            ]
+         )
+        
+
+
+        list_result = list(result)
+        return list_result[0]['productsAmount']

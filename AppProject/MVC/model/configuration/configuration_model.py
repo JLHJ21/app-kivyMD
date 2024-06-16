@@ -10,50 +10,56 @@ class ConfigurationBD():
         collection = DataBase.db['users']
 
         #busca si existe un usuario con el dato dado
-        user = collection.find_one({"username": functions.usernameStaff})
+        #user = collection.find_one({"username": functions.usernameStaff})
 
 
-        if user:
+        #if user:
+        #if value1 == value2:
 
-            if value1 == value2:
+        match indexData:
+            case 'password':
+                    value1 = sha256_crypt.hash(value1)
 
-
-                if indexData == 'password':
-                    if sha256_crypt.verify(value1, user[indexData]):
-                        print(' son iguales los datos password en la bd no se cambiaran')
-                        return
-                    else:
-                        value1 = sha256_crypt.hash(value1)
-
-                elif value1 == user[indexData]:
-                    print(' son iguales los datos en la bd no se cambiaran')
-                    return
-
-        
-                documentToChange = { 'username': functions.usernameStaff}
-                newValue = { "$set": { indexData: value1 } }
-
-
-
-                collection.update_one(documentToChange, newValue)
+            #    if sha256_crypt.verify(value1, functions.passwordStaff):
+            #        return ', la contraseña es identica a la existente.'
+            #    else:
+            #        value1 = sha256_crypt.hash(value1)
+            case 'email':
+                if collection.count_documents({'email': value1}, limit = 1):
+                    return ', ya existe este correo electrónico.'
                 
-                match indexData:
-                    case 'username':
-                        functions.usernameStaff = value1
-                        
-                    case 'email':
-                        functions.emailStaff = value1
+                #elif value1 == functions.usernameStaff:
+                #    return ', el correo es el mismo.'
 
-                    case 'password':
-                        functions.passwordStaff = value1
+            case 'username':
+                if collection.count_documents({'username': value1}, limit = 1):
+                    return ', ya existe este usuario.'
+                
+                #elif value1 == functions.usernameStaff:
+                #    return ', el usuario es el mismo.'
+                
+        documentToChange = { 'username': functions.usernameStaff}
+        newValue = { "$set": { indexData: value1 } }
 
-                return
-                    
-            else:
-                print('no son iguales')
+        collection.update_one(documentToChange, newValue)
         
-        else:
-            print('no se encuentra el usuario')
+        match indexData:
+            case 'username':
+                functions.usernameStaff = value1
+                
+            case 'email':
+                functions.emailStaff = value1
+
+            case 'password':
+                functions.passwordStaff = value1
+
+        return True
+                
+        #else:
+        #    return ', los datos no son iguales.'
+        
+        #else:
+        #    print('no se encuentra el usuario')
 
 
-        pass
+        #pass
