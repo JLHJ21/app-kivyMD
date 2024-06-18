@@ -2,12 +2,21 @@ import database.database as DataBase
 import MVC.controller.functions as functions
 from datetime import datetime
 
+
+name_collection = 'foreign_exchange'
+API = DataBase.DatabaseClass
 class ForeignExchangeDB():
 
     def GetForeignExchange():
         
-        collection = DataBase.db['foreign_exchange']
-        results = collection.find_one()
+        #collection = DataBase.db['foreign_exchange']
+        #results = collection.find_one()
+
+        results = API.FindOne(
+            name_collection,
+            None,
+            None,
+        )
         
         return results
     
@@ -30,32 +39,45 @@ class ForeignExchangeDB():
             return ', no hay ningun dato por cambiar.'
         else:
 
-            collection = DataBase.db['foreign_exchange']
+            #collection = DataBase.db['foreign_exchange']
 
             last_change = datetime.today().strftime('%d-%m-%Y')
             query['last_change'] = last_change
 
-            documentToChange = {'money_preference': functions.money_preference}
-            newValue = { "$set":  query  }
+            #documentToChange = {'money_preference': functions.money_preference}
+            #newValue = { "$set":  query  }
 
-            collection.update_one(documentToChange, newValue)
 
-            return True
+            result = API.UpdateOne(
+                name_collection,
+                {'_id': {'$oid': '6668ef8bc265ac0f72985b42'}},
+                query
+            )
+
+            #collection.update_one(documentToChange, newValue)
+
+            return result
         
     def UpdateMoneyPreference(new_preference):
         try:
-            collection = DataBase.db['foreign_exchange']
+            #collection = DataBase.db['foreign_exchange']
 
             last_change = datetime.today().strftime('%d-%m-%Y')
             documentToChange = {'money_preference': functions.money_preference}
+            query = { 'money_preference': new_preference, 'last_change': last_change }
+            
+            #newValue = { "$set": { 'money_preference': new_preference, 'last_change': last_change } }
 
-            newValue = { "$set": { 'money_preference': new_preference, 'last_change': last_change } }
-
-            collection.update_one(documentToChange, newValue)
+            #collection.update_one(documentToChange, newValue)
+            result = API.UpdateOne(
+                name_collection,
+                documentToChange,
+                query
+            )
 
             functions.money_preference = new_preference
 
-            return True
+            return result
         except:
             return ', error al usar la base de datos.'
         

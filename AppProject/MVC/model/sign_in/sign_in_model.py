@@ -6,14 +6,23 @@ import MVC.controller.functions as functions
 
 from passlib.hash import sha256_crypt
 
+name_collection = 'users'
+API = DataBase.DatabaseClass
+
 class SignInDatabase():
     def SignInBD(username, password):
         
         
-        collection = DataBase.db['users']
+        #collection = DataBase.db['users']
 
         #busca si existe un usuario con el dato dado
-        user = collection.find_one({"username": username})
+        #user = collection.find_one({"username": username})
+
+        user = API.FindOne(
+            name_collection,
+            {"username": username},
+            None
+        )
 
         #verifica si la contraseña es igual al dato dato
         if user and sha256_crypt.verify(password, user['password']):

@@ -3,11 +3,15 @@ import database.database as DataBase
 from passlib.hash import sha256_crypt
 import MVC.controller.functions as functions
 
+
+name_collection = 'users'
+API = DataBase.DatabaseClass
+
 class ConfigurationBD():
     def ChangeUserData(indexData, value1, value2):
         
         
-        collection = DataBase.db['users']
+        #collection = DataBase.db['users']
 
         #busca si existe un usuario con el dato dado
         #user = collection.find_one({"username": functions.usernameStaff})
@@ -25,23 +29,48 @@ class ConfigurationBD():
             #    else:
             #        value1 = sha256_crypt.hash(value1)
             case 'email':
-                if collection.count_documents({'email': value1}, limit = 1):
+
+                
+                if API.CountDocument(
+                        name_collection,
+                        {'email': value1},
+                        None,
+                        None
+                    ):
                     return ', ya existe este correo electrónico.'
+
+                #if collection.count_documents({'email': value1}, limit = 1):
+                #    return ', ya existe este correo electrónico.'
                 
                 #elif value1 == functions.usernameStaff:
                 #    return ', el correo es el mismo.'
 
             case 'username':
-                if collection.count_documents({'username': value1}, limit = 1):
+                if API.CountDocument(
+                        name_collection,
+                        {'username': value1},
+                        None,
+                        None
+                    ):
                     return ', ya existe este usuario.'
+
+                #if collection.count_documents({'username': value1}, limit = 1):
+                #    return ', ya existe este usuario.'
                 
                 #elif value1 == functions.usernameStaff:
                 #    return ', el usuario es el mismo.'
-                
-        documentToChange = { 'username': functions.usernameStaff}
-        newValue = { "$set": { indexData: value1 } }
 
-        collection.update_one(documentToChange, newValue)
+        newValue = { indexData: value1 }
+
+        API.UpdateOne(
+                    name_collection,
+                    {'_id': {'$oid':  functions.idStaff}},
+                    newValue
+                )
+        #documentToChange = { 'username': functions.usernameStaff}
+        #newValue = { "$set": { indexData: value1 } }
+
+        #collection.update_one(documentToChange, newValue)
         
         match indexData:
             case 'username':

@@ -6,6 +6,8 @@ import re
 
 last_id = previous_id = None
 
+name_collection = 'charges'
+API = DataBase.DatabaseClass
 class ChargesDB():
 
 
@@ -19,7 +21,16 @@ class ChargesDB():
         collection = DataBase.db['charges']
 
         #OBTIENE TODOS LOS DATOS DE LA COLECCION
-        starting_id = collection.find({'state_charges': 1})
+        #starting_id = collection.find({'state_charges': 1})
+
+        starting_id = API.Find(
+            name_collection,
+            {'state_charges': 1},
+            {'_id': 1},
+            None,
+            None,
+            {'id': -1}
+        )
 
         #SI EL ESTADO ES NONE, REINICIA LAS VARIABLES GLOBALES
         if state == '':
@@ -30,11 +41,25 @@ class ChargesDB():
 
 
             #OBTIENE LOS DATOS DE LA COLECCION
-            results = collection.find({'state_charges': 1}, {'_id': 1, 'name_supplier': 1, 'buy_products': 1, 'date': 1}).skip(start).limit( end ).sort({'_id': 1}) #.sort({ '_id' : -1})
+            #results = collection.find({'state_charges': 1}, {'_id': 1, 'name_supplier': 1, 'buy_products': 1, 'date': 1}).skip(start).limit( end ).sort({'_id': 1}) #.sort({ '_id' : -1})
             
-            #cantidad de productos que se encontraron
-            amount_items = collection.count_documents({'state_charges': 1}, skip=start, limit=end)
+            results = API.Find(
+                name_collection, 
+                {'state_charges': 1},
+                {'_id': 1, 'name_supplier': 1, 'buy_products': 1, 'date': 1},
+                start, 
+                end, 
+                {'_id': 1}
+            )
 
+            #cantidad de productos que se encontraron
+            #amount_items = collection.count_documents({'state_charges': 1}, skip=start, limit=end)
+            amount_items = API.CountDocument(
+                name_collection,
+                {'state_charges': 1},
+                start,
+                end
+            )
             #Obtiene el ultimo id del producto
             last_id = results[amount_items - 1]['_id']
 
@@ -44,9 +69,27 @@ class ChargesDB():
             #SI SE DA CLICK AL BOTON DE SIGUIENTE
             if state == 'next':
 
-                results = collection.find({'_id': {'$gt': last_id}, 'state_charges': 1}, {'_id': 1, 'name_supplier': 1, 'buy_products': 1, 'date': 1}).limit( end )#.sort({ '_id' : ObjectId(last_id)})
+                #results = collection.find({'_id': {'$gt': last_id}, 'state_charges': 1}, {'_id': 1, 'name_supplier': 1, 'buy_products': 1, 'date': 1}).limit( end )#.sort({ '_id' : ObjectId(last_id)})
+                
+                results = API.Find(
+                    name_collection, 
+                    {'_id': {'$gt': { "$oid": last_id}}, 'state_charges': 1},
+                    {'_id': 1, 'name_supplier': 1, 'buy_products': 1, 'date': 1},
+                    None, 
+                    end, 
+                    None
+                )
 
-                amount_items = collection.count_documents({'_id': {'$gt': last_id}, 'state_charges': 1}, limit=end)
+                #amount_items = collection.count_documents({'_id': {'$gt': last_id}, 'state_charges': 1}, limit=end)
+
+                amount_items = API.CountDocument(
+                    name_collection,
+                    {'_id': {'$gt': { "$oid": last_id}}, 'state_charges': 1},
+                    None,
+                    end
+                )
+
+
                 last_id = results[amount_items - 1]['_id']
 
                 
@@ -59,10 +102,24 @@ class ChargesDB():
             #SI SE DA CLICK AL BOTON DE ATRÁS
             elif state == 'previous':
 
-                results = collection.find({'_id': {'$gte': previous_id}, 'state_charges': 1}, {'_id': 1, 'name_supplier': 1, 'buy_products': 1, 'date': 1}).limit( end )#.sort({ '_id' : ObjectId(last_id)})
-
-                amount_items = collection.count_documents({'_id': {'$gte': previous_id}, 'state_charges': 1}, limit=end)
+                results = API.Find(
+                    name_collection, 
+                    {'_id': {'$gte': { "$oid": previous_id}}, 'state_charges': 1},
+                    {'_id': 1, 'name_supplier': 1, 'buy_products': 1, 'date': 1},
+                    None, 
+                    end, 
+                    None
+                )
                 
+                #results = collection.find({'_id': {'$gte': previous_id}, 'state_charges': 1}, {'_id': 1, 'name_supplier': 1, 'buy_products': 1, 'date': 1}).limit( end )#.sort({ '_id' : ObjectId(last_id)})
+
+                #amount_items = collection.count_documents({'_id': {'$gte': previous_id}, 'state_charges': 1}, limit=end)
+                amount_items = API.CountDocument(
+                    name_collection,
+                    {'_id': {'$gte': {"$oid": previous_id }}, 'state_charges': 1},
+                    None,
+                    end
+                )
                 #OBTIENE EL ULTIMO ID DEL ITEM DE LA COLECCION
                 last_id = results[amount_items - 1]['_id']
 
@@ -76,8 +133,13 @@ class ChargesDB():
         #SE CREA DICCIONARIO QUE ALMACENARÁ LOS DATOS OBTENIDOS DE LA BASE DE DATOS
         list_results = {}
         #CUANTA LA CANTIDAD DE DOCUMENTOS DE LA COLECCIÓN
-        numbers_collection = collection.count_documents({'state_charges': 1})#, skip=start, limit=end)
-
+        #numbers_collection = collection.count_documents({'state_charges': 1})#, skip=start, limit=end)
+        numbers_collection = API.CountDocument(
+                    name_collection,
+                    {'state_charges': 1},
+                    None,
+                    None
+                )
         #SE AGREGA SIEMPRE COMO PRIMER DATO, LAS CARACTERISTICAS (CANTIDAD DE DOCUMENTOS, ARCHIVO COMIENZA, ARCHIVO TERMINADA)
         list_results.update({'characteristics': [numbers_collection, start, end]})
 
@@ -105,36 +167,62 @@ class ChargesDB():
         return list_results
     
     def GetAmountItemsCharge(collection, id_charges):
-        pipeline = [
-            {
-            '$match': {
-                    '_id': id_charges #results_amount_item[0]['name_supplier']
-                }
-            },
-            {
-                "$unwind": "$products" # descompone el array en un documento por separado
-            },
-            {
-                '$group': {
-                    '_id': "$products.name_product", # agrupamos por el tags
-                    'count': {
-                    '$sum': 1 # Realizamos sumatoria
-                    }
-                }
-            }
-        ]
+        #pipeline = [
+        #    {
+        #    '$match': {
+        #            '_id': id_charges #results_amount_item[0]['name_supplier']
+        #        }
+        #    },
+        #    {
+        #        "$unwind": "$products" # descompone el array en un documento por separado
+        #    },
+        #    {
+        #        '$group': {
+        #            '_id': "$products.name_product", # agrupamos por el tags
+        #            'count': {
+        #            '$sum': 1 # Realizamos sumatoria
+        #            }
+        #        }
+        #    }
+        #]
 
-        result = len(list(collection.aggregate( pipeline )))
-        return result
+        result = API.Aggregate(
+            'charges',
+            {'_id': {'$oid': id_charges}},
+            None,
+            None,
+            { '_id' : 0 , 'productsAmount': { '$size': "$products.name_product" } },
+        )
+
+        #result = len(list(collection.aggregate( pipeline )))
+        return result[0]['productsAmount']
 
     def GetDataSupplier(text):
 
-        rgx = re.compile('.*'+ text +'.*', re.IGNORECASE)  # compile the regex
+        #rgx = re.compile('.*'+ text +'.*', re.IGNORECASE)  # compile the regex
 
 
-        collection = DataBase.db['supplier']
+        #collection = DataBase.db['supplier']
 
-        results = collection.find({'name_supplier': rgx , 'state_supplier': 1}, {'name_supplier': 1}).limit( 5 )#.sort({ '_id' : ObjectId(last_id)})
+        #results = API.Find(
+        #    'supplier',
+        #    {'name_supplier': rgx , 'state_supplier': 1},
+        #    {'name_supplier': 1},
+        #    None,
+        #    5,
+        #    None,
+        #)
+
+        results = API.Find(
+            'supplier',
+            {'name_supplier': {'$regex': '.*' + text +  '.*', "$options": "i" } , 'state_supplier': 1},
+            {'name_supplier': 1},
+            None,
+            5,
+            None,
+        )
+
+        #results = collection.find({'name_supplier': rgx , 'state_supplier': 1}, {'name_supplier': 1}).limit( 5 )#.sort({ '_id' : ObjectId(last_id)})
 
         #SE CREA DICCIONARIO QUE ALMACENARÁ LOS DATOS OBTENIDOS DE LA BASE DE DATOS
         list_results = {}
@@ -147,24 +235,28 @@ class ChargesDB():
 
             list_results.update(d)
 
-        
-
         #RETORNA LA INFORMACIÓN OBTENIDO
         return list_results
 
     def InsertNewCharge(new_product, name_product, amount_product, buy_product, profit_product, name_supplier, id_supplier, money_buys, money_profits, money_total):
         
         #CONEXION A LA COLECCION
-        collection = DataBase.db['charges']
-        collection_products = DataBase.db['products']
-        collection_supplier = DataBase.db['supplier']
+        #collection = DataBase.db['charges']
+        #collection_products = DataBase.db['products']
+        #collection_supplier = DataBase.db['supplier']
 
 
         date = datetime.today().strftime('%d-%m-%Y %H:%M:%S')
         list_ids_products = []
 
-        result_supplier = collection_supplier.count_documents({'name_supplier': name_supplier, 'state_supplier': 1}, limit = 1)
+        #result_supplier = collection_supplier.count_documents({'name_supplier': name_supplier, 'state_supplier': 1}, limit = 1)
 
+        result_supplier = API.CountDocument(
+                'supplier',
+                {'name_supplier': name_supplier, 'state_supplier': 1},
+                None,
+                None
+            )
         if result_supplier > 0:
                 
             #agregar/modificarlo producto
@@ -173,15 +265,37 @@ class ChargesDB():
                 #Si es nuevo el producto lo agrega
                 if new_product[index] == False:
                     #query
-                    post = {'name_product': item, 'amount_product': str(amount_product[index]), 'buy_product': str(buy_product[index]), 'profit_product': str(profit_product[index]), 'name_supplier': name_supplier, 'state_product': 1}
+                    document = {'name_product': item, 'amount_product': str(amount_product[index]), 'buy_product': str(buy_product[index]), 'profit_product': str(profit_product[index]), 'name_supplier': name_supplier, 'state_product': 1}
 
                     #insertar
-                    collection_products.insert_one(post)
-                    list_ids_products.append(list(collection_products.find({}, {'_id': 1}).sort({'_id':-1}).limit(1) ))
+                    API.InsertInto(
+                        'products', 
+                        document
+                    )
+
+                    #collection_products.insert_one(post)
+
+                    results = API.Find(
+                        'products', 
+                        {},
+                        {'_id': 1},
+                        None, 
+                        1, 
+                        {'_id':-1}
+                    )
+
+                    list_ids_products.append(list(results))
+                    #list_ids_products.append(list(collection_products.find({}, {'_id': 1}).sort({'_id':-1}).limit(1) ))
                 #Si es viejo, revisa que datos ha cambiado
                 else:
                     #datos del producto ya existente
-                    results = collection_products.find_one({'name_product': item, 'state_product': 1}, {'_id': 1, 'amount_product': 1, 'buy_product': 1, 'profit_product': 1, 'name_supplier': 1})
+                    
+                    results = API.FindOne(
+                        'products',
+                        {'name_product': item, 'state_product': 1},
+                        {'_id': 1, 'amount_product': 1, 'buy_product': 1, 'profit_product': 1, 'name_supplier': 1}
+                    )
+                    #results = collection_products.find_one({'name_product': item, 'state_product': 1}, {'_id': 1, 'amount_product': 1, 'buy_product': 1, 'profit_product': 1, 'name_supplier': 1})
                 
                     new_amount = int(results['amount_product']) + int(amount_product[index])
                     new_buy = float(buy_product[index])
@@ -196,7 +310,13 @@ class ChargesDB():
 
                         query = {'amount_product': str(new_amount), 'buy_product': str(new_buy), 'profit_product': str(new_profit), 'name_supplier': new_supplier}
 
-                    collection_products.update_one({'_id': ObjectId(results['_id'])}, {'$set': query })
+                    API.UpdateOne(
+                            'products',
+                            { '_id': {'$oid': results['_id']} },
+                            query
+                        )
+
+                    #collection_products.update_one({'_id': ObjectId(results['_id'])}, {'$set': query })
 
 
                     id = [{'_id': results['_id']}]
@@ -218,7 +338,7 @@ class ChargesDB():
                 products.append(noSQL)
 
 
-            post = {'name_supplier': name_supplier,
+            document = {'name_supplier': name_supplier,
                 'id_supplier': ObjectId(id_supplier),
                 'products': products,
                 'date': date,
@@ -228,7 +348,11 @@ class ChargesDB():
                 'state_charges': 1
             }
 
-            collection.insert_one(post)
+            API.InsertInto(
+                name_collection, 
+                document
+            )
+            #collection.insert_one(post)
 
             return True
         else:
@@ -240,9 +364,15 @@ class ChargesDB():
         #rgx = re.compile('.*'+ textProduct +'.*', re.IGNORECASE)  # compile the regex
 
 
-        collection = DataBase.db['products']
+        #collection = DataBase.db['products']
 
-        results = collection.count_documents({'name_product': textProduct})
+        results = API.CountDocument(
+            name_collection,
+            {'name_product': textProduct},
+            None
+        )
+
+        #results = collection.count_documents({'name_product': textProduct})
 
         if results > 0:
             return True

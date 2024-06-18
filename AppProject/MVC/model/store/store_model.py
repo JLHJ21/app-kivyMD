@@ -3,7 +3,8 @@ from pymongo import ASCENDING
 from bson import ObjectId
 
 last_id = previous_id = None
-
+name_collection = 'products'
+API = DataBase.DatabaseClass
 class StoreDB():
 
     def ShowDataStoreModel(start, end, state = ''):
@@ -12,10 +13,22 @@ class StoreDB():
         global last_id, previous_id
 
         #CONEXION A LA COLECCION
-        collection = DataBase.db['products']
+        #collection = DataBase.db['products']
+
 
         #OBTIENE TODOS LOS DATOS DE LA COLECCION
-        starting_id = collection.find({'state_product': 1, 'amount_product': {"$ne" : "0"}}).sort({'id': -1})
+
+
+        #starting_id = collection.find({'state_product': 1, 'amount_product': {"$ne" : "0"}}).sort({'id': -1})
+
+        starting_id = API.Find(
+            name_collection,
+            {'state_product': 1, 'amount_product': {"$ne" : "0"}},
+            {'_id': 1},
+            None,
+            None,
+            {'id': -1}
+        )
 
         #SI EL ESTADO ES NONE, REINICIA LAS VARIABLES GLOBALES
         if state == '':
@@ -25,10 +38,27 @@ class StoreDB():
         if last_id == None:
 
             #OBTIENE LOS DATOS DE LA COLECCION
-            results = collection.find({'state_product': 1, 'amount_product': {"$ne" : "0"}}, {'_id': 1, 'name_product': 1, 'amount_product': 1, 'profit_product': 1, 'name_supplier': 1}).skip(start).limit( end ) #.sort({ '_id' : -1})
+
+            results = API.Find(
+                name_collection, 
+                {'state_product': 1, 'amount_product': {"$ne" : "0"}},
+                {'_id': 1, 'name_product': 1, 'amount_product': 1, 'profit_product': 1, 'name_supplier': 1},
+                start, 
+                end, 
+                None
+            )
+            #results = collection.find({'state_product': 1, 'amount_product': {"$ne" : "0"}}, {'_id': 1, 'name_product': 1, 'amount_product': 1, 'profit_product': 1, 'name_supplier': 1}).skip(start).limit( end ) #.sort({ '_id' : -1})
             
             #cantidad de productos que se encontraron
-            amount_items = collection.count_documents({'state_product': 1, 'amount_product': {"$ne" : "0"}}, skip=start, limit=end)
+
+            amount_items = API.CountDocument(
+                name_collection,
+                {'state_product': 1, 'amount_product': {"$ne" : "0"}},
+                start,
+                end
+            )
+
+            #amount_items = collection.count_documents({'state_product': 1, 'amount_product': {"$ne" : "0"}}, skip=start, limit=end)
 
             #Obtiene el ultimo id del producto
             last_id = results[amount_items - 1]['_id']
@@ -38,9 +68,25 @@ class StoreDB():
             #SI SE DA CLICK AL BOTON DE SIGUIENTE
             if state == 'next':
 
-                results = collection.find({'_id': {'$gt': last_id}, 'state_product': 1, 'amount_product': {"$ne" : "0"}}, {'_id': 1, 'name_product': 1, 'amount_product': 1, 'profit_product': 1, 'name_supplier': 1} ).limit( end )#.sort({ '_id' : ObjectId(last_id)})
+                results = API.Find(
+                    name_collection, 
+                    {'_id': {'$gt': { "$oid": last_id}}, 'state_product': 1, 'amount_product': {"$ne" : "0"}},
+                    {'_id': 1, 'name_product': 1, 'amount_product': 1, 'profit_product': 1, 'name_supplier': 1},
+                    None, 
+                    end, 
+                    None
+                )
 
-                amount_items = collection.count_documents({'_id': {'$gt': last_id}, 'state_product': 1, 'amount_product': {"$ne" : "0"}}, limit=end)
+                #results = collection.find({'_id': {'$gt': last_id}, 'state_product': 1, 'amount_product': {"$ne" : "0"}}, {'_id': 1, 'name_product': 1, 'amount_product': 1, 'profit_product': 1, 'name_supplier': 1} ).limit( end )#.sort({ '_id' : ObjectId(last_id)})
+
+                amount_items = API.CountDocument(
+                    name_collection,
+                    {'_id': {'$gt': { "$oid": last_id}}, 'state_product': 1, 'amount_product': {"$ne" : "0"}},
+                    None,
+                    end
+                )
+
+                #amount_items = collection.count_documents({'_id': {'$gt': last_id}, 'state_product': 1, 'amount_product': {"$ne" : "0"}}, limit=end)
                 last_id = results[amount_items - 1]['_id']
 
                 
@@ -52,9 +98,26 @@ class StoreDB():
 
             #SI SE DA CLICK AL BOTON DE ATRÁS
             elif state == 'previous':
-                results = collection.find({'_id': {'$gte': previous_id}, 'state_product': 1, 'amount_product': {"$ne" : "0"}}, {'_id': 1, 'name_product': 1, 'amount_product': 1, 'profit_product': 1, 'name_supplier': 1}).limit( end )#.sort({ '_id' : ObjectId(last_id)})
 
-                amount_items = collection.count_documents({'_id': {'$gte': previous_id}, 'state_product': 1, 'amount_product': {"$ne" : "0"}}, limit=end)
+                results = API.Find(
+                    name_collection, 
+                    {'_id': {'$gte': { "$oid": previous_id}}, 'state_product': 1, 'amount_product': {"$ne" : "0"}},
+                    {'_id': 1, 'name_product': 1, 'amount_product': 1, 'profit_product': 1, 'name_supplier': 1},
+                    None, 
+                    end, 
+                    None
+                )
+
+                #results = collection.find({'_id': {'$gte': previous_id}, 'state_product': 1, 'amount_product': {"$ne" : "0"}}, {'_id': 1, 'name_product': 1, 'amount_product': 1, 'profit_product': 1, 'name_supplier': 1}).limit( end )#.sort({ '_id' : ObjectId(last_id)})
+
+                #amount_items = collection.count_documents({'_id': {'$gte': previous_id}, 'state_product': 1, 'amount_product': {"$ne" : "0"}}, limit=end)
+
+                amount_items = API.CountDocument(
+                    name_collection,
+                    {'_id': {'$gte': {"$oid": previous_id }}, 'state_product': 1, 'amount_product': {"$ne" : "0"}},
+                    None,
+                    end
+                )
                 
                 #OBTIENE EL ULTIMO ID DEL ITEM DE LA COLECCION
                 last_id = results[amount_items - 1]['_id']
@@ -69,7 +132,13 @@ class StoreDB():
         #SE CREA DICCIONARIO QUE ALMACENARÁ LOS DATOS OBTENIDOS DE LA BASE DE DATOS
         list_results = {}
         #CUANTA LA CANTIDAD DE DOCUMENTOS DE LA COLECCIÓN
-        numbers_collection = collection.count_documents({'state_product': 1, 'amount_product': {"$ne" : "0"}})#, skip=start, limit=end)
+        numbers_collection = API.CountDocument(
+                    name_collection,
+                    {'state_product': 1, 'amount_product': {"$ne" : "0"}},
+                    None,
+                    None
+                )
+        #numbers_collection = collection.count_documents({'state_product': 1, 'amount_product': {"$ne" : "0"}})#, skip=start, limit=end)
 
         #SE AGREGA SIEMPRE COMO PRIMER DATO, LAS CARACTERISTICAS (CANTIDAD DE DOCUMENTOS, ARCHIVO COMIENZA, ARCHIVO TERMINADA)
         list_results.update({'characteristics': [numbers_collection, start, end]})
@@ -119,56 +188,121 @@ class StoreDB():
     def UpdateProduct(nameProduct, profitProduct, supplierProduct, idObject):
         
         query = {}
-        collection = DataBase.db['products']
+        #collection = DataBase.db['products']
 
-        
-        #Revisa si el dato existe en otros proveedores
-        if collection.count_documents( {
-                "_id":  {"$nin" : [ObjectId(idObject)]},
-                'name_product': nameProduct,
-                "state_product": 1
-            }):
+
+        #Revisa si el dato existe en otros productos
+        #if collection.count_documents( {
+        #        "_id":  {"$nin" : [ObjectId(idObject)]},
+        #        'name_product': nameProduct,
+        #        "state_product": 1
+        #    }):
+        #    return ', ya existe registrado este nombre.'
+
+
+        if API.CountDocument(
+                name_collection,
+                {
+                    "_id": {"$nin" : [{ "$oid": idObject }]},
+                    'name_product': nameProduct,
+                    "state_product": 1
+                },
+                None,
+                None
+            ):
             return ', ya existe registrado este nombre.'
 
         else:
             #data
             ####Si no existe el dato introducido, lo añade al query
             #name_product
-            if collection.count_documents({'_id': ObjectId(idObject), 'name_product': nameProduct}, limit = 1) <= 0:
+            if API.CountDocument(
+                name_collection,
+                {
+                    "_id": {"$nin" : [{ "$oid": idObject }]},
+                    'name_product': nameProduct,
+                },
+                None,
+                None
+            ) == None:
                 query['name_product'] = nameProduct
+                
+            #if collection.count_documents({'_id': ObjectId(idObject), 'name_product': nameProduct}, limit = 1) <= 0:
+            #    query['name_product'] = nameProduct
 
             #amount_product
             #if collection.count_documents({'_id': ObjectId(idObject), 'amount_product': amountProduct}, limit = 1) <= 0:
             #    query['amount_product'] = amountProduct
 
             #profit_product
-            if collection.count_documents({'_id': ObjectId(idObject), 'profit_product': profitProduct}, limit = 1) <= 0:
+            if API.CountDocument(
+                name_collection,
+                {
+                    "_id": {"$nin" : [{ "$oid": idObject }]},
+                    'profit_product': profitProduct,
+                },
+                None,
+                None
+            ) == None:
                 query['profit_product'] = profitProduct
 
+            #if collection.count_documents({'_id': ObjectId(idObject), 'profit_product': profitProduct}, limit = 1) <= 0:
+            #    query['profit_product'] = profitProduct
+
             #name_supplier
-            if collection.count_documents({'_id': ObjectId(idObject), 'name_supplier': supplierProduct}, limit = 1) <= 0:
+            if API.CountDocument(
+                name_collection,
+                {
+                    "_id": {"$nin" : [{ "$oid": idObject }]},
+                    'name_supplier': supplierProduct,
+                },
+                None,
+                None
+            ) == None:
                 query['name_supplier'] = supplierProduct
+            #if collection.count_documents({'_id': ObjectId(idObject), 'name_supplier': supplierProduct}, limit = 1) <= 0:
+            #    query['name_supplier'] = supplierProduct
 
             ##########
             #Si no tiene items el query (no hay datos nuevos), regresar si hacer cambios  a la base de datos
             if len(query) == 0:
                 return ', los datos ingresados son los mismos que habia antes.'
             else:
-                collection.update_one({'_id': ObjectId(idObject)},{'$set': query })
-                return True
+
+                result = API.UpdateOne(
+                    name_collection,
+                    {'_id': {'$oid': idObject}},
+                    query
+                )
+
+                #collection.update_one({'_id': ObjectId(idObject)},{'$set': query })
+                return result
 
     
     def DeleteProduct(id):
 
-        collection = DataBase.db['products']
+        API.UpdateOne(
+            name_collection,
+            {"_id": { "$oid": id }},
+            {'state_product': 0}
+        )
 
-        query = {'state_product': 0}
+        #collection = DataBase.db['products']
 
-        collection.update_one({'_id': id},{'$set': query })
+        #query = {'state_product': 0}
+
+        #collection.update_one({'_id': id},{'$set': query })
 
     def SearchProduct(id):
-        collection = DataBase.db['products']
+        
+        #collection = DataBase.db['products']
 
-        result = collection.find_one({'_id': ObjectId(id)})
+        #result = collection.find_one({'_id': ObjectId(id)})
+
+        result = API.FindOne(
+            name_collection,
+            {"_id": { "$oid": id }},
+            None
+        )
         
         return result

@@ -75,9 +75,10 @@ class ForeignExchangePage(MDScreen):
         try:
             if self_main.root.ids:
                 HeaderAndFooter.CallbackTypeMoney(self_header_and_footer, functions.money_preference)
-                print('if')
+                #print('if')
         except:
-            print('except')
+            pass
+            #print('except')
 
         match functions.money_preference:
             case 'dolar':
@@ -227,6 +228,7 @@ class ForeignExchangePage(MDScreen):
     #Funcion al dar click al boton
     def ChangeForeignExchange(self, text):
 
+        print('click al change')
 
         if functions.money_preference == text:
             toast('Hubo un error, ya existe esta moneda como preferencia.')

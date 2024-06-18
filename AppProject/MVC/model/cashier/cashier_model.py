@@ -4,6 +4,8 @@ from bson import ObjectId
 from datetime import datetime
 
 
+name_collection = 'products'
+API = DataBase.DatabaseClass
 
 class CashierDB():
 
@@ -13,10 +15,20 @@ class CashierDB():
         global last_id, previous_id
 
         #CONEXION A LA COLECCION
-        collection = DataBase.db['products']
+        #collection = DataBase.db['products']
 
         #OBTIENE TODOS LOS DATOS DE LA COLECCION
-        starting_id = collection.find({'state_product': 1, 'amount_product': {"$ne" : "0"}})
+        #starting_id = collection.find({'state_product': 1, 'amount_product': {"$ne" : "0"}})
+
+        starting_id = API.Find(
+            name_collection,
+            {'state_product': 1, 'amount_product': {"$ne" : "0"}},
+            {'_id': 1},
+            None,
+            None,
+            {'id': -1}
+        )
+
 
         #SI EL ESTADO ES NONE, REINICIA LAS VARIABLES GLOBALES
         if state == '':
@@ -26,11 +38,25 @@ class CashierDB():
         if last_id == None:
 
             #OBTIENE LOS DATOS DE LA COLECCION
-            results = collection.find({'state_product': 1, 'amount_product': {"$ne" : "0"}}, {'_id': 1, 'name_product': 1, 'amount_product': 1, 'profit_product': 1}).skip(start).limit( end ).sort({'_id': 1}) #.sort({ '_id' : -1})
-            
-            #cantidad de productos que se encontraron
-            amount_items = collection.count_documents({'state_product': 1, 'amount_product': {"$ne" : "0"}}, skip=start, limit=end)
+            #results = collection.find({'state_product': 1, 'amount_product': {"$ne" : "0"}}, {'_id': 1, 'name_product': 1, 'amount_product': 1, 'profit_product': 1}).skip(start).limit( end ).sort({'_id': 1}) #.sort({ '_id' : -1})
 
+            results = API.Find(
+                name_collection, 
+                {'state_product': 1, 'amount_product': {"$ne" : "0"}},
+                {'_id': 1, 'name_product': 1, 'amount_product': 1, 'profit_product': 1},
+                start, 
+                end, 
+                {'_id': 1}
+            )
+            #cantidad de productos que se encontraron
+            #amount_items = collection.count_documents({'state_product': 1, 'amount_product': {"$ne" : "0"}}, skip=start, limit=end)
+            
+            amount_items = API.CountDocument(
+                name_collection,
+                {'state_product': 1, 'amount_product': {"$ne" : "0"}},
+                start,
+                end
+            )
             #Obtiene el ultimo id del producto
             last_id = results[amount_items - 1]['_id']
 
@@ -39,9 +65,25 @@ class CashierDB():
             #SI SE DA CLICK AL BOTON DE SIGUIENTE
             if state == 'next':
 
-                results = collection.find({'_id': {'$gt': last_id}, 'state_product': 1, 'amount_product': {"$ne" : "0"}}, {'_id': 1, 'name_product': 1, 'amount_product': 1, 'profit_product': 1} ).limit( end )#.sort({ '_id' : ObjectId(last_id)})
+                #results = collection.find({'_id': {'$gt': last_id}, 'state_product': 1, 'amount_product': {"$ne" : "0"}}, {'_id': 1, 'name_product': 1, 'amount_product': 1, 'profit_product': 1} ).limit( end )#.sort({ '_id' : ObjectId(last_id)})
+                
+                results = API.Find(
+                    name_collection, 
+                    {'_id': {'$gt': last_id}, 'state_product': 1, 'amount_product': {"$ne" : "0"}},
+                    {'_id': 1, 'name_product': 1, 'amount_product': 1, 'profit_product': 1},
+                    None, 
+                    end, 
+                    None
+                )
 
-                amount_items = collection.count_documents({'_id': {'$gt': last_id}, 'state_product': 1,  'amount_product': {"$ne" : "0"}}, limit=end)
+                amount_items = API.CountDocument(
+                    name_collection,
+                    {'_id': {'$gt': last_id}, 'state_product': 1,  'amount_product': {"$ne" : "0"}},
+                    None,
+                    end
+                )
+
+                #amount_items = collection.count_documents({'_id': {'$gt': last_id}, 'state_product': 1,  'amount_product': {"$ne" : "0"}}, limit=end)
                 last_id = results[amount_items - 1]['_id']
 
                 
@@ -53,9 +95,23 @@ class CashierDB():
 
             #SI SE DA CLICK AL BOTON DE ATRÁS
             elif state == 'previous':
-                results = collection.find({'_id': {'$gte': previous_id}, 'state_product': 1, 'amount_product': {"$ne" : "0"}}, {'_id': 1, 'name_product': 1, 'amount_product': 1, 'profit_product': 1}).limit( end )#.sort({ '_id' : ObjectId(last_id)})
-
-                amount_items = collection.count_documents({'_id': {'$gte': previous_id}, 'state_product': 1, 'amount_product': {"$ne" : "0"}}, limit=end)
+                #results = collection.find({'_id': {'$gte': previous_id}, 'state_product': 1, 'amount_product': {"$ne" : "0"}}, {'_id': 1, 'name_product': 1, 'amount_product': 1, 'profit_product': 1}).limit( end )#.sort({ '_id' : ObjectId(last_id)})
+                
+                results = API.Find(
+                    name_collection, 
+                    {'_id': {'$gte': previous_id}, 'state_product': 1, 'amount_product': {"$ne" : "0"}},
+                    {'_id': 1, 'name_product': 1, 'amount_product': 1, 'profit_product': 1},
+                    None, 
+                    end, 
+                    None
+                )
+                #amount_items = collection.count_documents({'_id': {'$gte': previous_id}, 'state_product': 1, 'amount_product': {"$ne" : "0"}}, limit=end)
+                amount_items = API.CountDocument(
+                    name_collection,
+                    {'_id': {'$gte': previous_id}, 'state_product': 1, 'amount_product': {"$ne" : "0"}},
+                    None,
+                    end
+                )
                 
                 #OBTIENE EL ULTIMO ID DEL ITEM DE LA COLECCION
                 last_id = results[amount_items - 1]['_id']
@@ -70,7 +126,13 @@ class CashierDB():
         #SE CREA DICCIONARIO QUE ALMACENARÁ LOS DATOS OBTENIDOS DE LA BASE DE DATOS
         list_results = {}
         #CUANTA LA CANTIDAD DE DOCUMENTOS DE LA COLECCIÓN
-        numbers_collection = collection.count_documents({'state_product': 1, 'amount_product': {"$ne" : "0"}})#, skip=start, limit=end)
+        #numbers_collection = collection.count_documents({'state_product': 1, 'amount_product': {"$ne" : "0"}})#, skip=start, limit=end)
+        numbers_collection = API.CountDocument(
+                    name_collection,
+                    {'state_product': 1, 'amount_product': {"$ne" : "0"}},
+                    None,
+                    None
+                )
 
         #SE AGREGA SIEMPRE COMO PRIMER DATO, LAS CARACTERISTICAS (CANTIDAD DE DOCUMENTOS, ARCHIVO COMIENZA, ARCHIVO TERMINADA)
         list_results.update({'characteristics': [numbers_collection, start, end]})
@@ -89,20 +151,39 @@ class CashierDB():
         return list_results
 
     def GetDataProduct(idProduct):
-        collection = DataBase.db['products']
-        results_items = collection.find_one({'_id': ObjectId(idProduct), 'state_product': 1}, {'_id': 1, 'name_product': 1, 'amount_product': 1, 'profit_product': 1})
+        #collection = DataBase.db['products']
+
+        results_items  = API.FindOne(
+                'products',
+                {'_id': {'$oid': idProduct}},
+                {'_id': 1, 'name_product': 1, 'amount_product': 1, 'profit_product': 1}
+            )
+
+        #results_items = collection.find_one({'_id': ObjectId(idProduct), 'state_product': 1}, {'_id': 1, 'name_product': 1, 'amount_product': 1, 'profit_product': 1})
         return results_items
 
     def SearchClient(self, textIdClient):
 
         list_variables = []
 
-        collection = DataBase.db['clients']
-        results_items = collection.count_documents({'id_client': textIdClient, 'state_client': 1})
+        #collection = DataBase.db['clients']
+        results_items = API.CountDocument(
+                    'clients',
+                    {'id_client': textIdClient, 'state_client': 1},
+                    None,
+                    None
+                )
+        
+        #results_items = collection.count_documents({'id_client': textIdClient, 'state_client': 1})
 
 
         if results_items >= 1:
-            results = collection.find_one({'id_client': textIdClient, 'state_client': 1}, {'_id': 1, 'name_client': 1, 'id_client': 1, 'phone_client': 1})
+            results = API.FindOne(
+                    'products',
+                    {'id_client': {'$oid': textIdClient}, 'state_client': 1},
+                    {'_id': 1, 'name_client': 1, 'id_client': 1, 'phone_client': 1}
+                )
+            #results = collection.find_one({'id_client': textIdClient, 'state_client': 1}, {'_id': 1, 'name_client': 1, 'id_client': 1, 'phone_client': 1})
 
             list_variables.append(True)
             list_variables.append(results)
@@ -110,28 +191,48 @@ class CashierDB():
         else:
             list_variables.append(False)
 
-
         return list_variables
     
     def CreateClient(nameClient, idClient, phoneClient):
-        collection = DataBase.db['clients']
+        #collection = DataBase.db['clients']
 
-        query = {'name_client': nameClient, 'id_client': idClient, 'phone_client': phoneClient, 'state_client': 1}
+        document = {'name_client': nameClient, 'id_client': idClient, 'phone_client': phoneClient, 'state_client': 1}
 
-        collection.insert_one(query)
 
-        resultID = collection.find_one({}, {'_id': 1}, sort= {'_id': -1})
+        API.InsertInto(
+                name_collection, 
+                document
+            )
+        
+        #collection.insert_one(query)
+
+        resultID = API.Find(
+            name_collection,
+            {},
+            {'_id': 1},
+            None,
+            None,
+            {'_id': -1}
+        )
+
+        #resultID = collection.find_one({}, {'_id': 1}, sort= {'_id': -1})
         return resultID
     
     def UpdateAmountProduct(idProduct, amountProduct):
         
-        collection = DataBase.db['products']
-        query = {'amount_product': amountProduct}
+        #collection = DataBase.db['products']
+        document = {'amount_product': amountProduct}
 
-        collection.update_one({'_id': ObjectId(idProduct)},{'$set': query })
+        API.UpdateOne(
+                    name_collection,
+                    {'_id': {'$oid': idProduct}},
+                    document
+                )
+
+        #collection.update_one({'_id': ObjectId(idProduct)},{'$set': query })
 
     def AddPurchase(idObjectClient, nameClient, phoneClient, idClient, idStaff, nameStaff, purchaseAmount, typeForeignExchange,itemsProducts, purchaseAmountOriginal):
-        collection = DataBase.db['sales']
+        #collection = DataBase.db['sales']
         datePurchase = datetime.today().strftime('%d-%m-%Y %H:%M:%S')
 
         key_products = list(itemsProducts.keys())
@@ -155,7 +256,7 @@ class CashierDB():
             }
             products.append(dictionaryItem)
 
-        post = {
+        document = {
                 'data_client_sales': {
                         '_id_client': ObjectId(idObjectClient), 
                         'name_client': nameClient, 
@@ -180,5 +281,11 @@ class CashierDB():
                 'state_sales': 1
             }
         
-        collection.insert_one(post)
+
+        API.InsertInto(
+                'sales', 
+                document
+            )
+
+        #collection.insert_one(post)
         

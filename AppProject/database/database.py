@@ -24,6 +24,13 @@ db = None
 
 class DatabaseClass():
 
+    headers = {
+            'Content-Type': 'application/json',
+            'Access-Control-Request-Headers': '*',
+            'api-key': '0GPikKUv5FT2DDEpA3jE7ulhZGlfqT1PmnEQNvtkihGxy4YaXdse8oViFae2d7UO', 
+            'return_type': 'JSON'
+        }
+
     def Conexion():
 
 
@@ -191,13 +198,6 @@ class DatabaseClass():
         #RETORNA LA INFORMACIÓN OBTENIDO
         return list_results
 
-    headers = {
-            'Content-Type': 'application/json',
-            'Access-Control-Request-Headers': '*',
-            'api-key': '0GPikKUv5FT2DDEpA3jE7ulhZGlfqT1PmnEQNvtkihGxy4YaXdse8oViFae2d7UO', 
-            'return_type': 'JSON'
-        }
-
     def Find(collection, filter_query, projection, skip, limit, sort):
 
         '''
@@ -260,8 +260,11 @@ class DatabaseClass():
         #print(type(out))
         #print(out)
 
-        #lo entrega tal y como lo permite el sistema
-        return out['documents']
+        #lo entrega tal y como lo permite el sistema    
+        try:
+            return out['documents']
+        except:
+            return None
             
     #no usar
     def FindOne(collection, filter_query, projection):
@@ -299,7 +302,12 @@ class DatabaseClass():
         out = response.json()
 
         #lo entrega tal y como lo permite el sistema
-        return out['document']
+        #return out['document']
+    
+        try:
+            return out['document']
+        except:
+            return None
     
     def CountDocument(collection, match, skip, limit):
         '''
@@ -349,7 +357,7 @@ class DatabaseClass():
             
                 "dataSource": "DataBaseIV",
                 "database": "programDB",
-                "collection": "products",
+                "collection": collection,
                 "pipeline": pipeline_query 
             }
         )
@@ -361,7 +369,65 @@ class DatabaseClass():
         out = response.json()
 
         #lo entrega tal y como lo permite el sistema
-        return out['documents'][0]['amount_item']
+        
+        try:
+            return out['documents'][0]['amount_item']
+        except:
+            return None
+        
+    def Aggregate(collection, match, skip, limit, project):
+        '''
+        collection, se refiere a la coleccion(tabla en sql) que se utilizará en este query
+        match, se refiere a los productos a buscar (el project)
+        skip, salta la cantidad de documentos en el query
+        limit, limita la cantidad de documentos que regresará el query
+        '''
+
+        #primero tiene que ir el limit para que si limite los documentos a buscar
+        #{"$limit": 1},
+        #{"$skip": 0},
+        #{'$match': {'state_product': 1, 'amount_product': {"$ne" : "0"} } },
+        #{ '$group': { '_id': 1, 'amount_item': { '$sum': 1 } } },
+                
+        #cambiar por la opcion, ahorita es aggregate
+        url = "https://us-east-1.aws.data.mongodb-api.com/app/data-rxxunxx/endpoint/data/v1/action/aggregate"
+
+        pipeline_query = []
+
+        if skip != None:
+            add = {"$skip": skip}
+            pipeline_query.append(add)
+
+        if limit != None:
+            add = {"$limit": limit}
+            pipeline_query.append(add)
+
+            
+        add_match = {"$match": match}
+        pipeline_query.append(add_match)
+        
+        add_match = { '$project': project }
+        pipeline_query.append(add_match)
+
+        payload = json.dumps(
+            {
+            
+                "dataSource": "DataBaseIV",
+                "database": "programDB",
+                "collection": collection,
+                "pipeline": pipeline_query
+            }
+        )
+
+
+        response = requests.request("POST", url, headers=DatabaseClass.headers, data=payload)
+
+        #transforma el json en dicitonario
+        out = response.json()
+
+        #lo entrega tal y como lo permite el sistema
+
+        return out['documents']
 
     def UpdateOne(collection, filter, update):
         
@@ -388,8 +454,10 @@ class DatabaseClass():
         #lo entrega tal y como lo permite el sistema
 
         #print( out['modifiedCount'] )
-        return  out['modifiedCount'] >= 1
-
+        try:
+            return out['modifiedCount'] >= 1
+        except:
+            return None
         
     
     def InsertInto(collection, document):
@@ -434,9 +502,9 @@ class DatabaseClass():
         #print(out)
 
         #lo entrega tal y como lo permite el sistema
-        print(out)
-        print()
-        print(json_query)
+        #print(out)
+        #print()
+        #print(json_query)
 
     
 

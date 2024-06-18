@@ -1,6 +1,10 @@
 import database.database as DataBase
 import MVC.controller.functions as functions
 
+
+name_collection = 'sales'
+API = DataBase.DatabaseClass
+
 class SalesHistoryDB():
     def ShowDataSalesHistoryModel(start, end, state = ''):
 
@@ -11,7 +15,15 @@ class SalesHistoryDB():
         collection = DataBase.db['sales']
 
         #OBTIENE TODOS LOS DATOS DE LA COLECCION
-        starting_id = collection.find({'state_sales': 1})
+        #starting_id = collection.find({'state_sales': 1})
+        starting_id = API.Find(
+            name_collection,
+            {'state_sales': 1},
+            {'_id': 1},
+            None,
+            None,
+            {'id': -1}
+        )
 
         #SI EL ESTADO ES NONE, REINICIA LAS VARIABLES GLOBALES
         if state == '':
@@ -21,11 +33,27 @@ class SalesHistoryDB():
         if last_id == None:
 
             #OBTIENE LOS DATOS DE LA COLECCION
-            results = collection.find({'state_sales': 1}).skip(start).limit( end )#.sort({'_id': 1}) #.sort({ '_id' : -1})
-            results1 = collection.find({'state_sales': 1}).skip(start).limit( end )#.sort({'_id': 1}) #.sort({ '_id' : -1})
+            #results = collection.find({'state_sales': 1}).skip(start).limit( end )#.sort({'_id': 1}) #.sort({ '_id' : -1})
+
+            results = API.Find(
+                name_collection, 
+                {'state_sales': 1},
+                None,
+                start, 
+                end, 
+                None
+            )
+            #results1 = collection.find({'state_sales': 1}).skip(start).limit( end )#.sort({'_id': 1}) #.sort({ '_id' : -1})
 
             #cantidad de productos que se encontraron
-            amount_items = collection.count_documents({'state_sales': 1}, skip=start, limit=end)
+            #amount_items = collection.count_documents({'state_sales': 1}, skip=start, limit=end)
+
+            amount_items = API.CountDocument(
+                name_collection,
+                {'state_sales': 1},
+                start,
+                end
+            )
 
             #Obtiene el ultimo id del producto
             last_id = results[amount_items - 1]['_id']
@@ -37,7 +65,24 @@ class SalesHistoryDB():
 
                 results = collection.find({'_id': {'$gt': last_id}, 'state_sales': 1}).limit( end )#.sort({ '_id' : ObjectId(last_id)})
 
-                amount_items = collection.count_documents({'_id': {'$gt': last_id}, 'state_sales': 1}, limit=end)
+                results = API.Find(
+                    name_collection, 
+                    {'_id': {'$gt': { "$oid": last_id}}, 'state_sales': 1},
+                    None,
+                    None, 
+                    end, 
+                    None
+                )
+
+                #amount_items = collection.count_documents({'_id': {'$gt': last_id}, 'state_sales': 1}, limit=end)
+
+                amount_items = API.CountDocument(
+                    name_collection,
+                    {'_id': {'$gt': { "$oid": last_id}}, 'state_sales': 1},
+                    None,
+                    end
+                )
+
                 last_id = results[amount_items - 1]['_id']
 
                 
@@ -49,10 +94,25 @@ class SalesHistoryDB():
 
             #SI SE DA CLICK AL BOTON DE ATRÁS
             elif state == 'previous':
-                results = collection.find({'_id': {'$gte': previous_id}, 'state_sales': 1}).limit( end )#.sort({ '_id' : ObjectId(last_id)})
-
-                amount_items = collection.count_documents({'_id': {'$gte': previous_id}, 'state_sales': 1}, limit=end)
+                #results = collection.find({'_id': {'$gte': previous_id}, 'state_sales': 1}).limit( end )#.sort({ '_id' : ObjectId(last_id)})
                 
+                results = API.Find(
+                    name_collection, 
+                    {'_id': {'$gte': { "$oid": previous_id}}, 'state_sales': 1},
+                    None,
+                    None, 
+                    end, 
+                    None
+                )
+                #amount_items = collection.count_documents({'_id': {'$gte': previous_id}, 'state_sales': 1}, limit=end)
+                
+                amount_items = API.CountDocument(
+                    name_collection,
+                    {'_id': {'$gte': {"$oid": previous_id }}, 'state_sales': 1},
+                    None,
+                    end
+                )
+
                 #OBTIENE EL ULTIMO ID DEL ITEM DE LA COLECCION
                 last_id = results[amount_items - 1]['_id']
 
@@ -66,7 +126,14 @@ class SalesHistoryDB():
         #SE CREA DICCIONARIO QUE ALMACENARÁ LOS DATOS OBTENIDOS DE LA BASE DE DATOS
         list_results = {}
         #CUANTA LA CANTIDAD DE DOCUMENTOS DE LA COLECCIÓN
-        numbers_collection = collection.count_documents({'state_sales': 1})#, skip=start, limit=end)
+        #numbers_collection = collection.count_documents({'state_sales': 1})#, skip=start, limit=end)
+
+        numbers_collection = API.CountDocument(
+                    name_collection,
+                    {'state_sales': 1},
+                    None,
+                    None
+                )
 
         #SE AGREGA SIEMPRE COMO PRIMER DATO, LAS CARACTERISTICAS (CANTIDAD DE DOCUMENTOS, ARCHIVO COMIENZA, ARCHIVO TERMINADA)
         list_results.update({'characteristics': [numbers_collection, start, end]})
@@ -110,7 +177,7 @@ class SalesHistoryDB():
     def GetAmountItemsSales(id_sales):
 
 
-        collection = DataBase.db['sales']
+        #collection = DataBase.db['sales']
 
         '''
         pipeline = [
@@ -141,26 +208,34 @@ class SalesHistoryDB():
         
         '''
 
-        result = collection.aggregate(
-            [
+        result = API.Aggregate(
+            'sales',
+            {'_id': {'$oid': id_sales}},
+            None,
+            None,
+            { '_id' : 0 , 'productsAmount': { '$size': "$products_sales" } },
+        )
+
+        #result = collection.aggregate(
+        #    [
                 
-                {
-                '$match': {
-                        '_id': id_sales #results_amount_item[0]['name_supplier']
-                    },
-                },
+        #        {
+        #        '$match': {
+        #                '_id': id_sales #results_amount_item[0]['name_supplier']
+        #            },
+        #        },
                 
-                {
-                    '$project': {
-                        '_id' : 0 ,
-                        'productsAmount': { 
-                            '$size': "$products_sales" 
-                        },
-                    },
-                    
-                },
-            ]
-         )
+        #        {
+        #            '$project': {
+        #                '_id' : 0 ,
+        #                'productsAmount': { 
+        #                    '$size': "$products_sales" 
+        #                },
+        #            },
+        #            
+        #        },
+        #    ]
+        # )
         
 
 
