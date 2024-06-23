@@ -1,4 +1,13 @@
 import concurrent.futures
+from kivy.network.urlrequest import UrlRequest
+import json
+
+#datos de la api
+headers = {'Content-type': 'application/json',
+          'Accept': 'text/plain'}
+
+url = 'http://127.0.0.1:5000/'
+
 
 executor = concurrent.futures.ThreadPoolExecutor()
 
@@ -196,6 +205,16 @@ class FunctionsKivys():
         #results['profit_product'] = str(new_profit)
         return str(new_profit)
 
+    def GetResultFromDatabase(body_content, direction):
+        body_content = json.dumps(body_content)
+
+        get_result_s= UrlRequest(url + direction, req_body=body_content, req_headers=headers)
+
+        get_result_s.wait()
+
+        result_database = get_result_s.result
+
+        return result_database
 
 #Variables 'globales' de los datos del usuario
 usernameStaff = emailStaff = passwordStaff = idStaff = ''

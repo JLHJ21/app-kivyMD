@@ -2,6 +2,11 @@ import database.database as DataBase
 from pymongo import ASCENDING
 from bson import ObjectId
 
+
+from time import sleep
+from kivy.network.urlrequest import UrlRequest
+from kivy.clock import Clock
+
 last_id = previous_id = None
 name_collection = 'products'
 API = DataBase.DatabaseClass
@@ -20,7 +25,7 @@ class StoreDB():
 
 
         #starting_id = collection.find({'state_product': 1, 'amount_product': {"$ne" : "0"}}).sort({'id': -1})
-
+        
         starting_id = API.Find(
             name_collection,
             {'state_product': 1, 'amount_product': {"$ne" : "0"}},
@@ -38,6 +43,18 @@ class StoreDB():
         if last_id == None:
 
             #OBTIENE LOS DATOS DE LA COLECCION
+            filter_query = '{"state_product":1,"amount_product":{"$ne":"0"}}'
+            projection = '{"name_product":1}'
+            skip = start
+            limit = end
+            sort = 'None'
+
+            #url = f'http://127.0.0.1:5000/find/{name_collection}/{filter_query}/{projection}/{skip}/{limit}/{sort}'
+            #url = 'http://127.0.0.1:5000/find/products///start/0/{"_id":1}'
+            #result= UrlRequest(url, debug=True)
+
+            #result.wait()
+            #results = result.result
 
             results = API.Find(
                 name_collection, 
@@ -50,7 +67,7 @@ class StoreDB():
             #results = collection.find({'state_product': 1, 'amount_product': {"$ne" : "0"}}, {'_id': 1, 'name_product': 1, 'amount_product': 1, 'profit_product': 1, 'name_supplier': 1}).skip(start).limit( end ) #.sort({ '_id' : -1})
             
             #cantidad de productos que se encontraron
-
+            
             amount_items = API.CountDocument(
                 name_collection,
                 {'state_product': 1, 'amount_product': {"$ne" : "0"}},

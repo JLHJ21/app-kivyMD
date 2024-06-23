@@ -5,8 +5,9 @@ import MVC.controller.configuration.configuration_controller as Configuration
 import MVC.controller.functions as functions
 
 from passlib.hash import sha256_crypt
+import json
 
-name_collection = 'users'
+name_collection = "users"
 API = DataBase.DatabaseClass
 
 class SignInDatabase():
@@ -18,11 +19,33 @@ class SignInDatabase():
         #busca si existe un usuario con el dato dado
         #user = collection.find_one({"username": username})
 
-        user = API.FindOne(
-            name_collection,
-            {"username": username},
-            None
-        )
+        query = {
+            #nombre de la coleccion
+            "collection_choose": name_collection, 
+            #archivo a buscar
+            "search_query": 
+                {
+                    "username": username
+                },
+            #dato a mostrar
+            "projection": "None",
+            #cantidad de archivos a saltar
+            "skip":0,
+            #cantidad de resultados
+            "limit": 0,
+            #como se ordenarán
+            "sort": {
+                "_id":-1
+            }
+        }
+        
+        user = functions.FunctionsKivys.GetResultFromDatabase(query, "find_one")
+
+        #user = API.FindOne(
+        #    name_collection,
+        #    {"username": username},
+        #    None
+        #)
 
         #verifica si la contraseña es igual al dato dato
         if user and sha256_crypt.verify(password, user['password']):

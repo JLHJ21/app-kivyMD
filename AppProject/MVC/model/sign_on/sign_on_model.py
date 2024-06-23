@@ -1,37 +1,39 @@
 import database.database as DataBase
 #from passlib.hash import sha256_crypt
+import MVC.controller.functions as functions
 
-name_collection = 'users'
-API = DataBase.DatabaseClass
+name_collection = "users"
+#API = DataBase.DatabaseClass
 
 class SignOnDatabase():
     def CreateAccountDB(username, email, password):
                 
-        #collection = DataBase.db['users']
+
+        query_count_username = {
+            #nombre de la coleccion
+            "collection_choose": name_collection, 
+            #archivo a buscar
+            "search_query": 
+                {
+                    "username": username
+                },
+        }
+
+        query_count_email = {
+            #nombre de la coleccion
+            "collection_choose": name_collection, 
+            #archivo a buscar
+            "search_query": 
+                {
+                    "email": email,
+                },
+        }
 
         #data
-
-        if API.CountDocument(
-            name_collection,
-            {
-                'username': username,
-            },
-            None,
-            None
-        ):
+        if functions.FunctionsKivys.GetResultFromDatabase(query_count_username, 'count_document'):
             return ', ya existe este nombre de usuario'
-
-        #if collection.count_documents({'username': username}, limit = 1):
-        #    return ', ya existe este nombre de usuario'
-
-        elif API.CountDocument(
-            name_collection,
-            {
-                'email': email,
-            },
-            None,
-            None
-        ):
+        
+        elif functions.FunctionsKivys.GetResultFromDatabase(query_count_email, 'count_document'):
             return ', ya existe este correo electrónico'
         
         else:
@@ -43,14 +45,20 @@ class SignOnDatabase():
             
             '''
 
-            document = {'username': username, 'email': email, 'password': password, 'access_level': 0}
+            query_insert = {
+                #nombre de la colección
+                "collection_choose": name_collection, 
+                #datos a agregar en la coleccion
+                "document_insert":
+                    {
+                        "username": username, 
+                        "email": email, 
+                        "password": password, 
+                        "access_level": 0
+                    },
+                
+                }
 
-            API.InsertInto(
-                name_collection, 
-                document
-            )
+            result = functions.FunctionsKivys.GetResultFromDatabase(query_insert, 'insert_into')
 
-
-            #collection.insert_one(post)
-
-            return True
+            return result
