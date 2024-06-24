@@ -36,14 +36,6 @@ a = {
         "name_supplier": 1,
         "_id": 1
     },
-    #cantidad de archivos a saltar
-    "skip":0,
-    #cantidad de resultados
-    "limit": 2,
-    #como se ordenarán
-    "sort": {
-        "_id":-1
-    }
 }
 
 #UPDATE_ONE

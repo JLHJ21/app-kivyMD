@@ -4,19 +4,29 @@ from datetime import datetime
 
 
 name_collection = 'foreign_exchange'
-API = DataBase.DatabaseClass
+#API = DataBase.DatabaseClass
 class ForeignExchangeDB():
 
     def GetForeignExchange():
         
         #collection = DataBase.db['foreign_exchange']
         #results = collection.find_one()
+        query_find_one = {
+            #nombre de la coleccion
+            "collection_choose": name_collection, 
+            #archivo a buscar
+            "search_query": "None",
+            #dato a mostrar
+            "projection": "None",
+        }
 
-        results = API.FindOne(
-            name_collection,
-            None,
-            None,
-        )
+        results = functions.FunctionsKivys.GetResultFromDatabase(query_find_one, 'find_one')
+
+        #results = API.FindOne(
+        #    name_collection,
+        #    None,
+        #    None,
+        #)
         
         return results
     
@@ -48,13 +58,30 @@ class ForeignExchangeDB():
             #newValue = { "$set":  query  }
 
 
-            result = API.UpdateOne(
-                name_collection,
-                {'_id': {'$oid': '6668ef8bc265ac0f72985b42'}},
-                query
-            )
+            #result = API.UpdateOne(
+            #    name_collection,
+            #    {'_id': {'$oid': '6668ef8bc265ac0f72985b42'}},
+            #    query
+            #)
 
             #collection.update_one(documentToChange, newValue)
+
+            query_update = {
+                #nombre de la coleccion
+                "collection_choose": name_collection, 
+                #archivo a buscar
+                "search_query": 
+                    {
+                        "_id": "ObjectId('6668ef8bc265ac0f72985b42')"
+                    },
+                #dato a cambiar
+                "update_query":
+                    {"$set":
+                        query,
+                    }
+            }
+
+            result = functions.FunctionsKivys.GetResultFromDatabase(query_update, 'update_one')
 
             return result
         
@@ -63,17 +90,34 @@ class ForeignExchangeDB():
             #collection = DataBase.db['foreign_exchange']
 
             last_change = datetime.today().strftime('%d-%m-%Y')
-            documentToChange = {'money_preference': functions.money_preference}
-            query = { 'money_preference': new_preference, 'last_change': last_change }
+            #documentToChange = {'money_preference': functions.money_preference}
+            #query = { 'money_preference': new_preference, 'last_change': last_change }
             
             #newValue = { "$set": { 'money_preference': new_preference, 'last_change': last_change } }
 
             #collection.update_one(documentToChange, newValue)
-            result = API.UpdateOne(
-                name_collection,
-                documentToChange,
-                query
-            )
+            #result = API.UpdateOne(
+            #    name_collection,
+            #    documentToChange,
+            #    query
+            #)
+
+            query_update = {
+                #nombre de la coleccion
+                "collection_choose": name_collection, 
+                #archivo a buscar
+                "search_query": 
+                    {
+                        "_id": "ObjectId('6668ef8bc265ac0f72985b42')"
+                    },
+                #dato a cambiar
+                "update_query":
+                    {"$set":
+                       { 'money_preference': new_preference, 'last_change': last_change }
+                    }
+            }
+
+            result = functions.FunctionsKivys.GetResultFromDatabase(query_update, 'update_one')
 
             functions.money_preference = new_preference
 

@@ -1,4 +1,4 @@
-import database.database as DataBase
+#import database.database as DataBase
 
 class HomeBD():
     def Data(username, password):

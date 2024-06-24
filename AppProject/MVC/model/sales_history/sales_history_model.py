@@ -13,10 +13,6 @@ class SalesHistoryDB():
         #PERMITE QUE PERSISTA EL PRIMER Y ULTIMO ID, 
         global last_id, previous_id
 
-        #CONEXION A LA COLECCION
-        #collection = DataBase.db['sales']
-
-
         query = {
             "collection_choose": name_collection, 
             "search_query":
@@ -53,6 +49,16 @@ class SalesHistoryDB():
             #OBTIENE LOS DATOS DE LA COLECCION
             #results = collection.find({'state_sales': 1}).skip(start).limit( end )#.sort({'_id': 1}) #.sort({ '_id' : -1})
 
+            #results = API.Find(
+            #    name_collection, 
+            #    {'state_sales': 1},
+            #    None,
+            #    start, 
+            #    end, 
+            #    None
+            #)
+            #results1 = collection.find({'state_sales': 1}).skip(start).limit( end )#.sort({'_id': 1}) #.sort({ '_id' : -1})
+
             query_find = {
                 "collection_choose": name_collection, 
                 "search_query":
@@ -67,18 +73,16 @@ class SalesHistoryDB():
 
             results = functions.FunctionsKivys.GetResultFromDatabase(query_find, 'find')
 
-            #results = API.Find(
-            #    name_collection, 
-            #    {'state_sales': 1},
-            #    None,
-            #    start, 
-            #    end, 
-            #    None
-            #)
-            #results1 = collection.find({'state_sales': 1}).skip(start).limit( end )#.sort({'_id': 1}) #.sort({ '_id' : -1})
-
+            
             #cantidad de productos que se encontraron
             #amount_items = collection.count_documents({'state_sales': 1}, skip=start, limit=end)
+
+            #amount_items = API.CountDocument(
+            #    name_collection,
+            #    {'state_sales': 1},
+            #    start,
+            #    end
+            #)
 
             query_count = {
                 #nombre de la coleccion
@@ -92,13 +96,7 @@ class SalesHistoryDB():
 
             amount_items = functions.FunctionsKivys.GetResultFromDatabase(query_count, 'count_document')
 
-            #amount_items = API.CountDocument(
-            #    name_collection,
-            #    {'state_sales': 1},
-            #    start,
-            #    end
-            #)
-
+            
             #Obtiene el ultimo id del producto
             last_id = results[amount_items - 1]['_id']
 
@@ -106,45 +104,6 @@ class SalesHistoryDB():
 
             #SI SE DA CLICK AL BOTON DE SIGUIENTE
             if state == 'next':
-
-                query_find = {
-                    "collection_choose": name_collection, 
-                    "search_query":
-                        {
-                            "_id": 
-                                {"$gt": 
-                                    "ObjectId('" + previous_id + "')"
-                                }, 
-                            "state_sales": 1
-                        },
-                    "projection": "None",
-                    "skip": "None",
-                    "limit": end,
-                    "sort": "None"
-                }
-
-                amount_items = functions.FunctionsKivys.GetResultFromDatabase(query_find, 'find')
-
-
-                query_count = {
-                    #nombre de la coleccion
-                    "collection_choose": name_collection, 
-                    #archivo a buscar
-                    "search_query":  
-                        {
-                            "_id": 
-                            {"$gt": 
-                                "ObjectId('"+ previous_id +  "')"
-                            }, 
-                            "state_sales": 1,
-                            "skip": "None",
-                            "limit": end
-                        }
-                }
-
-
-                amount_items = functions.FunctionsKivys.GetResultFromDatabase(query_count, 'count_document')
-
 
                 #results = collection.find({'_id': {'$gt': last_id}, 'state_sales': 1}).limit( end )#.sort({ '_id' : ObjectId(last_id)})
 
@@ -157,6 +116,24 @@ class SalesHistoryDB():
                 #    None
                 #)
 
+                query_find = {
+                    "collection_choose": name_collection, 
+                    "search_query":
+                        {
+                            "_id": 
+                                {"$gt": 
+                                    "ObjectId('" + last_id + "')"
+                                }, 
+                            "state_sales": 1
+                        },
+                    "projection": "None",
+                    "skip": "None",
+                    "limit": end,
+                    "sort": "None"
+                }
+
+                results = functions.FunctionsKivys.GetResultFromDatabase(query_find, 'find')
+
                 #amount_items = collection.count_documents({'_id': {'$gt': last_id}, 'state_sales': 1}, limit=end)
 
                 #amount_items = API.CountDocument(
@@ -166,6 +143,27 @@ class SalesHistoryDB():
                 #    end
                 #)
 
+
+                query_count = {
+                    #nombre de la coleccion
+                    "collection_choose": name_collection, 
+                    #archivo a buscar
+                    "search_query":  
+                        {
+                            "_id": 
+                            {"$gt": 
+                                "ObjectId('" + last_id + "')"
+                            }, 
+                            "state_sales": 1,
+                            "skip": "None",
+                            "limit": end
+                        }
+                }
+
+
+                amount_items = functions.FunctionsKivys.GetResultFromDatabase(query_count, 'count_document')
+
+                
                 last_id = results[amount_items - 1]['_id']
 
                 
@@ -179,14 +177,23 @@ class SalesHistoryDB():
             elif state == 'previous':
                 #results = collection.find({'_id': {'$gte': previous_id}, 'state_sales': 1}).limit( end )#.sort({ '_id' : ObjectId(last_id)})
                 
-
+                '''
+                results = API.Find(
+                    name_collection, 
+                    {'_id': {'$gte': { "$oid": previous_id}}, 'state_sales': 1},
+                    None,
+                    None, 
+                    end, 
+                    None
+                )
+                '''
                 query_find = {
                     "collection_choose": name_collection, 
                     "search_query":
                         {
                             "_id": 
                                 {
-                                    '$gte': "ObjectId('"+ previous_id +  "')"  
+                                    '$gte': "ObjectId('" + previous_id + "')"  
                                 }, 
                                  
                             "state_sales": 1
@@ -197,35 +204,10 @@ class SalesHistoryDB():
                     "sort": "None"
                 }
 
-                amount_items = functions.FunctionsKivys.GetResultFromDatabase(query_find, 'find')
-
-
-                query_count = {
-                    #nombre de la coleccion
-                    "collection_choose": name_collection, 
-                    #archivo a buscar
-                    "search_query": 
-
-                        {'_id': 
-                            {'$gte': "ObjectId('"+ last_id +  "')"  }, 
-                        'state_sales': 1},
-
-                        "skip": "None",
-                        "limit": end
-                }
-
-
-                amount_items = functions.FunctionsKivys.GetResultFromDatabase(query_count, 'count_document')
+                results = functions.FunctionsKivys.GetResultFromDatabase(query_find, 'find')
 
                 '''
-                results = API.Find(
-                    name_collection, 
-                    {'_id': {'$gte': { "$oid": previous_id}}, 'state_sales': 1},
-                    None,
-                    None, 
-                    end, 
-                    None
-                )
+
                 #amount_items = collection.count_documents({'_id': {'$gte': previous_id}, 'state_sales': 1}, limit=end)
                 
                 amount_items = API.CountDocument(
@@ -235,7 +217,23 @@ class SalesHistoryDB():
                     end
                 )
                 '''
-                
+
+                query_count = {
+                    #nombre de la coleccion
+                    "collection_choose": name_collection, 
+                    #archivo a buscar
+                    "search_query": 
+
+                        {'_id': 
+                            {'$gte': "ObjectId('" + previous_id + "')"  }, 
+                        'state_sales': 1},
+
+                        "skip": "None",
+                        "limit": end
+                }
+
+                amount_items = functions.FunctionsKivys.GetResultFromDatabase(query_count, 'count_document')
+
                 #OBTIENE EL ULTIMO ID DEL ITEM DE LA COLECCION
                 last_id = results[amount_items - 1]['_id']
 
@@ -352,7 +350,7 @@ class SalesHistoryDB():
             #archivo a buscar
             "search_query": 
                 {
-                    "_id": "ObjectId('"+ id_sales +  "')"
+                    "_id": "ObjectId('" + id_sales + "')"
                 },
             #cantidad de resultados
             "limit": "None",

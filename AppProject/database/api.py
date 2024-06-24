@@ -100,7 +100,7 @@ def find():
     #projection = json.loads(projection)
 
     if sort == 'None':
-        sort = {'_id': -1}
+        sort = {'_id': 1}
 
     ###############
     '''
@@ -356,9 +356,15 @@ def count_document():
 
             if type(value) == dict:
                 for i, k in zip(value.values(), value.keys()):
-                    if "objectid" in i.lower():
+                    try:
+                        if "objectid" in i.lower():
 
-                        count_query[key][k] = TransformToObjectId(i)
+                            count_query[key][k] = TransformToObjectId(i)
+                    except:
+                        if "objectid" in i[0].lower():
+
+                            count_query[key][k][0] = TransformToObjectId(i[0])
+                        print(count_query[key][k][0])
                         
     ###############
 

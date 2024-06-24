@@ -5,7 +5,7 @@ import MVC.controller.functions as functions
 
 
 name_collection = 'users'
-API = DataBase.DatabaseClass
+#API = DataBase.DatabaseClass
 
 class ConfigurationBD():
     def ChangeUserData(indexData, value1, value2):
@@ -31,13 +31,31 @@ class ConfigurationBD():
             case 'email':
 
                 
-                if API.CountDocument(
-                        name_collection,
-                        {'email': value1},
-                        None,
-                        None
-                    ):
-                    return ', ya existe este correo electrónico.'
+                query_count_document = {
+                    #nombre de la coleccion
+                    "collection_choose": name_collection, 
+                    #archivo a buscar
+                    "search_query": 
+                        {
+                            'email': value1
+                        },
+                    
+                    "skip": "None",
+                    "limit": "None"
+                }
+
+                result_email = functions.FunctionsKivys.GetResultFromDatabase(query_count_document, 'count_document')
+
+
+                if result_email >= 1:
+                    return ', ya existe este correo electrónico'
+                #if API.CountDocument(
+                #        name_collection,
+                #        {'email': value1},
+                #        None,
+                #        None
+                #    ):
+                #    return ', ya existe este correo electrónico.'
 
                 #if collection.count_documents({'email': value1}, limit = 1):
                 #    return ', ya existe este correo electrónico.'
@@ -45,14 +63,33 @@ class ConfigurationBD():
                 #elif value1 == functions.usernameStaff:
                 #    return ', el correo es el mismo.'
 
-            case 'username':
-                if API.CountDocument(
-                        name_collection,
-                        {'username': value1},
-                        None,
-                        None
-                    ):
+            case 'username': 
+
+                query_count_document = {
+                    #nombre de la coleccion
+                    "collection_choose": name_collection, 
+                    #archivo a buscar
+                    "search_query": 
+                        {
+                            'username': value1,
+                        },
+                    
+                    "skip": "None",
+                    "limit": "None"
+                }
+
+                result_username = functions.FunctionsKivys.GetResultFromDatabase(query_count_document, 'count_document')
+
+                if result_username >= 1:
                     return ', ya existe este usuario.'
+                
+                #if API.CountDocument(
+                #        name_collection,
+                #        {'username': value1},
+                #        None,
+                #        None
+                #    ):
+                #    return ', ya existe este usuario.'
 
                 #if collection.count_documents({'username': value1}, limit = 1):
                 #    return ', ya existe este usuario.'
@@ -62,11 +99,30 @@ class ConfigurationBD():
 
         newValue = { indexData: value1 }
 
-        API.UpdateOne(
-                    name_collection,
-                    {'_id': {'$oid':  functions.idStaff}},
-                    newValue
-                )
+        query_update_one = {
+            #nombre de la coleccion
+            "collection_choose": name_collection, 
+            #archivo a buscar
+            "search_query": 
+                {
+                    "_id": "ObjectId('" + functions.idStaff + "')"
+                },
+            #dato a cambiar
+            "update_query":
+                {"$set":
+                    { 
+                        indexData: value1 
+                    },
+                }
+        }
+
+        result = functions.FunctionsKivys.GetResultFromDatabase(query_update_one, 'update_one')
+
+        #API.UpdateOne(
+        #            name_collection,
+        #            {'_id': {'$oid':  functions.idStaff}},
+        #            newValue
+        #        )
         #documentToChange = { 'username': functions.usernameStaff}
         #newValue = { "$set": { indexData: value1 } }
 
@@ -82,7 +138,7 @@ class ConfigurationBD():
             case 'password':
                 functions.passwordStaff = value1
 
-        return True
+        return result
                 
         #else:
         #    return ', los datos no son iguales.'

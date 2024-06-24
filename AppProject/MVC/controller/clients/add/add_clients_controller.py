@@ -24,6 +24,5 @@ class ClientAddPage(MDScreen):
             ModalsDialog.ActualizeData(objecto, objectoRv)
             toast('¡Proveedor agregado con éxito!')            
             functions.FunctionsKivys.ChangePage('self', 'ClientsPage', 'Cliente')
-        pass
-
-    pass
+        else:
+            toast('Hubo un error ' + str(results))            

@@ -6,10 +6,12 @@ from bson import ObjectId
 from time import sleep
 from kivy.network.urlrequest import UrlRequest
 from kivy.clock import Clock
+import MVC.controller.functions as functions
 
 last_id = previous_id = None
 name_collection = 'products'
-API = DataBase.DatabaseClass
+#API = DataBase.DatabaseClass
+
 class StoreDB():
 
     def ShowDataStoreModel(start, end, state = ''):
@@ -25,7 +27,8 @@ class StoreDB():
 
 
         #starting_id = collection.find({'state_product': 1, 'amount_product': {"$ne" : "0"}}).sort({'id': -1})
-        
+
+        '''
         starting_id = API.Find(
             name_collection,
             {'state_product': 1, 'amount_product': {"$ne" : "0"}},
@@ -34,6 +37,22 @@ class StoreDB():
             None,
             {'id': -1}
         )
+        '''
+
+        query = {
+            "collection_choose": name_collection, 
+            "search_query":
+                {
+                    'state_product': 1, 
+                    'amount_product': {"$ne" : "0"}
+                },
+            "projection": {'_id': 1},
+            "skip": 0,
+            "limit": 0,
+            "sort": "None"
+        }
+
+        starting_id = functions.FunctionsKivys.GetResultFromDatabase(query, 'find')
 
         #SI EL ESTADO ES NONE, REINICIA LAS VARIABLES GLOBALES
         if state == '':
@@ -42,20 +61,20 @@ class StoreDB():
         #SE ACTIVA AL SER LA PRIMERA LLAMADA A LA BASE DE DATOS
         if last_id == None:
 
+            query_find = {
+                "collection_choose": name_collection, 
+                "search_query":
+                    {'state_product': 1, 'amount_product': {"$ne" : "0"}},
+                "projection": {'_id': 1, 'name_product': 1, 'amount_product': 1, 'profit_product': 1, 'name_supplier': 1},
+                "skip": start,
+                "limit": end,
+                "sort": "None"
+            }
+            
             #OBTIENE LOS DATOS DE LA COLECCION
-            filter_query = '{"state_product":1,"amount_product":{"$ne":"0"}}'
-            projection = '{"name_product":1}'
-            skip = start
-            limit = end
-            sort = 'None'
+            results = functions.FunctionsKivys.GetResultFromDatabase(query_find, 'find')
 
-            #url = f'http://127.0.0.1:5000/find/{name_collection}/{filter_query}/{projection}/{skip}/{limit}/{sort}'
-            #url = 'http://127.0.0.1:5000/find/products///start/0/{"_id":1}'
-            #result= UrlRequest(url, debug=True)
-
-            #result.wait()
-            #results = result.result
-
+            '''
             results = API.Find(
                 name_collection, 
                 {'state_product': 1, 'amount_product': {"$ne" : "0"}},
@@ -74,8 +93,22 @@ class StoreDB():
                 start,
                 end
             )
-
             #amount_items = collection.count_documents({'state_product': 1, 'amount_product': {"$ne" : "0"}}, skip=start, limit=end)
+            '''
+
+            query_count = {
+                #nombre de la coleccion
+                "collection_choose": name_collection, 
+                #archivo a buscar
+                "search_query": 
+                    {'state_product': 1, 'amount_product': {"$ne" : "0"}},
+                "skip": start,
+                "limit": end
+            }
+
+            #cantidad de productos que se encontraron
+            amount_items = functions.FunctionsKivys.GetResultFromDatabase(query_count, 'count_document')
+
 
             #Obtiene el ultimo id del producto
             last_id = results[amount_items - 1]['_id']
@@ -85,6 +118,7 @@ class StoreDB():
             #SI SE DA CLICK AL BOTON DE SIGUIENTE
             if state == 'next':
 
+                '''
                 results = API.Find(
                     name_collection, 
                     {'_id': {'$gt': { "$oid": last_id}}, 'state_product': 1, 'amount_product': {"$ne" : "0"}},
@@ -93,17 +127,58 @@ class StoreDB():
                     end, 
                     None
                 )
-
+                '''
                 #results = collection.find({'_id': {'$gt': last_id}, 'state_product': 1, 'amount_product': {"$ne" : "0"}}, {'_id': 1, 'name_product': 1, 'amount_product': 1, 'profit_product': 1, 'name_supplier': 1} ).limit( end )#.sort({ '_id' : ObjectId(last_id)})
+               
+                query_find = {
+                    "collection_choose": name_collection, 
+                    "search_query":
+                        {
+                            "_id": 
+                                {"$gt": 
+                                    "ObjectId('" + last_id + "')"
+                                }, 
+                            'state_product': 1, 
+                            'amount_product': {"$ne" : "0"}
+                        },
+                    "projection": {'_id': 1, 'name_product': 1, 'amount_product': 1, 'profit_product': 1, 'name_supplier': 1},
+                    "skip": "None",
+                    "limit": end,
+                    "sort": "None"
+                }
 
+                results = functions.FunctionsKivys.GetResultFromDatabase(query_find, 'find')
+                '''
                 amount_items = API.CountDocument(
                     name_collection,
                     {'_id': {'$gt': { "$oid": last_id}}, 'state_product': 1, 'amount_product': {"$ne" : "0"}},
                     None,
                     end
                 )
+                '''
 
                 #amount_items = collection.count_documents({'_id': {'$gt': last_id}, 'state_product': 1, 'amount_product': {"$ne" : "0"}}, limit=end)
+
+                query_count = {
+                    #nombre de la coleccion
+                    "collection_choose": name_collection, 
+                    #archivo a buscar
+                    "search_query":  
+                        {
+                            "_id": 
+                                {"$gt": 
+                                    "ObjectId('" + last_id + "')"
+                                }, 
+                            'state_product': 1, 
+                            'amount_product': {"$ne" : "0"}
+                        },
+                    "skip": "None",
+                    "limit": end
+                }
+
+
+                amount_items = functions.FunctionsKivys.GetResultFromDatabase(query_count, 'count_document')
+
                 last_id = results[amount_items - 1]['_id']
 
                 
@@ -116,6 +191,7 @@ class StoreDB():
             #SI SE DA CLICK AL BOTON DE ATRÁS
             elif state == 'previous':
 
+                '''
                 results = API.Find(
                     name_collection, 
                     {'_id': {'$gte': { "$oid": previous_id}}, 'state_product': 1, 'amount_product': {"$ne" : "0"}},
@@ -124,17 +200,54 @@ class StoreDB():
                     end, 
                     None
                 )
-
+                '''
                 #results = collection.find({'_id': {'$gte': previous_id}, 'state_product': 1, 'amount_product': {"$ne" : "0"}}, {'_id': 1, 'name_product': 1, 'amount_product': 1, 'profit_product': 1, 'name_supplier': 1}).limit( end )#.sort({ '_id' : ObjectId(last_id)})
+
+                query_find = {
+                    "collection_choose": name_collection, 
+                    "search_query":
+                        {
+                            "_id": 
+                                {
+                                    '$gte': "ObjectId('" + previous_id + "')"  
+                                }, 
+                                 
+                            'state_product': 1, 
+                            'amount_product': {"$ne" : "0"}
+                        },
+                    "projection": {'_id': 1, 'name_product': 1, 'amount_product': 1, 'profit_product': 1, 'name_supplier': 1},
+                    "skip": "None",
+                    "limit": end,
+                    "sort": "None"
+                }
+
+                results = functions.FunctionsKivys.GetResultFromDatabase(query_find, 'find')
 
                 #amount_items = collection.count_documents({'_id': {'$gte': previous_id}, 'state_product': 1, 'amount_product': {"$ne" : "0"}}, limit=end)
 
+                '''
                 amount_items = API.CountDocument(
                     name_collection,
                     {'_id': {'$gte': {"$oid": previous_id }}, 'state_product': 1, 'amount_product': {"$ne" : "0"}},
                     None,
                     end
                 )
+                '''
+                query_count = {
+                    #nombre de la coleccion
+                    "collection_choose": name_collection, 
+                    #archivo a buscar
+                    "search_query": 
+                        {'_id': 
+                            {'$gte': "ObjectId('"+ previous_id +  "')"  }, 
+                            'state_product': 1, 
+                            'amount_product': {"$ne" : "0"}
+                        },
+                    "skip": "None",
+                    "limit": end
+                }
+
+                amount_items = functions.FunctionsKivys.GetResultFromDatabase(query_count, 'count_document')
                 
                 #OBTIENE EL ULTIMO ID DEL ITEM DE LA COLECCION
                 last_id = results[amount_items - 1]['_id']
@@ -148,7 +261,7 @@ class StoreDB():
 
         #SE CREA DICCIONARIO QUE ALMACENARÁ LOS DATOS OBTENIDOS DE LA BASE DE DATOS
         list_results = {}
-        #CUANTA LA CANTIDAD DE DOCUMENTOS DE LA COLECCIÓN
+        '''
         numbers_collection = API.CountDocument(
                     name_collection,
                     {'state_product': 1, 'amount_product': {"$ne" : "0"}},
@@ -156,6 +269,19 @@ class StoreDB():
                     None
                 )
         #numbers_collection = collection.count_documents({'state_product': 1, 'amount_product': {"$ne" : "0"}})#, skip=start, limit=end)
+        '''
+        query_count = {
+            #nombre de la coleccion
+            "collection_choose": name_collection, 
+            #archivo a buscar
+            "search_query": 
+                {'state_product': 1, 'amount_product': {"$ne" : "0"}},
+            "skip": "None",
+            "limit": "None"
+        }
+
+        #CUANTA LA CANTIDAD DE DOCUMENTOS DE LA COLECCIÓN
+        numbers_collection = functions.FunctionsKivys.GetResultFromDatabase(query_count, 'count_document')
 
         #SE AGREGA SIEMPRE COMO PRIMER DATO, LAS CARACTERISTICAS (CANTIDAD DE DOCUMENTOS, ARCHIVO COMIENZA, ARCHIVO TERMINADA)
         list_results.update({'characteristics': [numbers_collection, start, end]})
@@ -173,34 +299,6 @@ class StoreDB():
 
         return list_results
 
-    '''
-    def CreateSupplier(name, address, rif, phone):
-            
-        collection = DataBase.db['supplier']
-
-        #data
-
-        if collection.count_documents({'name': name}, limit = 1):
-
-            return 'name: ' + str(collection.find({'name': name}))
-
-        #elif collection.count_documents({'address': address}, limit = 1):
-        #    return 'address: ' + str(collection.find({'address': address}))
-        
-        elif collection.count_documents({'rif': rif}, limit = 1):
-            return 'rif: ' + str(collection.find({'rif': rif}))
-        
-        elif collection.count_documents({'phone': phone}, limit = 1):
-            return 'phone: ' + str(collection.find({'phone': phone}))
-        
-        else:
-
-
-            post = {'name': name, 'address': address, 'rif': rif, 'phone': phone}
-            collection.insert_one(post)
-
-            return True
-    '''
     #def UpdateProduct(nameProduct, amountProduct, profitProduct, supplierProduct, idObject):
     def UpdateProduct(nameProduct, profitProduct, supplierProduct, idObject):
         
@@ -216,33 +314,70 @@ class StoreDB():
         #    }):
         #    return ', ya existe registrado este nombre.'
 
-
-        if API.CountDocument(
-                name_collection,
+        query_count_document_name = {
+            #nombre de la coleccion
+            "collection_choose": name_collection, 
+            #archivo a buscar
+            "search_query": 
                 {
-                    "_id": {"$nin" : [{ "$oid": idObject }]},
+                    "_id": {"$nin" : [ "ObjectId('" + idObject + "')" ]},
                     'name_product': nameProduct,
                     "state_product": 1
                 },
-                None,
-                None
-            ):
-            return ', ya existe registrado este nombre.'
+            
+            "skip": "None",
+            "limit": "None"
+        }
+        result_name_product = functions.FunctionsKivys.GetResultFromDatabase(query_count_document_name, 'count_document')
 
+        if result_name_product >= 1:
+            return ', ya existe registrado este nombre.'
+            '''
+            if API.CountDocument(
+                    name_collection,
+                    {
+                        "_id": {"$nin" : [{ "$oid": idObject }]},
+                        'name_product': nameProduct,
+                        "state_product": 1
+                    },
+                    None,
+                    None
+                ):
+                return ', ya existe registrado este nombre.'
+            '''
         else:
             #data
             ####Si no existe el dato introducido, lo añade al query
             #name_product
-            if API.CountDocument(
-                name_collection,
-                {
-                    "_id": {"$nin" : [{ "$oid": idObject }]},
-                    'name_product': nameProduct,
-                },
-                None,
-                None
-            ) == None:
+            query_count_document_name = {
+                #nombre de la coleccion
+                "collection_choose": name_collection, 
+                #archivo a buscar
+                "search_query": 
+                    {
+                        "_id": "ObjectId('" + idObject + "')",
+                        'name_product': nameProduct,
+                    },
+                
+                "skip": "None",
+                "limit": "None"
+            }
+            result_name_product = functions.FunctionsKivys.GetResultFromDatabase(query_count_document_name, 'count_document')
+
+            if result_name_product <= 0:
                 query['name_product'] = nameProduct
+                '''
+                if API.CountDocument(
+                    name_collection,
+                    {
+                        "_id": {"$nin" : [{ "$oid": idObject }]},
+                        'name_product': nameProduct,
+                    },
+                    None,
+                    None
+                ) == None:
+                    query['name_product'] = nameProduct
+                '''
                 
             #if collection.count_documents({'_id': ObjectId(idObject), 'name_product': nameProduct}, limit = 1) <= 0:
             #    query['name_product'] = nameProduct
@@ -251,7 +386,26 @@ class StoreDB():
             #if collection.count_documents({'_id': ObjectId(idObject), 'amount_product': amountProduct}, limit = 1) <= 0:
             #    query['amount_product'] = amountProduct
 
+            query_count_document_profit = {
+                #nombre de la coleccion
+                "collection_choose": name_collection, 
+                #archivo a buscar
+                "search_query": 
+                    {
+                        "_id": "ObjectId('" + idObject + "')",
+                        'profit_product': profitProduct,
+                    },
+                
+                "skip": "None",
+                "limit": "None"
+            }
+
+            result_profit_product = functions.FunctionsKivys.GetResultFromDatabase(query_count_document_profit, 'count_document')
+            if result_profit_product <= 0:
+                query['profit_product'] = profitProduct
+
             #profit_product
+            '''
             if API.CountDocument(
                 name_collection,
                 {
@@ -262,11 +416,31 @@ class StoreDB():
                 None
             ) == None:
                 query['profit_product'] = profitProduct
+            '''
 
             #if collection.count_documents({'_id': ObjectId(idObject), 'profit_product': profitProduct}, limit = 1) <= 0:
             #    query['profit_product'] = profitProduct
 
             #name_supplier
+            query_count_document_name_supplier = {
+                #nombre de la coleccion
+                "collection_choose": name_collection, 
+                #archivo a buscar
+                "search_query": 
+                    {
+                        "_id": "ObjectId('" + idObject + "')",
+                        'name_supplier': supplierProduct,
+                    },
+                
+                "skip": "None",
+                "limit": "None"
+            }
+
+            result_name_supplier = functions.FunctionsKivys.GetResultFromDatabase(query_count_document_name_supplier, 'count_document')
+            if result_name_supplier <= 0:
+                query['name_supplier'] = supplierProduct
+
+            '''
             if API.CountDocument(
                 name_collection,
                 {
@@ -277,6 +451,7 @@ class StoreDB():
                 None
             ) == None:
                 query['name_supplier'] = supplierProduct
+            '''
             #if collection.count_documents({'_id': ObjectId(idObject), 'name_supplier': supplierProduct}, limit = 1) <= 0:
             #    query['name_supplier'] = supplierProduct
 
@@ -286,24 +461,61 @@ class StoreDB():
                 return ', los datos ingresados son los mismos que habia antes.'
             else:
 
+                query_update_one = {
+                    #nombre de la coleccion
+                    "collection_choose": name_collection, 
+                    #archivo a buscar
+                    "search_query": 
+                        {
+                            "_id": "ObjectId('" + idObject + "')"
+                        },
+                    #dato a cambiar
+                    "update_query":
+                        {"$set":
+                            query,
+                        }
+                }
+
+                result = functions.FunctionsKivys.GetResultFromDatabase(query_update_one, 'update_one')
+                return result
+
+                '''
                 result = API.UpdateOne(
                     name_collection,
                     {'_id': {'$oid': idObject}},
                     query
                 )
+                '''
 
                 #collection.update_one({'_id': ObjectId(idObject)},{'$set': query })
-                return result
 
     
     def DeleteProduct(id):
 
+        query_update = {
+            #nombre de la coleccion
+            "collection_choose": name_collection, 
+            #archivo a buscar
+            "search_query": 
+                {
+                    "_id": "ObjectId('" + id + "')"
+                },
+            #dato a cambiar
+            "update_query":
+                {"$set":
+                    {'state_product': 0},
+                }
+        }
+
+        functions.FunctionsKivys.GetResultFromDatabase(query_update, 'update_one')
+
+        '''
         API.UpdateOne(
             name_collection,
             {"_id": { "$oid": id }},
             {'state_product': 0}
         )
-
+        '''
         #collection = DataBase.db['products']
 
         #query = {'state_product': 0}
@@ -315,11 +527,27 @@ class StoreDB():
         #collection = DataBase.db['products']
 
         #result = collection.find_one({'_id': ObjectId(id)})
-
+        '''
         result = API.FindOne(
             name_collection,
             {"_id": { "$oid": id }},
             None
         )
         
+        return result
+        '''
+        query_find_one = {
+            #nombre de la coleccion
+            "collection_choose": name_collection, 
+            #archivo a buscar
+            "search_query": 
+                {
+                    "_id": "ObjectId('" + id + "')"               
+                },
+            #dato a mostrar
+            "projection": "None",
+        }
+
+        result = functions.FunctionsKivys.GetResultFromDatabase(query_find_one, 'find_one')
+
         return result
