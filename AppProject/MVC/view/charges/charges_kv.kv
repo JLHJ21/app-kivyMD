@@ -83,7 +83,13 @@
                     titles_labels: ["Proveedor", "Compra", 'Fecha', "Cant. Productos"]
                     list_table_data: ["name_supplier", "buy_products", "date", "products"]
 
-                    modalData: 
-                        'ModalsDialog.ShowAlertDialog("self","¿Que desea realizar?", "Por favor, elija algunas de las opciones presentadas.", "Cancelar", "Eliminar", "Modificar",  lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog.dismiss()),lambda x: ModalsDialog.ShowAlertDialogDelete ("self","¿De verdad quiere eliminar este producto?", "Si es así, adelante","Cancelar","Eliminar",lambda x: ModalsDialog.CloseDialog("self", RecycleViewTable.dialog2.dismiss()),lambda x: print("cerrar")    ),lambda x: ModalsDialog.ChangePage("self", "StorePageUpdate", "Almacen - Modificar"))'
+                    differentColumn: 'CancelAndDelete'
+
+                    #Datos del Modal de eliminar "¿Esta seguro?"
+                    modalChooseDeleteConfirmationTitle: '¿De verdad quiere eliminar esta compra?'
+                    modalChooseDeletConfirmationeText: 'Recuerda que esta opción no se puede revertir.'
+                    modalChooseDeleteConfirmation: 'from MVC.model.charges.charges_model import ChargesDB; ChargesDB.DeleteCharge(global_id_modal); self = global_self_modal; exec(self.test)'
                     
                     test: 'self.objecto.DictionaryDataset.update(self.objecto.root.ShowDataChargesController(self.objecto.StartPagination, self.objecto.StaticItemsAccountPagination, self.objecto.DirectionPagination))'
+
+

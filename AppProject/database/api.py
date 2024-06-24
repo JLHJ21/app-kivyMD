@@ -69,7 +69,6 @@ def find():
     collection = db[collection_choose]
 
     #No se pueden enviar comillas simples por el url
-
     
     ###############
     '''
@@ -90,7 +89,14 @@ def find():
                 if type(value) == dict:
                     for i, k in zip(value.values(), value.keys()):
 
-                        filter_query[key][k] = TransformToObjectId(i)
+                        
+
+                        try:
+                            if "objectid" in i.lower():
+                                filter_query[key][k] = TransformToObjectId(i)
+                        except Exception as e:
+                            print('segundo except, 104 linea')
+                            
 
     if projection == 'None':
         projection = {}
@@ -123,11 +129,12 @@ def find():
     #obtiene el resultado en Cursos.Object
     results = collection.find(filter_query, projection).skip(skip).limit(limit).sort(sort)
 
-    #transforma el cursor a lista
+
+    #transforma el cursor a lista    
     try:
         result_list = list(results)
     except:
-        return jsonify(results), 200
+        return jsonify(list(results)), 200
 
 
     for index in range(0, len(result_list)):
@@ -237,8 +244,7 @@ def update_one():
     #    print('Error, el update_query no es un query')
 
     #obtiene el resultado en Cursos.Object
-    results = collection.update_one(find_query, update_query )
-
+    results = collection.update_one(find_query, update_query)
 
     #results = collection.find_one(filter_query, projection)
 

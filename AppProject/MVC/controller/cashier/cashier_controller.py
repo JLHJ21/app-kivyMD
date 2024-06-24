@@ -171,6 +171,13 @@ class CashierPage(MDScreen):
 
                     ModalsDialog.ActualizeData(global_rv[self_sales_history_rv], self_sales_history_rv)
 
+                    #Actualiza los datos de la tabla de Almacen StorePage
+                    self_store_page = App.get_running_app().root.ids.screen_manager.get_screen('StorePage')
+                    self_store_page_rv = self_store_page.ids.tableAlmacen.objecto.rv
+
+                    ModalsDialog.ActualizeData(global_rv[self_store_page_rv], self_store_page_rv)
+
+
 
                     toast('¡Compra realizada con éxito!')
                 else:
@@ -508,16 +515,6 @@ class CashierPage(MDScreen):
 
             global global_table_products
             global_table_products = global_modal_rv
-
-            print()
-            print()
-            print('global')
-            print(global_table_products)
-            print()
-            print()
-            print()
-
-
 
             idProduct = str(CustomModal.idProduct)
             nameProduct = CustomModal.nameProduct

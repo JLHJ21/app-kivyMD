@@ -492,6 +492,28 @@ class ModalsDialog():
                     )
                 ],
             )
+        elif global_different_column == 'CancelAndDelete':
+
+            #Caracteristicas
+            RecycleViewTable.dialog = MDDialog(
+                title= "¿Que desea realizar?",
+                text= "Por favor, elija algunas de las opciones presentadas.",
+                buttons=[
+                    #Boton de Cancelar
+                    MDFlatButton(
+                        text= 'Cancelar',
+                        #text_color=self.theme_cls.primary_color,
+                        on_press = lambda x: ModalsDialog.CloseDialog(RecycleViewTable.dialog.dismiss())
+                    ),
+                    #Boton de eliminar
+                    MDRaisedButton(
+                        text= 'Eliminar',
+                        md_bg_color="red",
+                        text_color="white",
+                        on_press = lambda x: ModalsDialog.ShowAlertDialogDelete()
+                    ),
+                ],
+            )
         elif global_different_column == 'nothing':
             return
         elif global_different_column == 'tableProductsShoppingCart':
@@ -843,6 +865,7 @@ class ModalsDialog():
         #print(global_modal_rv.objecto.test)
         #exec(self.objecto.test)
         #ModalsDialog.ChangeItemsAmountButtons('', self_rv)
+        print('llama el actualizedata')
         ModalsDialog.ChangeItemsAmount('', self_rv, True)
 
     '''
