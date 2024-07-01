@@ -12,16 +12,15 @@ from kivymd.uix.dialog import MDDialog
 from kivymd.uix.button import MDFlatButton, MDRaisedButton
 from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.toast import toast
-import re
 
-from kivy.properties import StringProperty, NumericProperty, ObjectProperty
+from kivy.properties import StringProperty, ObjectProperty
 
 #Pagina de cajero
 
 self_cashier_page = self_custom_modal = global_table_products = None
 items_shopping_cart = {'characteristics': [2, 0, 5]}
 #Solo permite 0-9 . y ,
-regex = r'^[-,.0-9 ]+$'
+#regex = r'^[-,.0-9 ]+$'
 
 class ScrollViewCashierPage(MDScrollView):
     pass
@@ -49,11 +48,11 @@ class CustomModal(MDBoxLayout):
         profit = str(profitProduct)
         
         #tranforma el valor obtenido, ejemplo -> 4.500,00 a 4500.00
-        profit = functions.FunctionsKivys.TransformProfit(profit, 'float')
-
+        #profit = functions.FunctionsKivys.TransformProfit(profit, 'float')
 
         #obtiene el valor al dividirlo/multiplicarlo con la tasa seleccionada
         profit = functions.FunctionsKivys.TransformMoney(profit)
+        
         #transforma el valor obtenido a "vista humana"
         profit = functions.FunctionsKivys.TransformProfit(profit, 'human')
 
@@ -102,8 +101,8 @@ class CashierPage(MDScreen):
 
         #totalMoney = 0
         
-
-        if re.fullmatch(regex, totalCost) != None:
+        if functions.FunctionsKivys.ValidationNumber(totalCost) == True:
+        #if re.fullmatch(#regex, totalCost) != None:
             
             if (len(items_shopping_cart) - 1) <= 0:
                 #print('no hay items agregados')
@@ -136,7 +135,7 @@ class CashierPage(MDScreen):
                             purchaseAmountOriginal = float(purchaseAmount) * float(functions.rate_bolivar)
                     
                     #purchaseAmount = functions.FunctionsKivys.TransformProfit(purchaseAmount, 'human')
-                    purchaseAmountOriginal = functions.FunctionsKivys.TransformProfit(purchaseAmountOriginal, 'human')
+                    #purchaseAmountOriginal = functions.FunctionsKivys.TransformProfit(purchaseAmountOriginal, 'human')
 
 
                     #data = list(items_shopping_cart.keys())
@@ -187,8 +186,8 @@ class CashierPage(MDScreen):
                 
                 toast('No se puede realizar la compra porque falta dinero por pagar.')
 
-        else:
-            toast('Hubo un error, el campo pagado solo acepta números')
+        #else:
+        #    toast('Hubo un error, el campo pagado solo acepta números')
 
     def CleanInput(self, itemClean):
 
@@ -203,12 +202,12 @@ class CashierPage(MDScreen):
 
     def UpdateTotalCost(self):
 
-        foreign_exchange = ''
+        #foreign_exchange = ''
         totalCost = 0
         listPrices = 0
         totalMoneyPaid = 0
 
-        errorPaid = 0
+        #errorPaid = 0
 
         moneyPaid =  self_cashier_page.ids.inputPaid.text
         typeForeignExchange = self_cashier_page.ids.ButtonMenuCashierPaymentType.text
@@ -218,12 +217,14 @@ class CashierPage(MDScreen):
             pass
         else:
 
-            if re.fullmatch(regex, moneyPaid) == None:
-                toast('Hubo un error, el campo pagado solo acepta números')
-                return
+           # if re.fullmatch(#regex, moneyPaid) == None:
+            if functions.FunctionsKivys.ValidationNumber(moneyPaid) == True:
             
-            moneyPaid = functions.FunctionsKivys.TransformProfit(moneyPaid, 'float')
-            totalMoneyPaid = moneyPaid
+                #toast('Hubo un error, el campo pagado solo acepta números')
+                #return
+            
+                moneyPaid = functions.FunctionsKivys.TransformProfit(moneyPaid, 'float')
+                totalMoneyPaid = moneyPaid
 
 
 
@@ -377,10 +378,11 @@ class CashierPage(MDScreen):
             idProductShoppingCart = items_shopping_cart[d][0]['_id']
             nameProduct = items_shopping_cart[d][0]['name_product']
             amountWanted = items_shopping_cart[d][0]['amount_wanted']
+            priceProduct = items_shopping_cart[d][0]['price_product_unit']
             totalPrice = items_shopping_cart[d][0]['total_price']
             amountOriginal = items_shopping_cart[d][0]['amount_original']
 
-            new_item = {'dato'+str(index): [{'_id': idProductShoppingCart, 'name_product': nameProduct, 'amount_wanted': amountWanted, 'total_price': totalPrice, 'amount_original': amountOriginal}]}
+            new_item = {'dato'+str(index): [{'_id': idProductShoppingCart, 'name_product': nameProduct, 'amount_wanted': amountWanted, 'priceProduct': priceProduct, 'total_price': totalPrice, 'amount_original': amountOriginal}]}
 
             new_items.update(new_item)
 
@@ -437,11 +439,6 @@ class CashierPage(MDScreen):
 
                     break
 
-            print('aquii')
-            print(amountOriginal)
-            print(amount_discount)
-
-
 
             #Cambia la cantidad de produtos en la base de datos            
             with concurrent.futures.ThreadPoolExecutor() as executor:
@@ -451,7 +448,7 @@ class CashierPage(MDScreen):
             ModalsDialog.ActualizeData(global_rv[self_cashier_rv], self_cashier_rv)
 
             #Me transforma el 75,85 a 75.85
-            profitProduct = functions.FunctionsKivys.TransformProfit(profitProduct, 'float')
+            #profitProduct = functions.FunctionsKivys.TransformProfit(profitProduct, 'float')
             #print()
             #Valor mas cantidad
             totalPrice = int(amountWanted) * float(profitProduct)
@@ -543,8 +540,9 @@ class CashierPage(MDScreen):
             #print(functions.rate_bolivar)
             #print(functions.rate_dolar)
             
+            
             #Me transforma el 75,85 a 75.85
-            profitProduct = functions.FunctionsKivys.TransformProfit(profitProduct, 'float')
+            #profitProduct = functions.FunctionsKivys.TransformProfit(profitProduct, 'float')
 
             #print(float(profitProduct))
             #print(float(profitProduct) / float(functions.rate_bolivar))
@@ -577,7 +575,7 @@ class CashierPage(MDScreen):
                 new_characteristics = {'characteristics': [count_items, start, end]}
                 items_shopping_cart.update(new_characteristics)
 
-            new_item = {'dato'+str(count_items): [{'_id': idProduct, 'name_product': nameProduct, 'amount_wanted': amountWanted, 'total_price': totalPrice, 'amount_original': CustomModal.amountProduct}]}
+            new_item = {'dato'+str(count_items): [{'_id': idProduct, 'name_product': nameProduct, 'amount_wanted': amountWanted, 'price_product_unit': profitProduct, 'total_price': totalPrice, 'amount_original': CustomModal.amountProduct}]}
 
             items_shopping_cart.update(new_item)
 
@@ -613,7 +611,7 @@ class CashierPage(MDScreen):
 
                 
                 #Me da el valor del producto así -> 4500.00
-                profit = functions.FunctionsKivys.TransformProfit(profit, 'float')
+                #profit = functions.FunctionsKivys.TransformProfit(profit, 'float')
                 #profit = functions.FunctionsKivys.ChangeCommaAndDot(profit, False)
 
                 match functions.money_preference:
@@ -642,8 +640,9 @@ class CashierPage(MDScreen):
 
         from templates.table.table import global_rv, global_self_shoppingCart
 
-        start = global_rv[global_self_shoppingCart].objecto.StartPagination
-        end = global_rv[global_self_shoppingCart].objecto.StaticItemsAccountPagination
+        #OJO
+        #start = global_rv[global_self_shoppingCart].objecto.StartPagination
+        #end = global_rv[global_self_shoppingCart].objecto.StaticItemsAccountPagination
 
         data = list(items_shopping_cart.keys())
 
@@ -683,7 +682,6 @@ class CashierPage(MDScreen):
                 ]}
 
             list_return.update(new_item)
-
 
         return list_return
 

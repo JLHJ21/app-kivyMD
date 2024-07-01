@@ -3,6 +3,8 @@ from kivymd.uix.label import MDLabel
 import MVC.controller.functions as functions
 import concurrent.futures
 from MVC.model.sales_history.sales_history_model import SalesHistoryDB
+from MVC.controller.sales_history.pdf.sales_history_pdf import PDF
+
 
 from templates.table.table import RecycleViewTable
 from kivy.metrics import dp
@@ -88,10 +90,44 @@ class SalesHistoryPage(MDScreen):
         functions.MenuAndTitleSelect.ChangeNameDropMenu(self_sales_history, functions.global_variable_self.MenuTypeSalesHistory, "ButtonMenuSearchingSalesHistory", Text)
 
     
+    def CreatePDF(id):
+
+        PDF.CreatePDF("ObjectId('" + id + "')")
+        toast('¡Se ha descargado el PDF con éxito!')
+
     def ShowDataSalesHistoryController(self, start, end, state):
 
         with concurrent.futures.ThreadPoolExecutor() as executor:
             future = executor.submit(SalesHistoryDB.ShowDataSalesHistoryModel, start,end,state)
             return_value = future.result()
 
-            return return_value    
+            data = list(return_value.keys())
+
+
+            for index, item in enumerate(data[1:]):
+                #usar la variable de money_preference con un match y se multiplica/divide con el valor obtenido de la base de datos (valor siempre en pesos)
+                profit = return_value['dato' + str(index)][0]['total_purchase_sales']
+                #profit = functions.FunctionsKivys.ChangeCommaAndDot(profit, False)
+
+                #Me da el valor del producto así -> 4500.00
+                #profit = functions.FunctionsKivys.TransformProfit(profit, 'float')
+
+                #match functions.money_preference:
+                #    case 'bolivar':
+                #        new_profit = float(profit) / float(functions.rate_bolivar)
+                #        new_profit = f"{new_profit:.2f}"
+
+                #    case 'dolar':
+                #        new_profit = float(profit) / float(functions.rate_dolar)
+                #        new_profit = f"{new_profit:.2f}"
+                #    case 'peso':
+                #        new_profit = profit
+                #        #new_profit = f"{new_profit:.3f}"
+
+                #Me da el valor del producto así -> 4.500,00
+                new_profit = functions.FunctionsKivys.TransformProfit(profit, 'human')
+                return_value['dato' + str(index)][0]['total_purchase_sales'] = str(new_profit)
+
+            #print(return_value)
+
+            return return_value

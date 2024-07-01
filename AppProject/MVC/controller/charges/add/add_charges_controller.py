@@ -26,6 +26,8 @@ import weakref
 only_one_time_call = False
 self_page = None
 
+errors = 0
+
 class CustomOneLineIconListItem(OneLineIconListItem):
     icon = StringProperty()
 
@@ -500,7 +502,7 @@ class ChargeAddPage(MDScreen):
                         )
                 case 1:
                     #crea el widget
-                    NewLabels = MDTextField(
+                    NewLabels = TextInputBuyAndProfit(
                             mode= 'rectangle',
                             text= '',
                             hint_text= item,
@@ -601,6 +603,8 @@ class ChargeAddPage(MDScreen):
     #Cambia número de ganancias, compras y total al escribir algún on_key en los inputs
     def updateNumberTextChargeNew(self, *args):
 
+        global errors
+
         totalProfitMoney = 0
         totalBuyMoney = 0
 
@@ -616,13 +620,39 @@ class ChargeAddPage(MDScreen):
                 if self_page.ids.BoxLayoutChargeAdd.children[index].ids.idCompra.text == '':
                     buyProducts = 0
                 else:
-                    buyProducts = float(self_page.ids.BoxLayoutChargeAdd.children[index].ids.idCompra.text)
+                    if functions.FunctionsKivys.ValidationNumber(self_page.ids.BoxLayoutChargeAdd.children[index].ids.idCompra.text) == True:
+
+                        if errors <= 1:
+                            errors = 0
+                        else:
+                            errors -= 1
+
+                        buyProducts = functions.FunctionsKivys.TransformProfit(self_page.ids.BoxLayoutChargeAdd.children[index].ids.idCompra.text, 'float')
+                        buyProducts = float(buyProducts)
+                    else:
+                        errors += 1
+                        return
+                    
+                    #buyProducts = float(self_page.ids.BoxLayoutChargeAdd.children[index].ids.idCompra.text)
 
                 #Ganancia
                 if self_page.ids.BoxLayoutChargeAdd.children[index].ids.idGanancia.text == '':
                     profitProducts = 0
                 else:
-                    profitProducts = float(self_page.ids.BoxLayoutChargeAdd.children[index].ids.idGanancia.text)
+                    if functions.FunctionsKivys.ValidationNumber(self_page.ids.BoxLayoutChargeAdd.children[index].ids.idGanancia.text) == True:
+
+                        if errors <= 1:
+                            errors = 0
+                        else:
+                            errors -= 1
+
+                        profitProducts = functions.FunctionsKivys.TransformProfit(self_page.ids.BoxLayoutChargeAdd.children[index].ids.idGanancia.text, 'float')
+                        profitProducts = float(profitProducts)
+                    else:
+                        errors += 1
+                        return
+                    
+                    #profitProducts = float(self_page.ids.BoxLayoutChargeAdd.children[index].ids.idGanancia.text)
 
                 #Cantidad
                 if self_page.ids.BoxLayoutChargeAdd.children[index].ids.idCantidad.text == '':
@@ -639,13 +669,39 @@ class ChargeAddPage(MDScreen):
                 if self_page.ids.idCompra.text == '':
                     buyProducts = 0
                 else:
-                    buyProducts = float(self_page.ids.idCompra.text)
+
+                    if functions.FunctionsKivys.ValidationNumber(self_page.ids.idCompra.text) == True:
+
+                        if errors <= 1:
+                            errors = 0
+                        else:
+                            errors -= 1
+
+                        buyProducts = functions.FunctionsKivys.TransformProfit(self_page.ids.idCompra.text, 'float')
+                        buyProducts = float(buyProducts)
+                    else:
+                        errors += 1
+                        return
 
                 #Ganancia
                 if self_page.ids.idGanancia.text == '':
                     profitProducts = 0
                 else:
-                    profitProducts = float(self_page.ids.idGanancia.text)
+                    if functions.FunctionsKivys.ValidationNumber(self_page.ids.idGanancia.text) == True:
+
+                        if errors <= 1:
+                            errors = 0
+                        else:
+                            errors -= 1
+
+                        profitProducts = functions.FunctionsKivys.TransformProfit(self_page.ids.idGanancia.text, 'float')
+                        profitProducts = float(profitProducts)
+
+                    else:
+                        errors += 1
+                        return
+
+                    #profitProducts = float(self_page.ids.idGanancia.text)
 
                 #Cantidad
                 if self_page.ids.idCantidad.text == '':
@@ -661,19 +717,23 @@ class ChargeAddPage(MDScreen):
         totalMoney = float(totalProfitMoney) - float(totalBuyMoney)
         #totalMoney = amountProducts * profitProducts
 
-        totalMoney = f"{totalMoney:.3f}"
-        totalProfitMoney = f"{totalProfitMoney:.3f}"
-        totalBuyMoney = f"{totalBuyMoney:.3f}"
+        totalMoney = functions.FunctionsKivys.TransformProfit(str(totalMoney), 'human')
+        totalProfitMoney = functions.FunctionsKivys.TransformProfit(str(totalProfitMoney), 'human')
+        totalBuyMoney = functions.FunctionsKivys.TransformProfit(str(totalBuyMoney), 'human')
+
+        #totalMoney = f"{totalMoney:.3f}"
+        #totalProfitMoney = f"{totalProfitMoney:.3f}"
+        #totalBuyMoney = f"{totalBuyMoney:.3f}"
 
 
         #Ganancia
-        self_page.ids.moneyItemToSell.text = str(totalProfitMoney) + '$'
+        self_page.ids.moneyItemToSell.text = totalProfitMoney
 
         #Compra
-        self_page.ids.moneyItemBuy.text = str(totalBuyMoney) + '$'
+        self_page.ids.moneyItemBuy.text = totalBuyMoney
         
         #Total
-        self_page.ids.totalMoney.text = str(totalMoney) + '$'
+        self_page.ids.totalMoney.text = totalMoney
 
         #moneyItemBuy = self_page.ids.moneyItemBuy.text.rstrip("$")
         #moneyItemToSell = self_page.ids.moneyItemToSell.text.rstrip("$")
@@ -686,84 +746,116 @@ class ChargeAddPage(MDScreen):
     
     def SubmitData(self):
 
-        name_product = []
-        amount_product = []
-        buy_product = []
-        profit_product = []
-        new_product = []
+        print('aqui')
+        print(errors)
 
-        #Dinero que se ganará/gastó/total
-        money_buys = self.ids.moneyItemBuy.text
-        money_profit = self.ids.moneyItemToSell.text
-        money_total = self.ids.totalMoney.text
-
-        #Nombre del proveedor
-        name_supplier = self.ids.searchingSupplier.text
-        #ID del proveedor
-        id_supplier = self.ids.searchingSupplier.name
-        
-        for index, i in enumerate(self_page.ids.BoxLayoutChargeAdd.children):
-
-            try:
-
-                #Nuevo producto
-                new_product.append(self.ids.BoxLayoutChargeAdd.children[index].ids.idProducto.verificationProduct)
-
-                #Producto
-                name_product.append(self.ids.BoxLayoutChargeAdd.children[index].ids.idProducto.text)
-                #Cantidad
-                amount_product.append(self.ids.BoxLayoutChargeAdd.children[index].ids.idCantidad.text)
-                #Compra
-                buy_product.append(self.ids.BoxLayoutChargeAdd.children[index].ids.idCompra.text)
-                #Ganancia
-                profit_product.append(self.ids.BoxLayoutChargeAdd.children[index].ids.idGanancia.text)
-
-            except AttributeError:
-
-                
-                #Nuevo producto
-                new_product.append(self.ids.idProducto.verificationProduct)
-
-                #Producto
-                name_product.append(self.ids.idProducto.text)
-                #Cantidad
-                amount_product.append(self.ids.idCantidad.text)
-                #Compra
-                buy_product.append(self.ids.idCompra.text)
-                #Ganancia
-                profit_product.append(self.ids.idGanancia.text)
-
-        
-        with concurrent.futures.ThreadPoolExecutor() as executor:
-            future = executor.submit(ChargesDB.InsertNewCharge, new_product, name_product, amount_product, buy_product, profit_product, name_supplier, id_supplier, money_buys, money_profit, money_total)
-            return_value = future.result()
-        
-        if return_value == True:
+        if errors <= 0:
             
 
-            from MVC.controller.charges.charges_controller import self_charge_page
-            from MVC.controller.store.store_controller import self_store_page
+            name_product = []
+            amount_product = []
+            buy_product = []
+            profit_product = []
+            new_product = []
 
-            from templates.table.table import ModalsDialog
+            #Dinero que se ganará/gastó/total
+            money_buys = self.ids.moneyItemBuy.text
+            money_buys = functions.FunctionsKivys.TransformProfit(money_buys, 'float')
 
-            objecto = self_charge_page.ids.tableCharge.objecto
-            objectoRv = self_charge_page.ids.tableCharge.objecto.rv
+            money_profit = self.ids.moneyItemToSell.text
+            money_profit = functions.FunctionsKivys.TransformProfit(money_profit, 'float')
 
-            objectoStore = self_store_page.ids.tableAlmacen.objecto
-            objectoStoreRv = self_store_page.ids.tableAlmacen.objecto.rv
+            money_total = self.ids.totalMoney.text
+            money_total = functions.FunctionsKivys.TransformProfit(money_total, 'float')
 
-            #el primero es el objecto (variable objecto que lleva el widget weak), el segundo es el objecto.rv del recycleview
+
+            #Nombre del proveedor
+            name_supplier = self.ids.searchingSupplier.text
+            #ID del proveedor
+            id_supplier = self.ids.searchingSupplier.name
+            
+            for index, i in enumerate(self_page.ids.BoxLayoutChargeAdd.children):
+
+                try:
+
+                    #Nuevo producto
+                    new_product.append(self.ids.BoxLayoutChargeAdd.children[index].ids.idProducto.verificationProduct)
+
+                    #Producto
+                    name_product.append(self.ids.BoxLayoutChargeAdd.children[index].ids.idProducto.text)
+
+                    #Cantidad
+                    amount_product.append(self.ids.BoxLayoutChargeAdd.children[index].ids.idCantidad.text)
+
+                    #Compra
+                    compra = self.ids.BoxLayoutChargeAdd.children[index].ids.idCompra.text
+                    compra = functions.FunctionsKivys.TransformProfit(compra, 'float')
+
+                    buy_product.append(compra)
+
+                    #Ganancia
+                    ganancia = self.ids.BoxLayoutChargeAdd.children[index].ids.idGanancia.text
+                    ganancia = functions.FunctionsKivys.TransformProfit(ganancia, 'float')
+
+                    profit_product.append(ganancia)
+
+                except AttributeError:
+
+                    
+                    #Nuevo producto
+                    new_product.append(self.ids.idProducto.verificationProduct)
+
+                    #Producto
+                    name_product.append(self.ids.idProducto.text)
+                    
+                    #Cantidad
+                    amount_product.append(self.ids.idCantidad.text)
+
+                    #Compra                    
+                    compra = self.ids.idCompra.text
+                    compra = functions.FunctionsKivys.TransformProfit(compra, 'float')
+
+                    buy_product.append(compra)
+
+                    #Ganancia
+                    ganancia = self.ids.idGanancia.text
+                    ganancia = functions.FunctionsKivys.TransformProfit(ganancia, 'float')
+
+                    profit_product.append(ganancia)
+
             
             with concurrent.futures.ThreadPoolExecutor() as executor:
-                #Actualiza de la tabla Encargos/Compra
-                executor.submit(ModalsDialog.ActualizeData, objecto, objectoRv)
-                #Actualiza de la tabla Encargos/Compra
-                executor.submit(ModalsDialog.ActualizeData, objectoStore, objectoStoreRv)
+                future = executor.submit(ChargesDB.InsertNewCharge, new_product, name_product, amount_product, buy_product, profit_product, name_supplier, id_supplier, money_buys, money_profit, money_total)
+                return_value = future.result()
+            
+            if return_value == True:
+                
 
-            toast('¡Compra agregada con éxito!')            
-            functions.FunctionsKivys.ChangePage('self', 'ChargePage','Encargo')
+                from MVC.controller.charges.charges_controller import self_charge_page
+                from MVC.controller.store.store_controller import self_store_page
 
+                from templates.table.table import ModalsDialog
+
+                objecto = self_charge_page.ids.tableCharge.objecto
+                objectoRv = self_charge_page.ids.tableCharge.objecto.rv
+
+                objectoStore = self_store_page.ids.tableAlmacen.objecto
+                objectoStoreRv = self_store_page.ids.tableAlmacen.objecto.rv
+
+                #el primero es el objecto (variable objecto que lleva el widget weak), el segundo es el objecto.rv del recycleview
+                
+                with concurrent.futures.ThreadPoolExecutor() as executor:
+                    #Actualiza de la tabla Encargos/Compra
+                    executor.submit(ModalsDialog.ActualizeData, objecto, objectoRv)
+                    #Actualiza de la tabla Encargos/Compra
+                    executor.submit(ModalsDialog.ActualizeData, objectoStore, objectoStoreRv)
+
+                toast('¡Compra agregada con éxito!')            
+                functions.FunctionsKivys.ChangePage('self', 'ChargePage','Compra')
+
+            else:
+                toast('Hubo un error' + str( return_value ))
         else:
-            toast('Hubo un error' + str( return_value ))
+            toast('Hay un error, por favor rectifiquelo para continuar.')
 
         

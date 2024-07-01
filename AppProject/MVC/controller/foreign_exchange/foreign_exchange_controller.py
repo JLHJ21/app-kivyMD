@@ -8,7 +8,6 @@ from MVC.controller.foreign_exchange.update.update_foreign_exchange_controller i
 from kivymd.toast.kivytoast.kivytoast import toast
 from kivy.app import App
 
-from kivy.clock import Clock
 
 #PAGINA DE DIVISAS
 class ForeignExchangePage(MDScreen):
@@ -74,11 +73,13 @@ class ForeignExchangePage(MDScreen):
         self_main = functions.global_variable_self
         try:
             if self_main.root.ids:
-                HeaderAndFooter.CallbackTypeMoney(self_header_and_footer, functions.money_preference)
+                HeaderAndFooter.CallbackTypeMoney(self_header_and_footer, functions.money_preference, True)
                 #print('if')
         except:
             pass
             #print('except')
+
+        dolar = functions.FunctionsKivys.TransformProfit(functions.rate_dolar, 'human')
 
         match functions.money_preference:
             case 'dolar':
@@ -87,11 +88,11 @@ class ForeignExchangePage(MDScreen):
                 inputBolivar = 'El cambio es de: ' + str(functions.rate_bolivar)
 
             case 'peso':
-                inputDollar = 'El cambio es de: ' + str(functions.rate_dolar)
+                inputDollar = 'El cambio es de: ' + dolar
                 inputPeso =  'PREFERIDO'
                 inputBolivar = 'El cambio es de: ' + str(functions.rate_bolivar)
             case 'bolivar':
-                inputDollar = 'El cambio es de: ' + str(functions.rate_dolar)
+                inputDollar = 'El cambio es de: ' + dolar
                 inputPeso =  'El cambio es de: 1'
                 inputBolivar = 'PREFERIDO'
             
@@ -113,32 +114,6 @@ class ForeignExchangePage(MDScreen):
         #ACTUALIZA LOS DATOS PARA LAS VARIABLES GLOBALES
         functions.GlobalVariables.UpdateForeignExchange(bolivar, dolar, preference, last_change)
         self.UpdateTextPrincipalPage()
-        #VIEJO
-        '''
-        listData = ForeignExchangeDB.ChangePreferenceExchangeForeign()
-
-
-        functions.GlobalVariables.AddForeignExchange(listData[2], listData[1], listData[0])
-
-        match (listData[3]):
-            case 'dolar':
-                    
-                self.inputDollar = 'PREFERIDO'
-                self.inputPeso = f'Dólar a Peso: {listData[0]}$ == {listData[1]}$$'
-                self.inputBolivar = f'Dólar a Bolívar: {listData[0]}$ == {listData[2]}bs'
-
-            case 'peso':
-                    
-                self.inputDollar = f'Peso a Dólar: {listData[0]}$$ == 1$'
-                self.inputPeso = 'PREFERIDO'
-                self.inputBolivar = f'Peso a Bolívar: {listData[1]}$$ == {listData[2]}bs'
-
-            case 'bolivar':
-                    
-                self.inputDollar = f'Bolívar a Dolar: {listData[0]}bs == 1$'
-                self.inputPeso = f'Bolívar a Peso: 10bs == 1000$$'
-                self.inputBolivar = 'PREFERIDO'
-        '''
 
     def ChangePageUpdateExchangeForeign(self):
 
@@ -228,19 +203,17 @@ class ForeignExchangePage(MDScreen):
     #Funcion al dar click al boton
     def ChangeForeignExchange(self, text):
 
-        print('click al change')
-
         if functions.money_preference == text:
             toast('Hubo un error, ya existe esta moneda como preferencia.')
         else:
 
             result = ForeignExchangeDB.UpdateMoneyPreference(text)
 
-            if result:
-                self.UpdateTextPrincipalPage()
-                toast('Se ha cambiado la preferencia monetaria.')
-            else:
-                toast('Hubo un error' + str(result))
+            #if result:
+            self.UpdateTextPrincipalPage()
+            toast('Se ha cambiado la preferencia monetaria.')
+            #else:
+            #    toast('Hubo un error' + str(result))
         '''
         match (text):
             case 'dolar':

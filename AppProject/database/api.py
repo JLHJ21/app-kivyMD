@@ -14,6 +14,7 @@ mongo_uri = "mongodb+srv://jorge:jorge123@databaseiv.yogxdsl.mongodb.net/?retryW
 client = MongoClient(mongo_uri, server_api=ServerApi('1'),  tlsCAFile=certifi.where())
 db = client['programDB']
 collection_test = db['products']
+indexes = 0
 
 
 def TransformToObjectId(value):
@@ -31,6 +32,116 @@ def TransformToObjectId(value):
 
         return value
     
+def TransformToStrings(dictionary, type_search):
+    indexes = 0
+
+    if type_search == 'find':
+
+        indexes = -1
+    
+        #itera la list
+        for index, key_item in enumerate(dictionary):
+
+            #si es dictionario pasa por aqui
+            if type(key_item) == dict:
+                for i, k in enumerate(key_item):
+
+                    #si es un diccionario dentro de un diccionario pasa por aqui
+                    if type(dictionary[index][k]) == dict:
+                        #print(dictionary[index][k])
+                        print('diccionario')
+
+
+                    #si es una list dentro de un diccionario pasa por aqui
+                    elif type(dictionary[index][k]) == list:
+                        #print('list 2')
+
+                        #itera la list
+                        for key_k in dictionary[index][k]:
+
+                            #si es un diccionario dentro de una list de un diccionario pasa por aqui
+                            if type(key_k) == dict:
+                                for index_key_k, key_dict_k in enumerate(key_k):
+                                    if index_key_k == (len(dictionary[index][k]) - 1):
+                                        indexes += 1
+
+                                    try:
+                                        if type(dictionary[index][k][indexes][key_dict_k]) == ObjectId:
+                                            dictionary[index][k][indexes][key_dict_k] = str(dictionary[index][k][indexes][key_dict_k])
+                                            #print('try')
+                                    except:
+                                        indexes = 0
+                                        if type(dictionary[index][k][indexes][key_dict_k]) == ObjectId:
+                                            
+                                            dictionary[index][k][indexes][key_dict_k] = str(dictionary[index][k][indexes][key_dict_k])
+                                            #print('except')
+                                    
+
+                                            
+
+                            #si es una list dentro de una list de un diccionario pasa por aqui
+                            elif type(key_k) == list:
+                                
+                                #print('list 3')
+                                try:
+                                    #print(dictionary[index][k][indexes])
+                                    print('try list 3')
+                                except:
+                                    #print(dictionary[index][k][0])
+                                    print('except list 3')
+
+                                if index == (len(dictionary[index][k]) - 1):
+                                    indexes += 1
+
+
+                            #si es un ObjectId dentro de una list de un diccionario pasa por aqui
+                            elif type(key_k) == ObjectId:
+                                print('objecitd 3')
+
+                    #si es una ObjectId dentro de un diccionario pasa por aqui
+                    elif type(dictionary[index][k]) == ObjectId:
+                        dictionary[index][k] = str(dictionary[index][k])
+                        print('objectid 2')
+
+            #si es lista pasa por aqui
+            elif type(key_item) == list:
+                print('list')
+            #si es ObjectId pasa por aqui
+            elif type(key_item) == ObjectId:
+                print('objectid')
+
+    else: 
+        for value_item, key_item in zip(dictionary.values(), dictionary.keys()):
+            if type(value_item) == ObjectId:
+
+                dictionary[key_item] = str(dictionary[key_item])
+
+                print('haveindex primer if: ' + str(dictionary[key_item]))
+                print()
+
+            elif type(value_item) == list:
+                for list_value in value_item:
+
+                    if type(list_value) == dict:
+                        for index, (dict_value, dict_key) in enumerate(zip(list_value.values(), list_value.keys())):
+                            
+                            if type(dict_value) == ObjectId:
+                                
+                                try:
+                                    dictionary[key_item][indexes][dict_key] = str(dictionary[key_item][indexes][dict_key])
+                                    print(' listIndex1: ' + str(dictionary[key_item][indexes][dict_key]))
+                                    indexes += 1
+                                except:
+                                    indexes = 0
+                                    dictionary[key_item][indexes][dict_key] = str(dictionary[key_item][indexes][dict_key])
+                                    print(' listIndex: ' + str(dictionary[key_item][indexes][dict_key]))
+                                    
+            elif type(value_item) == dict:
+                for v, k in zip(value_item.values(), value_item.keys()):
+                    if type(v) == ObjectId:
+                        dictionary[key_item][k] = str(v)
+                        print('haveindex segundo if: ' + str(dictionary[key_item][k]))
+
 def TransformToString(value, key, dictionary, indexes = '', haveIndex = False):
 
 
@@ -136,22 +247,26 @@ def find():
     except:
         return jsonify(list(results)), 200
 
+    #cambiar el ObjectId a String para que lo puede utilizar jsonify
+    TransformToStrings(result_list, 'find')
 
-    for index in range(0, len(result_list)):
+    #for index in range(0, len(result_list)):
 
             
-        for value, key in zip(result_list[index].values(), result_list[index].keys()):
+    #    for value, key in zip(result_list[index].values(), result_list[index].keys()):
 
-            TransformToString(value, key, result_list, index, True)
+    #        TransformToString(value, key, result_list, index, True)
 
 
-    #cambiar el ObjectId a String para que lo puede utilizar jsonify
+
 
     #envia los resultados con estatus 200 (Ok)
     return jsonify(result_list), 200
 
+
 @app.route('/find_one', methods=['POST'])
 def find_one():
+
 
     collection_choose = request.json['collection_choose']
     filter_query = request.json['search_query']
@@ -193,16 +308,83 @@ def find_one():
 
     #cambiar el ObjectId a String para que lo puede utilizar jsonify
     try:
-        for value, key in zip(result.values(), result.keys()):
+        for value_item, key_item in zip(result.values(), result.keys()):
+            if type(value_item) == ObjectId:
 
-            TransformToString(value, key, result)
+                result[key_item] = str(result[key_item])
 
-    except Exception as e:
+                print('haveindex primer if: ' + str(result[key_item]))
+                print()
+
+            elif type(value_item) == list:
+                for list_value in value_item:
+
+                    if type(list_value) == dict:
+                        for index, (dict_value, dict_key) in enumerate(zip(list_value.values(), list_value.keys())):
+                            
+                            if type(dict_value) == ObjectId:
+                                
+                                try:
+                                    result[key_item][indexes][dict_key] = str(result[key_item][indexes][dict_key])
+                                    print(' listIndex1: ' + str(result[key_item][indexes][dict_key]))
+                                    indexes += 1
+                                except:
+                                    indexes = 0
+                                    result[key_item][indexes][dict_key] = str(result[key_item][indexes][dict_key])
+                                    print(' listIndex: ' + str(result[key_item][indexes][dict_key]))
+                                    
+            elif type(value_item) == dict:
+                for v, k in zip(value_item.values(), value_item.keys()):
+                    if type(v) == ObjectId:
+                        result[key_item][k] = str(v)
+                        print('haveindex segundo if: ' + str(result[key_item][k]))
+    except AttributeError:
         return_result = []
         return jsonify(return_result), 200
 
+
+    '''
+    for value, key in zip(result.values(), result.keys()):
+
+        print(value)
+        print(type(value) == list)
+        print()
+        try:
+            if type(value) == ObjectId:
+                result[0][key] = str(value)
+                print('haveindex primer if: ' + str(result[0][key]))
+
+            elif type(value) == dict:
+
+                for v, k in zip(value.values(), value.keys()):
+                    if type(v) == ObjectId:
+                        result[0][key][k] = str(v)
+                        print('haveindex segundo if: ' + str(result[0][key][k]))
+            #elif type(value) == list:
+
+        except Exception as e:
+            try:
+                if type(value) == ObjectId:
+                    result[key] = str(value)
+                    print('normal primer if: ' + str(result[key]))
+
+
+                elif type(value) == dict:
+
+                    for v, k in zip(value.values(), value.keys()):
+                        if type(v) == ObjectId:
+                            result[key][k] = str(v)
+                            print('normal segundo if: ' + str(result[key][k]))
+            except Exception as e:
+                print(e)
+    '''
+    #except Exception as e:
+    #    return_result = []
+    #    return jsonify(return_result), 200
+
     #envia los resultados con estatus 200 (Ok)
     return jsonify(result), 200
+
 
 @app.route('/update_one', methods=['POST'])
 def update_one():
@@ -254,6 +436,7 @@ def update_one():
         
     #envia los resultados con estatus 200 (Ok)
     #return jsonify(results), 200
+
 
     if results.modified_count >= 1:
         return jsonify(True), 200
@@ -384,6 +567,7 @@ def count_document():
         results = collection.count_documents(count_query, limit=limit)
     else:
         results = collection.count_documents(count_query)
+
         
     #envia los resultados con estatus 200 (Ok)
     return jsonify(results), 200

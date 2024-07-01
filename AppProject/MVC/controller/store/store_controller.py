@@ -75,8 +75,8 @@ class StorePage(MDScreen):
                 #profit = functions.FunctionsKivys.ChangeCommaAndDot(profit, False)
 
                 #Me da el valor del producto así -> 4500.00
-                profit = functions.FunctionsKivys.TransformProfit(profit, 'float')
-
+                #profit = functions.FunctionsKivys.TransformProfit(profit, 'float')
+                
                 match functions.money_preference:
                     case 'bolivar':
                         new_profit = float(profit) / float(functions.rate_bolivar)

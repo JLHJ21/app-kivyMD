@@ -286,8 +286,8 @@ class SalesHistoryDB():
 
             amount_products = SalesHistoryDB.GetAmountItemsSales(idSalesHistory)
 
-            nameClient = i['data_client_sales']['name_client']
-            nameStaff = i['data_staff_sales']['name_staff']
+            nameClient = i['data_client_sales'][0]['name_client']
+            nameStaff = i['data_staff_sales'][0]['name_staff']
             totalPurchase = i['total_purchase_sales']
             datePurchase = i['date_sales']
 

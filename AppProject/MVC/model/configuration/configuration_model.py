@@ -97,7 +97,7 @@ class ConfigurationBD():
                 #elif value1 == functions.usernameStaff:
                 #    return ', el usuario es el mismo.'
 
-        newValue = { indexData: value1 }
+        #newValue = { indexData: value1 }
 
         query_update_one = {
             #nombre de la coleccion

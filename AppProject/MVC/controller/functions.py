@@ -1,6 +1,8 @@
 import concurrent.futures
 from kivy.network.urlrequest import UrlRequest
 import json
+import re
+from kivymd.toast import toast
 
 #datos de la api
 headers = {'Content-type': 'application/json',
@@ -71,6 +73,9 @@ class GlobalVariables():
         global_bolivar = bolivar
         global_peso = peso
         global_dolar = dolar
+
+#Validaciones regex
+regex = r'^[-,.0-9 ]+$'
 
 class FunctionsKivys():
     
@@ -216,6 +221,11 @@ class FunctionsKivys():
 
         return result_database
 
+    def ValidationNumber(text):
+        if re.fullmatch(regex, text) == None:
+            toast('Hubo un error, el campo pagado solo acepta números')
+            return False
+        return True
 #Variables 'globales' de los datos del usuario
 usernameStaff = emailStaff = passwordStaff = idStaff = ''
 access_text = 0

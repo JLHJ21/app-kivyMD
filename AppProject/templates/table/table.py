@@ -516,6 +516,30 @@ class ModalsDialog():
             )
         elif global_different_column == 'nothing':
             return
+        elif global_different_column == 'PDF':
+            
+            #Caracteristicas
+            RecycleViewTable.dialog = MDDialog(
+                title= "¿Que desea realizar?",
+                text= "Por favor, elija algunas de las opciones presentadas.",
+                buttons=[
+                    #Boton de Cancelar
+                    MDFlatButton(
+                        text= 'Cancelar',
+                        #text_color=self.theme_cls.primary_color,
+                        on_press = lambda x: ModalsDialog.CloseDialog(RecycleViewTable.dialog.dismiss())
+                    ),
+                    #Boton de eliminar
+                    MDRaisedButton(
+                        text= 'Descargar PDF',
+                        md_bg_color="red",
+                        text_color="white",
+                        on_press = lambda x: exec(global_rv[global_modal_rv].objecto.callbackPDF)
+                    ),
+                ],
+            )
+
+            #exec(call_pdf)
         elif global_different_column == 'tableProductsShoppingCart':
 
             custom_modal =  global_rv[global_modal_rv].objecto.customModal
@@ -756,6 +780,10 @@ class ModalsDialog():
                     global_rv[rv].objecto.ItemsAccountPagination = global_rv[rv].objecto.StaticItemsAccountPagination = 5
 
         #Cambia el texto del boton ItemsAmount
+
+        print(global_rv[rv].objecto.StaticItemsAccountPagination)
+        print(global_rv[rv].objecto.ItemsAccountPagination)
+
         global_rv[rv].objecto.ids.ItemsAmount.text = "Items por página: " + str(global_rv[rv].objecto.ItemsAccountPagination)
 
         #Llama la función TableData para rellenar los datos de la tabla

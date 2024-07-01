@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <title>Factura Nr: {{invoiceNr}}</title>
+    <style>
+        body {
+            padding: 20px;
+        }
+        table tbody tr th {
+            width: 50%;
+        }
+    </style>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col text-end ">
+            <div class="logo">
+                <a href="https://html2pdf.app" >
+                    <img src="C:/Users/PC/Documents/Universidad_PDFs_4/app-kivyMD/AppProject/images/logo.jpeg" style="height: 150px; width: 200px;" class="img-thumbnail rounded float-end" alt="logo.app"/>
+                </a>
+            </div>
+        </div>
+    </div>
+    <br>
+    <br>
+
+    <div class="row" >
+        <h1 class="mt-5">Factura interna</h1>
+
+    </div> 
+    <table class="table mt-5 text-start">
+        <tbody>
+        <tr>
+            <th scope="row">Número de factura</th>
+            <td> {{id_bill}} </td>
+        </tr>
+        <tr>
+            <th scope="row">Venta hecha a</th>
+            <td>{{client}}</td>
+        </tr>
+        <tr>
+            <th scope="row">Venta hecha por</th>
+            <td>{{employeer}}</td>
+        </tr>
+        <tr>
+            <th scope="row">Fecha de venta</th>
+            <td>{{date_did}}</td>
+        </tr>
+        <tr>
+            <th scope="row">Tipos de pago</th>
+            <td>
+                {% for item in type_paid %}
+                Divisa: {{item['type_money']}},
+                Dinero: {{item['purchase_money']}}
+                |
+                {% endfor %}
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <table class="table table-striped mt-5">
+        <thead>
+        <tr>
+            <th>Producto</th>
+            <th>Cantidad</th>
+            <th>Precio</th>
+            <th>Total</th>
+        </tr>
+        </thead>
+        <tbody>
+            
+        {% for item in products %}
+
+            <tr>
+                <td>{{item['name_product']}}</td>
+                <td>{{item['amount_product']}}</td>
+                <td>{{item['price_product_unit']}}</td>
+                <td>{{item['total_product']}}</td>
+            </tr>
+
+        {% endfor %}
+
+        </tbody>
+        <tfoot>
+        <tr>
+            <th colspan="3" class="text-end">
+                Total
+            </th>
+            <td>
+                {{total_price}}
+            </td>
+        </tr>
+        </tfoot>
+    </table>
+    <div class="row mt-5">
+        <div class="col">
+            <small>
+                <strong>Notes:</strong><br/>
+                El pago se muestra en pesos colombianos.
+            </small>
+        </div>
+    </div>
+    <hr/>
+    <address>
+        Ferreteria "FerreZambrano"<br/>
+        Dirección: Edificio Francisco Cárdenas Carrera 9 con Calle 4, Centro, San Cristóbal, Táchira.<br/>
+        <!--Email: <a class="link-secondary" href="https://html2pdf.app">info@html2pdf.app</a>-->
+    </address>
+</div>
+</body>
+</html>
+
+<!--
+<hr>
+
+<p style="text-align: center;"><strong>Contrato</strong></p>
+
+<hr>
+
+<p style="text-align: left;">Recibo de {{ client }} </p>
+<p style="text-align: left;">Hecho por {{ employeer }} </p>
+
+<ol>
+    {% for i in products[0] %}
+
+        <li style="text-align: left;">{{ products[0][i] }}</li>
+
+    {% endfor %}
+</ol>
+
+<p style="text-align: left;">Realizado el {{ date }}</p>
+<p style="text-align: left;">Cantidad pagada {{ money_cost }}</p>
+<p style="text-align: left;">Pago hecho con {{ type_paid }}</p>
+
+-->

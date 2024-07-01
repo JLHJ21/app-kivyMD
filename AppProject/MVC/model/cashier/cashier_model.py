@@ -448,7 +448,7 @@ class CashierDB():
 
         #collection.update_one({'_id': ObjectId(idProduct)},{'$set': query })
 
-    def AddPurchase(idObjectClient, nameClient, phoneClient, idClient, idStaff, nameStaff, purchaseAmount, typeForeignExchange,itemsProducts, purchaseAmountOriginal):
+    def AddPurchase(idObjectClient, nameClient, phoneClient, idClient, idStaff, nameStaff, purchaseAmount, typeForeignExchange, itemsProducts, purchaseAmountOriginal):
         #collection = DataBase.db['sales']
         datePurchase = datetime.today().strftime('%d-%m-%Y %H:%M:%S')
 
@@ -467,6 +467,7 @@ class CashierDB():
                 'amount_wanted': itemsProducts[item][0]['amount_wanted'],
                 #cantidad original del producto antes de la compra
                 'amount_original': itemsProducts[item][0]['amount_original'],
+                'price_product_unit': itemsProducts[item][0]['price_product_unit'],
                 #precio del producto, teniendo en cuenta los datos de amount_wanted
                 'total_price': itemsProducts[item][0]['total_price'],
                 
@@ -506,16 +507,20 @@ class CashierDB():
             #datos a agregar en la coleccion
             "document_insert":
                     {
-                        "data_client_sales": {
-                                "_id_client": "ObjectId('" + idObjectClient + "')",
-                                "name_client": nameClient, 
-                                "phone_client": phoneClient, 
-                                "id_client": idClient
-                            }, 
-                        "data_staff_sales": {
-                                "_id_staff": "ObjectId('" + idStaff + "')",
-                                "name_staff": nameStaff
-                            }, 
+                        "data_client_sales": [
+                                {
+                                    "_id_client": "ObjectId('" + idObjectClient + "')",
+                                    "name_client": nameClient, 
+                                    "phone_client": phoneClient, 
+                                    "id_client": idClient
+                                }
+                            ], 
+                        "data_staff_sales": [
+                                {
+                                    "_id_staff": "ObjectId('" + idStaff + "')",
+                                    "name_staff": nameStaff
+                                }
+                            ], 
                         "data_money_sales": [
                                 {
                                     "type_money": typeForeignExchange,

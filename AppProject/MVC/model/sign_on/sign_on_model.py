@@ -17,6 +17,9 @@ class SignOnDatabase():
                 {
                     "username": username
                 },
+                
+            "skip": "None",
+            "limit": 1
         }
 
         query_count_email = {
@@ -27,6 +30,9 @@ class SignOnDatabase():
                 {
                     "email": email,
                 },
+                
+            "skip": "None",
+            "limit": 1
         }
 
         #data

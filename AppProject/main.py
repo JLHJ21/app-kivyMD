@@ -194,8 +194,8 @@ class App(MDApp):
         functions.GlobalVariables.GetGlobalSelf(self)
         #DatabaseClass.Conexion()
 
-        t1 = threading.Thread(target=DatabaseClass.Conexion())# Here is where I have tried to thread the function
-        t1.start()
+        #t1 = threading.Thread(target=DatabaseClass.Conexion())# Here is where I have tried to thread the function
+        #t1.start()
 
         #CARGA LOS DATOS DE .KV
         self.screen = Builder.load_file("styles.kv")

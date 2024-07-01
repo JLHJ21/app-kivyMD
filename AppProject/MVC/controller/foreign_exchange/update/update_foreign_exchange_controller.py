@@ -68,11 +68,11 @@ class UpdateForeignExchangePage(MDScreen):
             
             ###########
           
-            print('paso los try')
             #Actualiza el dinero segun lo escrito en el input
             result = ForeignExchangeDB.UpdateRateMoney(str(dolar), str(bolivar))
 
             if result == True:
+
             
                 #obtiene el self principal del kivy
                 self_main = functions.global_variable_self
@@ -80,6 +80,8 @@ class UpdateForeignExchangePage(MDScreen):
                 self_main.root.ids.screen_manager.current = 'ForeignExchangePage'
                 #cambia el titulo del menu de arriba segun el nombre que queramos
                 self_main.root.ids.toolbar.title = 'Divisas'
+                toast('¡Se modificaron los datos con éxito!')
+
             else:
                 toast('Hubo un error' + str(result))
 
